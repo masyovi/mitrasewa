@@ -84,6 +84,33 @@ function getDefaultDates() {
   return { from, to };
 }
 
+function getPresetRange(preset: string): { from: string; to: string } {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const to = today.toISOString().split("T")[0];
+  const from = new Date(today);
+
+  switch (preset) {
+    case "6bulan":
+      from.setMonth(from.getMonth() - 6);
+      break;
+    case "3bulan":
+      from.setMonth(from.getMonth() - 3);
+      break;
+    case "1bulan":
+      from.setMonth(from.getMonth() - 1);
+      break;
+    case "minggu": {
+      const day = from.getDay() || 7;
+      from.setDate(from.getDate() - day + 1);
+      break;
+    }
+    case "hari":
+      break;
+  }
+  return { from: from.toISOString().split("T")[0], to };
+}
+
 export function LaporanTab() {
   const { from: defaultFrom, to: defaultTo } = getDefaultDates();
   const { resolvedTheme } = useTheme();
@@ -91,6 +118,7 @@ export function LaporanTab() {
 
   const [from, setFrom] = useState(defaultFrom);
   const [to, setTo] = useState(defaultTo);
+  const [activePreset, setActivePreset] = useState<string | null>(null);
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
@@ -117,6 +145,19 @@ export function LaporanTab() {
       setLoading(false);
     }
   }, [from, to]);
+
+  const handlePresetClick = (preset: string) => {
+    const range = getPresetRange(preset);
+    setActivePreset(preset);
+    setFrom(range.from);
+    setTo(range.to);
+  };
+
+  const handleDateChange = (field: "from" | "to", value: string) => {
+    setActivePreset(null);
+    if (field === "from") setFrom(value);
+    else setTo(value);
+  };
 
   useEffect(() => {
     fetchAnalytics();
@@ -244,28 +285,55 @@ export function LaporanTab() {
           className="flex flex-col sm:flex-row items-start sm:items-end gap-3 animate-fade-in-up"
           style={{ animationDelay: "0.05s" }}
         >
-          <div className="space-y-1">
-            <Label className="text-xs text-gray-500 dark:text-gray-400">Dari</Label>
-            <div className="relative">
-              <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
-              <Input
-                type="date"
-                value={from}
-                onChange={(e) => setFrom(e.target.value)}
-                className="pl-8 h-9 w-40 text-sm"
-              />
-            </div>
+          {/* Preset date range buttons */}
+          <div className="flex flex-wrap gap-2">
+            {[
+              { key: "6bulan", label: "6 Bulan" },
+              { key: "3bulan", label: "3 Bulan" },
+              { key: "1bulan", label: "1 Bulan" },
+              { key: "minggu", label: "Minggu Ini" },
+              { key: "hari", label: "Hari Ini" },
+            ].map((preset) => (
+              <button
+                key={preset.key}
+                onClick={() => handlePresetClick(preset.key)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
+                  activePreset === preset.key
+                    ? "bg-emerald-600 text-white shadow-sm"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                }`}
+              >
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="w-3 h-3" />
+                  {preset.label}
+                </span>
+              </button>
+            ))}
           </div>
-          <div className="space-y-1">
-            <Label className="text-xs text-gray-500 dark:text-gray-400">Sampai</Label>
-            <div className="relative">
-              <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
-              <Input
-                type="date"
-                value={to}
-                onChange={(e) => setTo(e.target.value)}
-                className="pl-8 h-9 w-40 text-sm"
-              />
+          <div className="flex items-end gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs text-gray-500 dark:text-gray-400">Dari</Label>
+              <div className="relative">
+                <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+                <Input
+                  type="date"
+                  value={from}
+                  onChange={(e) => handleDateChange("from", e.target.value)}
+                  className="pl-8 h-9 w-40 text-sm"
+                />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-gray-500 dark:text-gray-400">Sampai</Label>
+              <div className="relative">
+                <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+                <Input
+                  type="date"
+                  value={to}
+                  onChange={(e) => handleDateChange("to", e.target.value)}
+                  className="pl-8 h-9 w-40 text-sm"
+                />
+              </div>
             </div>
           </div>
           <Button

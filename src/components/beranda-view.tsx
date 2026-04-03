@@ -22,6 +22,7 @@ import {
   X,
   HelpCircle,
   ChevronDown,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -89,6 +90,7 @@ export function BerandaView() {
   const [estimatedCost, setEstimatedCost] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [promoDismissed, setPromoDismissed] = useState(false);
 
   // Equipment detail modal state
   const [selectedEquipDetail, setSelectedEquipDetail] = useState<StockItem | null>(null);
@@ -259,8 +261,16 @@ export function BerandaView() {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-mesh-gradient hero-pattern px-4 py-10 sm:py-16 animate-fade-in">
-        <div className="max-w-6xl mx-auto text-center">
+      <section className="bg-mesh-gradient hero-pattern px-4 py-10 sm:py-16 animate-fade-in relative overflow-hidden">
+        {/* Decorative gear pattern */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+             style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'20\' height=\'20\' viewBox=\'0 0 20 20\'%3E%3Ccircle cx=\'10\' cy=\'10\' r=\'4\' fill=\'none\' stroke=\'%2310b981\' stroke-width=\'1\'/%3E%3Ccircle cx=\'10\' cy=\'10\' r=\'1.5\' fill=\'%2310b981\'/%3E%3Cline x1=\'10\' y1=\'1\' x2=\'10\' y2=\'5\' stroke=\'%2310b981\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3Cline x1=\'10\' y1=\'15\' x2=\'10\' y2=\'19\' stroke=\'%2310b981\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3Cline x1=\'1\' y1=\'10\' x2=\'5\' y2=\'10\' stroke=\'%2310b981\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3Cline x1=\'15\' y1=\'10\' x2=\'19\' y2=\'10\' stroke=\'%2310b981\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3C/svg%3E")'}} />
+
+        <div className="relative overflow-hidden rounded-2xl">
+          {/* Animated gradient border */}
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/20 via-teal-400/10 to-emerald-400/20 animate-spin-slow"
+               style={{ animationDuration: '8s' }} />
+          <div className="max-w-6xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 px-4 py-1.5 rounded-full text-sm font-medium mb-4 animate-fade-in-up">
             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse-green" />
             Tersedia untuk disewa
@@ -329,11 +339,55 @@ export function BerandaView() {
               )}
             </div>
           )}
+          {/* CTA: Check Availability */}
+          {!loading && (
+            <div className="mt-6 animate-fade-in-up animate-fade-in-up-delay-4">
+              <a
+                href="#status-alat"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-white font-semibold btn-press transition-all shadow-lg shadow-emerald-500/25"
+              >
+                <Search className="w-4 h-4" />
+                Cek Ketersediaan Alat
+              </a>
+            </div>
+          )}
+        </div>
         </div>
       </section>
 
       {/* Main Content */}
       <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-8 space-y-8">
+        {/* Promotional Banner */}
+        {!promoDismissed && (
+          <div className="no-print animate-slide-down">
+            <div className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 rounded-xl p-3 sm:p-4 flex items-center justify-between gap-3 shadow-lg">
+              <div className="flex items-center gap-2 sm:gap-3 text-white min-w-0">
+                <span className="text-lg sm:text-xl flex-shrink-0">🎉</span>
+                <p className="text-sm sm:text-base font-medium truncate">
+                  PROMO: Diskon 10% untuk penyewaan pertama! Hubungi kami sekarang.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <a
+                  href="https://wa.me/6281234567890?text=Halo, saya tertarik dengan promo diskon MITRA SEWA"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white text-xs sm:text-sm font-semibold rounded-lg transition-all btn-press whitespace-nowrap"
+                >
+                  Hubungi
+                </a>
+                <button
+                  onClick={() => setPromoDismissed(true)}
+                  className="p-1.5 hover:bg-white/20 rounded-lg transition-colors text-white/80 hover:text-white"
+                  aria-label="Tutup promo"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Scaffolding Stats */}
         <section
           ref={(el) => { sectionRefs.current[0] = el; }}

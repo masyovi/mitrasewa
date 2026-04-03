@@ -1449,3 +1449,11 @@ input:focus, textarea:focus, select:focus {
     box-shadow: 0 0 14px oklch(0.55 0.17 163 / 0.35), 0 0 4px oklch(0.55 0.17 163 / 0.2);
   }
 }
+
+/* ==========================================================================
+   Hero Enhancement — Slow Spin for Animated Gradient Border
+   ========================================================================== */
+
+.animate-spin-slow {
+  animation: spin 8s linear infinite;
+}

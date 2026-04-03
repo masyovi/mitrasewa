@@ -12,11 +12,14 @@ import {
   DollarSign,
   History,
   BarChart3,
+  Users,
   Menu,
   X,
   Info,
   Sun,
   Moon,
+  CalendarDays,
+  Tag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -41,6 +44,9 @@ const HistoryTab = dynamic(() => import("./history-tab").then((mod) => ({ defaul
   loading: () => <Skeleton className="h-64 rounded-xl" />,
 });
 const LaporanTab = dynamic(() => import("./laporan-tab").then((mod) => ({ default: mod.LaporanTab })), {
+  loading: () => <Skeleton className="h-64 rounded-xl" />,
+});
+const PelangganTab = dynamic(() => import("./pelanggan-tab").then((mod) => ({ default: mod.PelangganTab })), {
   loading: () => <Skeleton className="h-64 rounded-xl" />,
 });
 
@@ -117,6 +123,7 @@ export function AdminDashboard() {
     { id: "input", label: "Input Sewa", icon: <FilePlus className="w-4 h-4" /> },
     { id: "harga", label: "Setting Harga", icon: <DollarSign className="w-4 h-4" /> },
     { id: "history", label: "History", icon: <History className="w-4 h-4" /> },
+    { id: "pelanggan", label: "Pelanggan", icon: <Users className="w-4 h-4" /> },
     { id: "laporan", label: "Laporan", icon: <BarChart3 className="w-4 h-4" /> },
   ];
 
@@ -181,8 +188,8 @@ export function AdminDashboard() {
       </header>
 
       <div className="flex-1 flex max-w-7xl mx-auto w-full">
-        <aside className="hidden lg:block w-64 bg-white border-r border-gray-100 p-4 min-h-0">
-          <nav className="space-y-1">
+        <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-100 p-4 min-h-0">
+          <nav className="space-y-1 flex-1">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -194,6 +201,26 @@ export function AdminDashboard() {
               </button>
             ))}
           </nav>
+          {/* Dashboard Info */}
+          <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700/50">
+            <div className="flex items-center gap-2 mb-2">
+              <CalendarDays className="w-3.5 h-3.5 text-gray-400" />
+              <p className="text-xs text-gray-400 dark:text-gray-500">
+                {new Date().toLocaleDateString("id-ID", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Tag className="w-3.5 h-3.5 text-gray-400" />
+              <span className="text-[11px] font-medium text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">
+                Versi 2.0
+              </span>
+            </div>
+          </div>
         </aside>
 
         {sidebarOpen && (
@@ -261,6 +288,7 @@ export function AdminDashboard() {
                   onExport={handleExportCSV}
                 />
               )}
+              {adminTab === "pelanggan" && <PelangganTab rentals={rentals} />}
               {adminTab === "laporan" && <LaporanTab />}
             </>
           )}

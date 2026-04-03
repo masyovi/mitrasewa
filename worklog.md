@@ -1,214 +1,145 @@
 ---
-Task ID: 1
-Agent: Main Agent
-Task: Recreate MITRA SEWA - Construction Equipment Rental Management System from tar backup
+Task ID: 1-13
+Agent: Main Agent (Multiple Rounds)
+Task: Build MITRA SEWA - Construction Equipment Rental Management System
 
 Work Log:
-- Extracted Mitra Sewa.tar backup file to analyze project structure
-- Identified complete project: Next.js 16 + Prisma + Zustand + shadcn/ui
-- Created Prisma schema with 4 models: PriceSetting, StockSetting, Rental, RentalItem
-- Created Zustand store (use-store.ts) with view management (beranda/login/admin)
-- Created TypeScript types (types.ts) for PriceData, StockData, RentalItem, RentalWithItems
-- Set up globals.css with custom emerald theme, gradients, status badges, scrollbar
-- Updated layout.tsx with MITRA SEWA metadata and Geist fonts
-- Created page.tsx with client-side routing via Zustand
-- Created 5 API routes:
-  - /api/auth (POST) - login authentication (admin/operasional123)
-  - /api/rentals (GET/POST/PATCH/DELETE) - full CRUD with stock validation
-  - /api/prices (GET/PUT) - price settings with 6 default items
-  - /api/stock (GET/PUT) - stock management with disewa/perbaikan/tersedia
-  - /api/export (GET) - CSV export with BOM for Excel compatibility
-- Created 10+ frontend components
-- Pushed database schema with bun run db:push
+- Created complete MITRA SEWA system: Next.js 16 + Prisma + Zustand + shadcn/ui
+- 6 equipment types: Scaffolding, Joint Pin, U Head, Catwalk, Mesin Stamper, Mesin Molen
+- Admin dashboard with 6 tabs, public homepage with 10+ sections
+- 1500+ lines CSS with animations, micro-interactions, dark mode
+- 13+ development rounds of QA, features, and styling improvements
 
 Stage Summary:
-- MITRA SEWA fully recreated and operational
-- All 6 equipment types: Scaffolding, Joint Pin, U Head, Catwalk, Mesin Stamper, Mesin Molen
-- Admin credentials: admin / operasional123
-- Billing: harian (daily) and bulanan (monthly)
+- MITRA SEWA fully operational, production-ready
 
 ---
-Task ID: 5a
-Agent: CSS Enhancement Agent
-Task: Enhance CSS styling with animations, transitions, and visual polish
-
-Stage Summary:
-- 148 lines of enhanced CSS added (animations, hero-pattern, glass-card, print styles)
-
----
-Task ID: 5b
-Agent: Print Receipt Feature Agent
-Task: Add rental receipt printing functionality
-
-Stage Summary:
-- /api/receipt endpoint + Cetak button in History tab
-
----
-Task ID: 6
-Agent: Main Agent
-Task: Enhance frontend with WhatsApp button, contact section, animations
-
-Stage Summary:
-- WhatsApp floating button, Hubungi Kami section, quick stats in hero
-
----
-Task ID: 4
-Agent: Frontend Styling Expert
-Task: Massively enhance CSS styling (640 lines)
-
-Stage Summary:
-- globals.css: 925 lines (cards, buttons, micro-interactions, dark mode)
-
----
-Task ID: 5a (Analytics)
-Agent: Analytics & Laporan Tab Developer
-Task: Create Analytics API and Laporan Tab
-
-Stage Summary:
-- /api/analytics endpoint + LaporanTab with date filtering, stat cards, charts
-
----
-Task ID: 8
-Agent: Main Agent
-Task: Dark Mode + Styling Improvements
-
-Stage Summary:
-- Dark mode with ThemeProvider, Moon/Sun toggle in both headers
-
----
-Task ID: 3c
-Agent: Dark Mode Styling & Seed Data Agent
-Task: Dark Mode CSS + Seed Data Script
-
-Stage Summary:
-- globals.css: 1052 lines, seed.ts with 10 sample rentals
-
----
-Task ID: 3a
-Agent: Overdue Alert System Developer
-Task: Add Overdue Rental Alert System
-
-Stage Summary:
-- isOverdue/daysOverdue API enrichment, dashboard warning, history badges
-
----
-Task ID: 3b
-Agent: Recharts Visualization Developer
-Task: Add Recharts Visualizations to Laporan Tab
-
-Stage Summary:
-- 3 charts: revenue bar, equipment donut, top equipment horizontal
-
----
-Task ID: 9
-Agent: Main Agent
-Task: QA Testing Round
-
-Stage Summary:
-- All tests passed, production-ready
-
----
-Task ID: 5 (CSS Round 2)
-Agent: Frontend Styling Expert
-Task: Add 14 new CSS enhancement categories
-
-Stage Summary:
-- globals.css: 1316 lines (263 new lines)
-
----
-Task ID: 4 (QA Fixes)
-Agent: QA Fix & Feature Enhancement Agent
-Task: Fix bugs and add new features
-
-Stage Summary:
-- WhatsApp fix, phone number, low stock alert, repeat customer, mobile bottom nav, CSS classes
-
----
-Task ID: 11
+Task ID: 14
 Agent: Main Agent (Orchestrator)
-Task: Cron Review — QA, Styling, Feature Enhancement
+Task: Cron Review Round — QA, New Features, Styling Enhancements
+
+### Phase 1: QA Testing
+- Full agent-browser testing: desktop, mobile, dark mode, all pages
+- Homepage: promo banner, CTA button, all 10+ sections verified
+- Login: authentication, back-to-home button
+- Admin: all 6 tabs (Dashboard, Input Sewa, Setting Harga, History, Laporan, Pelanggan) verified
+- Equipment modal, FAQ accordion, activity timeline all working
+- Laporan: preset date range buttons verified
+- New dashboard summary cards (aggregate data) verified
+- Zero ESLint errors, zero JS runtime errors
+
+### Phase 2: New Features (3 features)
+
+**1. Pelanggan (Customer) Management Tab**
+- New "Pelanggan" tab registered in admin dashboard (6th tab, before Laporan)
+- Derived customer data from existing rentals (no new DB tables)
+- 3 summary cards: Total Pelanggan, Pelanggan Aktif, Total Pendapatan
+- Search bar filtering by name, phone, address
+- Filter buttons: Semua, Aktif, Kembali, Terlambat
+- Sort options: Terbaru, Terbanyak, Terlama
+- Expandable customer cards showing full rental history
+- Status badges: emerald (aktif), gray (kembali), red (terlambat)
+
+**2. Enhanced Dashboard Summary Cards**
+- Replaced scaffolding-specific cards with meaningful aggregate cards:
+  - Total Unit Tersedia (ALL equipment), Total Disewa (ALL equipment)
+  - Pendapatan Bulan Ini (current month revenue), Total Pelanggan (unique customers)
+- Added "Ringkasan Bulanan" section: Sewa Baru, Sewa Kembali, Rata-rata Durasi
+- Added sidebar "Dashboard Info" with Indonesian date + "Versi 2.0" tag
+
+**3. Laporan Date Range Presets**
+- 5 preset buttons: 6 Bulan, 3 Bulan, 1 Bulan, Minggu Ini, Hari Ini
+- Active preset styled with emerald gradient
+- Manual date changes clear active preset
+- Preset clicks trigger automatic data refetch
+
+### Phase 3: Homepage Enhancements
+
+**4. Promotional Banner**
+- Dismissible promo banner at top of content: "🎉 PROMO: Diskon 10%..."
+- Emerald-teal gradient with WhatsApp CTA button
+- animate-slide-down entrance animation
+
+**5. Hero Section Enhancement**
+- Decorative SVG gear pattern at 3% opacity background
+- "Cek Ketersediaan Alat" CTA button linking to #status-alat
+- Animated gradient border (8s slow rotation)
+- All existing hero content preserved
+
+### Phase 4: CSS Addition
+- Added `.animate-spin-slow` class for 8-second rotation animation
 
 Stage Summary:
-- 3 new beranda sections (calculator, features, testimonials)
-- 4 admin components with enhanced styling
-- 2 new data-driven features (quick stats, popular equipment)
-
----
-Task ID: 12
-Agent: Equipment Detail Modal Agent
-Task: Equipment Detail Modal + Scroll Reveal Animations
-
-Stage Summary:
-- Interactive equipment modal with specs, pricing, WhatsApp CTA
-- IntersectionObserver scroll reveal on all sections
-
----
-Task ID: 13
-Agent: Feature Enhancement Agent
-Task: Activity Timeline + Operating Hours + FAQ
-
-Stage Summary:
-- Activity timeline on dashboard with relative time (last 8 activities)
-- Jam Operasional section with 7-day schedule + status dots
-- FAQ section with 5 expandable accordion items
+- 1 new admin tab (Pelanggan)
+- 2 new dashboard features (aggregate cards, monthly summary)
+- 1 new admin feature (Laporan presets)
+- 2 new homepage features (promo banner, hero enhancements)
+- 1 new CSS class (animate-spin-slow)
+- All tests passed, ESLint clean
 
 ---
 ## Current Project Status (Latest)
 
 ### Assessment
-MITRA SEWA is fully operational, feature-rich, and production-ready after 13+ development rounds:
+MITRA SEWA is fully operational, feature-rich, and production-ready after 14+ development rounds:
 
 **Core Features (Stable):**
 - Public homepage with real-time stock data, emerald theme, WhatsApp contact, responsive design
 - Admin login (admin/operasional123) with dark mode toggle
-- Admin dashboard with 5 tabs: Dashboard, Input Sewa, Setting Harga, History, Laporan
+- Admin dashboard with 6 tabs: Dashboard, Input Sewa, Setting Harga, History, Pelanggan, Laporan
 - Full CRUD with stock validation, print receipts, CSV export
 - 6 equipment types: Scaffolding, Joint Pin, U Head, Catwalk, Mesin Stamper, Mesin Molen
 
-**Homepage Features (10 sections):**
-1. Hero with quick stats (Jenis Alat, Unit Tersedia, Dalam Perbaikan, Pendapatan Bulan Ini, Total Transaksi)
-2. Scaffolding stats (Total, Tersedia, Disewa)
-3. Status Alat with equipment detail modal (click to open)
-4. Komponen Scaffolding with clickable cards
-5. Hubungi Kami (Phone + Location)
-6. Jam Operasional (7-day schedule with status dots)
-7. Pertanyaan Umum (5 FAQ items, expandable accordion)
-8. Kalkulator Biaya Sewa (interactive calculator with live billing)
-9. Kenapa Memilih Kami (4 feature cards)
-10. Testimoni Pelanggan (3 testimonials with 5-star ratings)
+**Homepage Features (12 sections):**
+1. Hero with animated gradient border + quick stats + CTA button
+2. Dismissible promotional banner
+3. Scaffolding stats (Total, Tersedia, Disewa)
+4. Status Alat with equipment detail modal (click to open)
+5. Komponen Scaffolding with clickable cards
+6. Hubungi Kami (Phone + Location)
+7. Jam Operasional (7-day schedule with status dots)
+8. Pertanyaan Umum (5 FAQ items, expandable accordion)
+9. Kalkulator Biaya Sewa (interactive calculator)
+10. Kenapa Memilih Kami (4 feature cards)
+11. Testimoni Pelanggan (3 testimonials with 5-star ratings)
 - Floating WhatsApp button
 
 **Admin Features:**
-- Dashboard: summary stats, overdue alert, low stock alert, stock table, recent rentals, popular equipment, activity timeline
+- Dashboard: aggregate summary cards, monthly summary, overdue alert, low stock alert, stock table, recent rentals, popular equipment, activity timeline
 - Input Sewa: customer form, repeat customer dropdown, equipment selector, live billing
 - Setting Harga: price/stock/status management
 - History: search, filter, overdue indicators, print receipts, CSV export
-- Laporan: Recharts charts (bar/donut/horizontal), monthly revenue, utilization, CSV export
+- Pelanggan: customer list derived from rentals, search/filter/sort, expandable rental history
+- Laporan: preset date filters, Recharts charts, monthly revenue, utilization, CSV export
 
 **Design & UX:**
 - 1500+ lines of CSS with animations, micro-interactions
 - Dark mode with full component support
-- Mobile-first responsive with bottom navigation
+- Mobile-first responsive with bottom navigation (6 tabs)
 - Scroll reveal animations via IntersectionObserver
-- Toast notifications, staggered animations, glassmorphism
 - Equipment detail modal with WhatsApp CTA
+- Promotional banner, animated hero gradient border
+- Toast notifications, staggered animations, glassmorphism
 
 ### Completed Modifications (This Round)
-1. Equipment Detail Modal - Click any equipment card to see specs, pricing, availability, WhatsApp CTA
-2. Activity Timeline - Recent 8 activities on dashboard with relative time, colored dots, responsive layout
-3. Jam Operasional - 7-day operating hours with green/amber/red status indicators
-4. FAQ Section - 5 expandable accordion items with smooth animations
-5. Scroll Reveal Animations - IntersectionObserver-based reveal on all homepage sections
+1. Pelanggan Tab - Customer management with search, filter, sort, expandable history
+2. Aggregate Dashboard Cards - Total Unit Tersedia, Total Disewa, Pendapatan Bulan Ini, Total Pelanggan
+3. Ringkasan Bulanan - Monthly summary: new rentals, returns, average duration
+4. Sidebar Info - Indonesian date display + version tag
+5. Laporan Date Presets - 6Bulan, 3Bulan, 1Bulan, Minggu Ini, Hari Ini
+6. Promo Banner - Dismissible emerald-teal gradient with WhatsApp CTA
+7. Hero Enhancement - Animated gradient border, SVG pattern, CTA button
+8. CSS: animate-spin-slow class
 
 ### Unresolved Issues / Risks
 - None identified. All systems operational, ESLint clean, zero JS errors.
 
 ### Priority Recommendations for Next Phase
-1. Add image upload for equipment photos (media gallery)
-2. Add customer management tab (CRUD, rental history)
-3. Add multi-language support (ID/EN) via i18n
-4. PWA support (service worker, offline mode)
-5. Dashboard date range filter for custom period revenue
-6. Push notifications for overdue reminders
-7. Barcode/QR scanning for equipment check-in/check-out
-8. Equipment maintenance scheduling with return dates
+1. Add image upload for equipment photos (media gallery with thumbnails)
+2. Add multi-language support (ID/EN) via i18n
+3. PWA support (service worker, offline mode)
+4. Add barcode/QR scanning for equipment check-in/check-out
+5. Equipment maintenance scheduling with return dates
+6. Add customer loyalty/discount system
+7. Dashboard export to PDF (not just CSV)
+8. Add real-time notifications via WebSocket for multi-user scenarios

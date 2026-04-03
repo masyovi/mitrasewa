@@ -7,7 +7,8 @@ export type AdminTab =
   | "input"
   | "harga"
   | "history"
-  | "laporan";
+  | "laporan"
+  | "pelanggan";
 
 interface AppState {
   view: AppView;

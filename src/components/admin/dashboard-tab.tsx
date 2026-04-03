@@ -15,6 +15,10 @@ import {
   ArrowDownCircle,
   ArrowUpCircle,
   ArrowDown,
+  Users,
+  PlusCircle,
+  RotateCcw,
+  Timer,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -63,6 +67,39 @@ export function DashboardTab({
   const totalPendapatan = rentals.reduce((sum, r) => sum + r.totalHarga, 0);
   const totalPerbaikan = stockData.reduce((sum, s) => sum + s.perbaikan, 0);
   const totalAllItems = stockData.reduce((sum, s) => sum + s.total, 0);
+
+  // Enhanced summary card values
+  const totalTersedia = stockData.reduce((sum, s) => sum + s.tersedia, 0);
+  const totalDisewa = stockData.reduce((sum, s) => sum + s.disewa, 0);
+  const uniqueCustomers = new Set(rentals.map((r) => r.namaPenyewa.toLowerCase())).size;
+  const thisMonthRevenue = rentals
+    .filter((r) => {
+      const d = new Date(r.createdAt);
+      const now = new Date();
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    })
+    .reduce((sum, r) => sum + r.totalHarga, 0);
+
+  // Monthly summary values
+  const sewaBaruBulanIni = rentals.filter((r) => {
+    const d = new Date(r.createdAt);
+    const now = new Date();
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  }).length;
+  const sewaKembaliBulanIni = rentals.filter((r) => {
+    if (r.status !== "kembali") return false;
+    const d = new Date(r.updatedAt);
+    const now = new Date();
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  }).length;
+  const thisMonthRentals = rentals.filter((r) => {
+    const d = new Date(r.createdAt);
+    const now = new Date();
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+  const rataRataDurasi = thisMonthRentals.length > 0
+    ? (thisMonthRentals.reduce((sum, r) => sum + r.lamaSewa, 0) / thisMonthRentals.length).toFixed(1)
+    : "0";
 
   const overdueRentals = rentals.filter((r) => r.isOverdue);
 
@@ -240,57 +277,92 @@ export function DashboardTab({
         <Card className="border-0 shadow-md card-elevated hover-lift animate-fade-in-up">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <div className="bg-emerald-100 p-2 rounded-lg">
-                <Package className="w-4 h-4 text-emerald-600" />
+              <div className="bg-emerald-100 dark:bg-emerald-900/40 p-2 rounded-lg">
+                <Package className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               </div>
-              <TrendingUp className="w-4 h-4 text-emerald-400" />
             </div>
-            <p className="text-2xl font-bold text-gray-900 animate-count-up stat-number">
-              {scaffolding?.total ?? 0}
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 animate-count-up stat-number">
+              {totalTersedia}
             </p>
-            <p className="text-xs text-gray-500">Total Scaffolding (Set)</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Total Unit Tersedia</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-md card-elevated hover-lift animate-fade-in-up animate-fade-in-up-delay-1">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <div className="bg-amber-100 p-2 rounded-lg">
-                <Truck className="w-4 h-4 text-amber-600" />
+              <div className="bg-amber-100 dark:bg-amber-900/40 p-2 rounded-lg">
+                <Truck className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               </div>
-              <TrendingUp className="w-4 h-4 text-amber-400" />
             </div>
-            <p className="text-2xl font-bold text-gray-900 animate-count-up stat-number">
-              {scaffolding?.disewa ?? 0}
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 animate-count-up stat-number">
+              {totalDisewa}
             </p>
-            <p className="text-xs text-gray-500">Scaffolding Disewa</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Total Disewa</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-md card-elevated hover-lift animate-fade-in-up animate-fade-in-up-delay-2">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <div className="bg-emerald-100 p-2 rounded-lg">
-                <Package className="w-4 h-4 text-emerald-600" />
+              <div className="bg-blue-100 dark:bg-blue-900/40 p-2 rounded-lg">
+                <DollarSign className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900 animate-count-up stat-number">
-              {scaffolding?.tersedia ?? 0}
+            <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 animate-count-up stat-number">
+              {formatCurrency(thisMonthRevenue)}
             </p>
-            <p className="text-xs text-gray-500">Scaffolding Tersedia</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Pendapatan Bulan Ini</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-md card-elevated hover-lift animate-fade-in-up animate-fade-in-up-delay-3">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <div className="bg-emerald-100 p-2 rounded-lg">
-                <DollarSign className="w-4 h-4 text-emerald-600" />
+              <div className="bg-violet-100 dark:bg-violet-900/40 p-2 rounded-lg">
+                <Users className="w-4 h-4 text-violet-600 dark:text-violet-400" />
               </div>
             </div>
-            <p className="text-lg sm:text-xl font-bold text-gray-900 animate-count-up stat-number">
-              {formatCurrency(totalPendapatan)}
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 animate-count-up stat-number">
+              {uniqueCustomers}
             </p>
-            <p className="text-xs text-gray-500">Total Pendapatan</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Total Pelanggan</p>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Ringkasan Bulanan */}
+      <div className="grid grid-cols-3 gap-3 sm:gap-4">
+        <div className="bg-emerald-50 dark:bg-emerald-950/30 rounded-xl p-3 sm:p-4 flex items-center gap-3 animate-fade-in-up">
+          <div className="bg-emerald-100 dark:bg-emerald-900/40 p-2 rounded-lg flex-shrink-0">
+            <PlusCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-lg sm:text-xl font-bold text-emerald-700 dark:text-emerald-400 animate-count-up stat-number">
+              {sewaBaruBulanIni}
+            </p>
+            <p className="text-[11px] sm:text-xs text-emerald-600 dark:text-emerald-500 truncate">Sewa Baru Bulan Ini</p>
+          </div>
+        </div>
+        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3 sm:p-4 flex items-center gap-3 animate-fade-in-up animate-fade-in-up-delay-1">
+          <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg flex-shrink-0">
+            <RotateCcw className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-lg sm:text-xl font-bold text-gray-700 dark:text-gray-300 animate-count-up stat-number">
+              {sewaKembaliBulanIni}
+            </p>
+            <p className="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">Sewa Kembali Bulan Ini</p>
+          </div>
+        </div>
+        <div className="bg-blue-50 dark:bg-blue-950/30 rounded-xl p-3 sm:p-4 flex items-center gap-3 animate-fade-in-up animate-fade-in-up-delay-2">
+          <div className="bg-blue-100 dark:bg-blue-900/40 p-2 rounded-lg flex-shrink-0">
+            <Timer className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-lg sm:text-xl font-bold text-blue-700 dark:text-blue-400 animate-count-up stat-number">
+              {rataRataDurasi}
+            </p>
+            <p className="text-[11px] sm:text-xs text-blue-600 dark:text-blue-500 truncate">Rata-rata Durasi (hari)</p>
+          </div>
+        </div>
       </div>
 
       {/* Stats Row */}
