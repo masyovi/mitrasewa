@@ -395,7 +395,7 @@ export function DashboardTab({
               </TableHeader>
               <TableBody>
                 {stockData.map((item) => (
-                  <TableRow key={item.item} className="transition-colors hover:bg-gray-50/50">
+                  <TableRow key={item.item} className="transition-colors hover:bg-gray-50/50 dark:hover:bg-gray-800/50">
                     <TableCell className="font-medium">{item.label}</TableCell>
                     <TableCell className="text-center">
                       {item.total} {item.unit}
@@ -479,7 +479,7 @@ export function DashboardTab({
                 </TableHeader>
                 <TableBody>
                   {rentals.slice(0, 5).map((r) => (
-                    <TableRow key={r.id} className="transition-colors hover:bg-gray-50/50">
+                    <TableRow key={r.id} className="transition-colors hover:bg-gray-50/50 dark:hover:bg-gray-800/50">
                       <TableCell>
                         <div>
                           <p className="font-medium text-sm">{r.namaPenyewa}</p>

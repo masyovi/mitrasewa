@@ -20,6 +20,7 @@ import {
   Moon,
   CalendarDays,
   Tag,
+  Bell,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -62,6 +63,8 @@ export function AdminDashboard() {
   const [rentals, setRentals] = useState<RentalWithItems[]>([]);
   const [loading, setLoading] = useState(true);
   const [aboutOpen, setAboutOpen] = useState(false);
+
+  const overdueCount = rentals.filter((r) => r.isOverdue && r.status === "aktif").length;
 
   const fetchAll = useCallback(async () => {
     try {
@@ -174,6 +177,24 @@ export function AdminDashboard() {
             >
               <Info className="w-4 h-4" />
             </Button>
+            <div className="relative">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  if (adminTab !== "dashboard") setAdminTab("dashboard");
+                }}
+                className="text-white/80 hover:text-white hover:bg-white/20 transition-all"
+                aria-label="Notifikasi"
+              >
+                <Bell className="w-4 h-4" />
+              </Button>
+              {overdueCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-pulse">
+                  {overdueCount > 9 ? "9+" : overdueCount}
+                </span>
+              )}
+            </div>
             <Button
               variant="ghost"
               size="sm"
@@ -315,7 +336,7 @@ export function AdminDashboard() {
               }`}>
                 {tab.icon}
               </div>
-              <span className={`text-[10px] font-medium leading-tight truncate max-w-[56px] ${
+              <span className={`text-[10px] font-medium leading-tight truncate max-w-[64px] ${
                 adminTab === tab.id
                   ? "text-emerald-700 font-semibold"
                   : "text-gray-400"

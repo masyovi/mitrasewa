@@ -392,7 +392,7 @@ export function HistoryTab({
                             Kembali
                           </Button>
                         </DialogTrigger>
-                        <DialogContent>
+                        <DialogContent aria-describedby={undefined}>
                           <DialogHeader>
                             <DialogTitle>Konfirmasi Pengembalian</DialogTitle>
                           </DialogHeader>
@@ -440,7 +440,7 @@ export function HistoryTab({
                           <Trash2 className="w-3 h-3" />
                         </Button>
                       </DialogTrigger>
-                      <DialogContent>
+                      <DialogContent aria-describedby={undefined}>
                         <DialogHeader>
                           <DialogTitle>Hapus Data</DialogTitle>
                         </DialogHeader>

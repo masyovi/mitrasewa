@@ -20,6 +20,7 @@ import {
   X,
   HelpCircle,
   ChevronDown,
+  Quote,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -61,6 +62,51 @@ interface PriceItem {
   price: number;
   billingType: string;
 }
+
+const testimonials = [
+  {
+    name: "Budi Santoso",
+    role: "Mandor Proyek",
+    text: "Alat scaffolding dari MITRA SEWA sangat berkualitas dan kondisinya selalu prima. Proses penyewaan cepat dan mudah.",
+    rating: 5,
+    initials: "BS",
+  },
+  {
+    name: "Ahmad Fauzi",
+    role: "Kontraktor Bangunan",
+    text: "Sudah 3 tahun bekerja sama dengan MITRA SEWA. Harga kompetitif dan pengiriman selalu tepat waktu.",
+    rating: 5,
+    initials: "AF",
+  },
+  {
+    name: "Dewi Rahmawati",
+    role: "Pemilik Rumah",
+    text: "Sewa mesin molen untuk renovasi rumah. Alat bersih dan berfungsi baik. Pelayanan ramah dan profesional.",
+    rating: 4,
+    initials: "DR",
+  },
+  {
+    name: "Hendra Wijaya",
+    role: "Mandor",
+    text: "Stok scaffolding selalu tersedia meskipun proyek kami butuh dalam jumlah besar. Sangat recommended!",
+    rating: 5,
+    initials: "HW",
+  },
+  {
+    name: "Siti Aminah",
+    role: "Developer Perumahan",
+    text: "MITRA SEWA adalah partner terbaik untuk kebutuhan alat konstruksi. Respon cepat dan harga bersahabat.",
+    rating: 5,
+    initials: "SA",
+  },
+  {
+    name: "Rudi Hermawan",
+    role: "Tukang Bangunan",
+    text: "Mesin stamper dari sini performanya bagus, tidak mudah rusak. Cocok untuk proyek pengecoran.",
+    rating: 4,
+    initials: "RH",
+  },
+];
 
 export function BerandaView() {
   const { setView } = useAppStore();
@@ -178,7 +224,8 @@ export function BerandaView() {
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
                 MITRA SEWA
               </h1>
-              <p className="text-xs sm:text-sm text-white/80">
+              <p className="text-xs sm:text-sm text-white/80 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
                 Penyewaan Alat Konstruksi Terpercaya
               </p>
             </div>
@@ -243,11 +290,11 @@ export function BerandaView() {
             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse-green" />
             Tersedia untuk disewa
           </div>
-          <h2 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3 animate-fade-in-up animate-fade-in-up-delay-1">
+          <h2 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-3 animate-fade-in-up animate-fade-in-up-delay-1">
             Solusi Alat Konstruksi
             <span className="text-emerald-600"> Terlengkap</span>
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base animate-fade-in-up animate-fade-in-up-delay-2">
+          <p className="text-gray-600 dark:text-gray-500 max-w-2xl mx-auto text-sm sm:text-base animate-fade-in-up animate-fade-in-up-delay-2">
             Menyediakan berbagai peralatan konstruksi berkualitas dengan harga
             terjangkau. Scaffolding, mesin stamper, mesin molen, dan lainnya.
           </p>
@@ -259,21 +306,21 @@ export function BerandaView() {
                 <p className="text-2xl sm:text-3xl font-bold text-emerald-600 stat-number">
                   {stockData.length}
                 </p>
-                <p className="text-xs text-gray-500 mt-0.5">Jenis Alat</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Jenis Alat</p>
               </div>
               <div className="w-px h-10 bg-gray-200" />
               <div className="text-center hover-lift rounded-xl px-4 py-2">
                 <p className="text-2xl sm:text-3xl font-bold text-emerald-600 stat-number">
                   {stockData.reduce((sum, s) => sum + s.tersedia, 0)}
                 </p>
-                <p className="text-xs text-gray-500 mt-0.5">Unit Tersedia</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Unit Tersedia</p>
               </div>
               <div className="w-px h-10 bg-gray-200" />
               <div className="text-center hover-lift rounded-xl px-4 py-2">
                 <p className="text-2xl sm:text-3xl font-bold text-emerald-600 stat-number">
                   {stockData.filter((s) => s.perbaikan > 0).length}
                 </p>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                   Dalam Perbaikan
                 </p>
               </div>
@@ -294,7 +341,7 @@ export function BerandaView() {
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
-            <h3 className="text-lg font-bold text-gray-900">Scaffolding</h3>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Scaffolding</h3>
           </div>
 
           {loading ? (
@@ -305,15 +352,15 @@ export function BerandaView() {
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-3 sm:gap-4">
-              <Card className="border-0 shadow-md bg-white card-shine animate-fade-in-up">
+              <Card className="border-0 shadow-md bg-white dark:bg-gray-900 card-shine animate-fade-in-up">
                 <CardContent className="p-4 sm:p-6 text-center">
-                  <p className="text-xs sm:text-sm text-gray-500 mb-1">
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">
                     Total Set
                   </p>
-                  <p className="text-2xl sm:text-3xl font-bold text-gray-900 animate-count-up stat-number">
+                  <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 animate-count-up stat-number">
                     {scaffolding?.total ?? 0}
                   </p>
-                  <p className="text-xs text-gray-400 mt-1">set</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">set</p>
                 </CardContent>
               </Card>
               <Card className="border-0 shadow-md bg-emerald-50 card-shine animate-fade-in-up animate-fade-in-up-delay-1">
@@ -349,8 +396,20 @@ export function BerandaView() {
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
-            <h3 className="text-lg font-bold text-gray-900">Status Alat</h3>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Status Alat</h3>
           </div>
+
+          {/* Equipment availability summary */}
+          {!loading && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {machines.map((m) => (
+                <Badge key={m.item} variant="outline" className="text-xs px-3 py-1.5 border-gray-200 dark:border-gray-700">
+                  <span className={`inline-block w-2 h-2 rounded-full mr-1.5 ${m.tersedia > 0 ? "bg-emerald-500" : m.tersedia <= 0 ? "bg-red-500" : "bg-gray-400"}`} />
+                  {m.label}: <span className="font-bold">{m.tersedia}</span>/{m.total} {m.unit}
+                </Badge>
+              ))}
+            </div>
+          )}
 
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -367,14 +426,14 @@ export function BerandaView() {
                 return (
                   <Card
                     key={machine.item}
-                    className="border-0 shadow-md bg-white overflow-hidden card-elevated cursor-pointer"
+                    className="border-0 shadow-md bg-white dark:bg-gray-900 overflow-hidden card-elevated cursor-pointer"
                     onClick={() => handleEquipmentClick(machine)}
                   >
                     <CardContent className="p-5 sm:p-6">
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="flex items-center gap-2">
-                            <h4 className="font-bold text-gray-900 text-sm sm:text-base">
+                            <h4 className="font-bold text-gray-900 dark:text-gray-100 text-sm sm:text-base">
                               {machine.label}
                             </h4>
                             {isPerbaikan && (
@@ -384,7 +443,7 @@ export function BerandaView() {
                               </Badge>
                             )}
                           </div>
-                          <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
                             Tersedia: {machine.tersedia} / {machine.total}{" "}
                             {machine.unit}
                           </p>
@@ -484,7 +543,7 @@ export function BerandaView() {
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
-            <h3 className="text-lg font-bold text-gray-900">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
               Komponen Scaffolding
             </h3>
           </div>
@@ -503,14 +562,14 @@ export function BerandaView() {
                 return (
                   <Card
                     key={item.item}
-                    className={`border-0 shadow-md bg-white overflow-hidden card-elevated cursor-pointer ${
+                    className={`border-0 shadow-md bg-white dark:bg-gray-900 overflow-hidden card-elevated cursor-pointer ${
                       isPerbaikan ? "ring-1 ring-orange-200" : ""
                     }`}
                     onClick={() => handleEquipmentClick(item)}
                   >
                     <CardContent className="p-5 sm:p-6">
                       <div className="flex items-center justify-between mb-3">
-                        <h4 className="font-bold text-gray-900 text-sm sm:text-base">
+                        <h4 className="font-bold text-gray-900 dark:text-gray-100 text-sm sm:text-base">
                           {item.label}
                         </h4>
                         <div className="flex items-center gap-1.5">
@@ -520,15 +579,15 @@ export function BerandaView() {
                               {item.perbaikan} perbaikan
                             </Badge>
                           )}
-                          <span className="text-xs text-gray-400">
+                          <span className="text-xs text-gray-400 dark:text-gray-500">
                             per {item.unit}
                           </span>
                         </div>
                       </div>
                       <div className="grid grid-cols-3 gap-2 text-center">
-                        <div className="bg-gray-50 rounded-lg py-2.5 transition-colors hover:bg-gray-100">
-                          <p className="text-xs text-gray-500">Total</p>
-                          <p className="font-bold text-gray-900">
+                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg py-2.5 transition-colors hover:bg-gray-100">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">Total</p>
+                          <p className="font-bold text-gray-900 dark:text-gray-100">
                             {item.total}
                           </p>
                         </div>
@@ -568,9 +627,9 @@ export function BerandaView() {
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
-            <h3 className="text-lg font-bold text-gray-900">Hubungi Kami</h3>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Hubungi Kami</h3>
           </div>
-          <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated">
+          <Card className="border-0 shadow-md bg-white dark:bg-gray-900 overflow-hidden card-elevated">
             <CardContent className="p-5 sm:p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex items-start gap-3 hover-lift rounded-xl p-2 -m-2">
@@ -578,13 +637,13 @@ export function BerandaView() {
                     <Phone className="w-5 h-5 text-emerald-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 text-sm">
+                    <p className="font-medium text-gray-900 dark:text-gray-100 text-sm">
                       Telepon / WhatsApp
                     </p>
                     <p className="text-sm text-emerald-600 font-medium mt-0.5">
                       0812-3456-7890
                     </p>
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                       Hubungi kami untuk informasi harga & ketersediaan alat
                     </p>
                   </div>
@@ -594,8 +653,8 @@ export function BerandaView() {
                     <MapPin className="w-5 h-5 text-emerald-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 text-sm">Lokasi</p>
-                    <p className="text-sm text-gray-500 mt-0.5">
+                    <p className="font-medium text-gray-900 dark:text-gray-100 text-sm">Lokasi</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                       Pengelola Gedung Pusat BMT NU Ngasem Group
                     </p>
                   </div>
@@ -609,9 +668,9 @@ export function BerandaView() {
         <section className="animate-fade-in-up">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
-            <h3 className="text-lg font-bold text-gray-900">Jam Operasional</h3>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Jam Operasional</h3>
           </div>
-          <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated">
+          <Card className="border-0 shadow-md bg-white dark:bg-gray-900 overflow-hidden card-elevated">
             <CardContent className="p-5 sm:p-6">
               <div className="flex items-center gap-2 mb-4">
                 <div className="bg-emerald-100 dark:bg-emerald-900/40 p-2 rounded-xl">
@@ -675,9 +734,9 @@ export function BerandaView() {
         <section className="animate-fade-in-up">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
-            <h3 className="text-lg font-bold text-gray-900">Pertanyaan Umum</h3>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Pertanyaan Umum</h3>
           </div>
-          <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated">
+          <Card className="border-0 shadow-md bg-white dark:bg-gray-900 overflow-hidden card-elevated">
             <CardContent className="p-5 sm:p-6">
               <div className="flex items-center gap-2 mb-4">
                 <div className="bg-emerald-100 dark:bg-emerald-900/40 p-2 rounded-xl">
@@ -722,7 +781,7 @@ export function BerandaView() {
                           {faq.q}
                         </span>
                         <ChevronDown
-                          className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-300 ${
+                          className={`w-4 h-4 text-gray-400 dark:text-gray-500 flex-shrink-0 transition-transform duration-300 ${
                             isOpen ? "rotate-180" : ""
                           }`}
                         />
@@ -751,11 +810,11 @@ export function BerandaView() {
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
-            <h3 className="text-lg font-bold text-gray-900">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
               Kalkulator Biaya Sewa
             </h3>
           </div>
-          <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated">
+          <Card className="border-0 shadow-md bg-white dark:bg-gray-900 overflow-hidden card-elevated">
             {/* Emerald gradient header */}
             <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 px-5 sm:px-6 py-4 flex items-center gap-3">
               <div className="bg-white/20 backdrop-blur-sm p-2 rounded-xl">
@@ -913,18 +972,18 @@ export function BerandaView() {
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
-            <h3 className="text-lg font-bold text-gray-900">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
               Kenapa Memilih Kami?
             </h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Feature 1: Harga Terjangkau */}
-            <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated hover-lift transition-all">
+            <Card className="border-0 shadow-md bg-white dark:bg-gray-900 overflow-hidden card-elevated hover-lift transition-all">
               <CardContent className="p-5 text-center">
                 <div className="bg-emerald-100 dark:bg-emerald-900/40 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <DollarSign className="w-7 h-7 text-emerald-600 dark:text-emerald-400" />
                 </div>
-                <h4 className="font-bold text-gray-900 text-sm sm:text-base mb-1">
+                <h4 className="font-bold text-gray-900 dark:text-gray-100 text-sm sm:text-base mb-1">
                   Harga Terjangkau
                 </h4>
                 <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
@@ -934,12 +993,12 @@ export function BerandaView() {
             </Card>
 
             {/* Feature 2: Alat Berkualitas */}
-            <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated hover-lift transition-all">
+            <Card className="border-0 shadow-md bg-white dark:bg-gray-900 overflow-hidden card-elevated hover-lift transition-all">
               <CardContent className="p-5 text-center">
                 <div className="bg-blue-100 dark:bg-blue-900/40 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <ShieldCheck className="w-7 h-7 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h4 className="font-bold text-gray-900 text-sm sm:text-base mb-1">
+                <h4 className="font-bold text-gray-900 dark:text-gray-100 text-sm sm:text-base mb-1">
                   Alat Berkualitas
                 </h4>
                 <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
@@ -949,12 +1008,12 @@ export function BerandaView() {
             </Card>
 
             {/* Feature 3: Proses Cepat */}
-            <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated hover-lift transition-all">
+            <Card className="border-0 shadow-md bg-white dark:bg-gray-900 overflow-hidden card-elevated hover-lift transition-all">
               <CardContent className="p-5 text-center">
                 <div className="bg-amber-100 dark:bg-amber-900/40 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <Clock className="w-7 h-7 text-amber-600 dark:text-amber-400" />
                 </div>
-                <h4 className="font-bold text-gray-900 text-sm sm:text-base mb-1">
+                <h4 className="font-bold text-gray-900 dark:text-gray-100 text-sm sm:text-base mb-1">
                   Proses Cepat
                 </h4>
                 <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
@@ -964,12 +1023,12 @@ export function BerandaView() {
             </Card>
 
             {/* Feature 4: Layanan 24/7 */}
-            <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated hover-lift transition-all">
+            <Card className="border-0 shadow-md bg-white dark:bg-gray-900 overflow-hidden card-elevated hover-lift transition-all">
               <CardContent className="p-5 text-center">
                 <div className="bg-violet-100 dark:bg-violet-900/40 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <HeadphonesIcon className="w-7 h-7 text-violet-600 dark:text-violet-400" />
                 </div>
-                <h4 className="font-bold text-gray-900 text-sm sm:text-base mb-1">
+                <h4 className="font-bold text-gray-900 dark:text-gray-100 text-sm sm:text-base mb-1">
                   Layanan 24/7
                 </h4>
                 <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
@@ -987,113 +1046,42 @@ export function BerandaView() {
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
-            <h3 className="text-lg font-bold text-gray-900">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
               Testimoni Pelanggan
             </h3>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            {/* Testimonial 1 */}
-            <Card className="border border-gray-100 dark:border-gray-800 shadow-md bg-white overflow-hidden card-elevated">
-              <CardContent className="p-5 sm:p-6">
-                {/* Stars */}
-                <div className="flex gap-0.5 mb-3">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Star
-                      key={i}
-                      className="w-4 h-4 fill-amber-400 text-amber-400"
-                    />
-                  ))}
-                </div>
-                {/* Quote */}
-                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-                  &ldquo;Alat scaffolding dari MITRA SEWA sangat berkualitas dan
-                  harganya sangat bersaing. Proses sewa juga cepat dan
-                  mudah.&rdquo;
-                </p>
-                {/* Name & Role */}
-                <div className="flex items-center gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {testimonials.map((t, idx) => (
+              <div
+                key={idx}
+                className="bg-white dark:bg-gray-900 border-0 shadow-md card-elevated rounded-xl p-5 relative overflow-hidden"
+              >
+                {/* Emerald left border accent */}
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-emerald-400 to-emerald-600" />
+
+                <div className="flex items-start gap-3 pl-2">
                   <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
-                      BS
-                    </span>
+                    <span className="text-sm font-bold text-emerald-700 dark:text-emerald-300">{t.initials}</span>
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                      Budi Santoso
-                    </p>
-                    <p className="text-xs text-gray-400">Kontraktor</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Testimonial 2 */}
-            <Card className="border border-gray-100 dark:border-gray-800 shadow-md bg-white overflow-hidden card-elevated">
-              <CardContent className="p-5 sm:p-6">
-                {/* Stars */}
-                <div className="flex gap-0.5 mb-3">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Star
-                      key={i}
-                      className="w-4 h-4 fill-amber-400 text-amber-400"
-                    />
-                  ))}
-                </div>
-                {/* Quote */}
-                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-                  &ldquo;Sudah 3 kali sewa mesin stamper di sini. Pelayanannya
-                  ramah dan alatnya selalu dalam kondisi baik.&rdquo;
-                </p>
-                {/* Name & Role */}
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm font-bold text-blue-700 dark:text-blue-300">
-                      SR
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                      Siti Rahayu
-                    </p>
-                    <p className="text-xs text-gray-400">Mandor Proyek</p>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <div>
+                        <p className="font-bold text-sm text-gray-900 dark:text-gray-100">{t.name}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{t.role}</p>
+                      </div>
+                      <Quote className="w-4 h-4 text-emerald-200 dark:text-emerald-800 flex-shrink-0" />
+                    </div>
+                    {/* Stars */}
+                    <div className="flex gap-0.5 mb-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star key={star} className={`w-3.5 h-3.5 ${star <= t.rating ? "text-amber-400 fill-amber-400" : "text-gray-200 dark:text-gray-700"}`} />
+                      ))}
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{t.text}</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Testimonial 3 */}
-            <Card className="border border-gray-100 dark:border-gray-800 shadow-md bg-white overflow-hidden card-elevated">
-              <CardContent className="p-5 sm:p-6">
-                {/* Stars */}
-                <div className="flex gap-0.5 mb-3">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Star
-                      key={i}
-                      className="w-4 h-4 fill-amber-400 text-amber-400"
-                    />
-                  ))}
-                </div>
-                {/* Quote */}
-                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-                  &ldquo;MITRA SEWA partner terpercaya untuk proyek-proyek kami.
-                  Stok selalu tersedia dan pengiriman tepat waktu.&rdquo;
-                </p>
-                {/* Name & Role */}
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm font-bold text-amber-700 dark:text-amber-300">
-                      AF
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                      Ahmad Fauzi
-                    </p>
-                    <p className="text-xs text-gray-400">Pengembang</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+            ))}
           </div>
         </section>
       </main>
@@ -1159,7 +1147,7 @@ export function BerandaView() {
 
         return (
           <Dialog open={!!selectedEquipDetail} onOpenChange={(open) => { if (!open) setSelectedEquipDetail(null); }}>
-            <DialogContent className="card-elevated max-w-lg w-[95vw] p-0 overflow-hidden">
+            <DialogContent aria-describedby={undefined} className="card-elevated max-w-lg w-[95vw] p-0 overflow-hidden">
               {/* Header with gradient */}
               <div className={`bg-gradient-to-r ${gradientBg} px-6 py-5 relative`}>
                 <DialogHeader className="text-left">
@@ -1176,12 +1164,12 @@ export function BerandaView() {
               <div className="px-6 py-5 space-y-5 max-h-[60vh] overflow-y-auto custom-scrollbar">
                 {/* Availability Stats */}
                 <div className="animate-fade-in-up">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Ketersediaan</p>
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Ketersediaan</p>
                   <div className="grid grid-cols-3 gap-3">
                     <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl py-3 px-2 text-center">
                       <p className="text-xs text-gray-500 dark:text-gray-400">Total</p>
                       <p className="text-xl font-bold text-gray-900 dark:text-gray-100 stat-number">{eq.total}</p>
-                      <p className="text-[10px] text-gray-400">{eq.unit}</p>
+                      <p className="text-[10px] text-gray-400 dark:text-gray-500">{eq.unit}</p>
                     </div>
                     <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl py-3 px-2 text-center">
                       <p className="text-xs text-emerald-600">Tersedia</p>
@@ -1234,7 +1222,7 @@ export function BerandaView() {
                 {/* Pricing Section */}
                 {eqPrice && (
                   <div className="animate-fade-in-up">
-                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Harga Sewa</p>
+                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Harga Sewa</p>
                     <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl px-4 py-3 space-y-1.5">
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-emerald-700 dark:text-emerald-300">Harga per {eqPrice.unit}</span>
@@ -1253,7 +1241,7 @@ export function BerandaView() {
 
                 {/* Equipment Info */}
                 <div className="animate-fade-in-up">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Informasi Alat</p>
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Informasi Alat</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                     {descriptions[eq.item] ?? "Peralatan konstruksi berkualitas untuk kebutuhan proyek Anda."}
                   </p>
