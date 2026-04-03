@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model PriceSetting {
+  id          String   @id @default(cuid())
+  item        String   @unique
+  label       String
+  unit        String
+  price       Float
+  billingType String   @default("harian")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model StockSetting {
+  id        String @id @default(cuid())
+  item      String @unique
+  label     String
+  unit      String
+  total     Int
+  perbaikan Int    @default(0)
+}
+
+model Rental {
+  id             String       @id @default(cuid())
+  namaPenyewa    String
+  noHp           String
+  alamat         String
+  tanggalSewa    DateTime
+  tanggalKembali DateTime
+  lamaSewa       Int
+  status         String       @default("aktif")
+  totalHarga     Float
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  items          RentalItem[]
+}
+
+model RentalItem {
+  id          String   @id @default(cuid())
+  rentalId    String
+  rental      Rental   @relation(fields: [rentalId], references: [id], onDelete: Cascade)
+  item        String
+  label       String
+  jumlah      Int
+  harga       Float
+  billingType String   @default("harian")
+  multiplier  Int
+  subtotal    Float
+}
