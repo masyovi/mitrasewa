@@ -19,16 +19,19 @@ import { useToast } from "@/hooks/use-toast";
 import {
   type StockData,
   type PriceData,
+  type RentalWithItems,
 } from "@/lib/types";
 import { useMemoLamaSewa, formatCurrency } from "./helpers";
 
 export function InputSewaTab({
   priceData,
   stockData,
+  rentals,
   onSuccess,
 }: {
   priceData: PriceData[];
   stockData: StockData[];
+  rentals: RentalWithItems[];
   onSuccess: () => void;
 }) {
   const { toast } = useToast();
@@ -38,6 +41,48 @@ export function InputSewaTab({
   const [alamat, setAlamat] = useState("");
   const [tanggalSewa, setTanggalSewa] = useState("");
   const [tanggalKembali, setTanggalKembali] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [dropdownFilter, setDropdownFilter] = useState("");
+
+  // Build unique customer list from previous rentals (most recent first)
+  const customerList = useMemo(() => {
+    const seen = new Set<string>();
+    const list: { nama: string; noHp: string; alamat: string }[] = [];
+    for (const r of rentals) {
+      const key = r.namaPenyewa.toLowerCase();
+      if (!seen.has(key)) {
+        seen.add(key);
+        list.push({ nama: r.namaPenyewa, noHp: r.noHp, alamat: r.alamat });
+      }
+    }
+    return list;
+  }, [rentals]);
+
+  const filteredCustomers = useMemo(() => {
+    if (!dropdownFilter) return customerList.slice(0, 8);
+    const f = dropdownFilter.toLowerCase();
+    return customerList.filter((c) => c.nama.toLowerCase().includes(f)).slice(0, 8);
+  }, [customerList, dropdownFilter]);
+
+  const handleSelectCustomer = (customer: { nama: string; noHp: string; alamat: string }) => {
+    setNamaPenyewa(customer.nama);
+    setNoHp(customer.noHp);
+    setAlamat(customer.alamat);
+    setShowDropdown(false);
+    setDropdownFilter("");
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      if (!target.closest('[data-customer-dropdown]')) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
 
   const [itemQuantities, setItemQuantities] = useState<
     Record<string, number>
@@ -199,7 +244,7 @@ export function InputSewaTab({
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
+              <div className="space-y-2 relative" data-customer-dropdown>
                 <Label htmlFor="nama" className="text-sm">
                   Nama Penyewa <span className="text-red-500">*</span>
                 </Label>
@@ -207,9 +252,58 @@ export function InputSewaTab({
                   id="nama"
                   placeholder="Nama lengkap penyewa"
                   value={namaPenyewa}
-                  onChange={(e) => setNamaPenyewa(e.target.value)}
+                  onChange={(e) => {
+                    setNamaPenyewa(e.target.value);
+                    setDropdownFilter(e.target.value);
+                  }}
+                  onFocus={() => {
+                    setDropdownFilter(namaPenyewa);
+                    setShowDropdown(true);
+                  }}
                   required
                 />
+                {showDropdown && filteredCustomers.length > 0 && !namaPenyewa && (
+                  <div className="absolute z-30 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                    <div className="px-3 py-2 text-xs text-gray-400 border-b border-gray-100 bg-gray-50 rounded-t-lg">
+                      Pelanggan sebelumnya
+                    </div>
+                    {filteredCustomers.map((customer) => (
+                      <button
+                        key={customer.nama}
+                        type="button"
+                        className="w-full text-left px-3 py-2.5 hover:bg-emerald-50 transition-colors flex items-center justify-between gap-2 border-b border-gray-50 last:border-0"
+                        onClick={() => handleSelectCustomer(customer)}
+                      >
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm text-gray-900 truncate">{customer.nama}</p>
+                          <p className="text-xs text-gray-400 truncate">{customer.noHp} • {customer.alamat}</p>
+                        </div>
+                        <Receipt className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {showDropdown && filteredCustomers.length > 0 && namaPenyewa && filteredCustomers.some((c) => c.nama.toLowerCase().includes(namaPenyewa.toLowerCase())) && (
+                  <div className="absolute z-30 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                    <div className="px-3 py-2 text-xs text-gray-400 border-b border-gray-100 bg-gray-50 rounded-t-lg">
+                      Cocok dengan pelanggan sebelumnya
+                    </div>
+                    {filteredCustomers.map((customer) => (
+                      <button
+                        key={customer.nama}
+                        type="button"
+                        className="w-full text-left px-3 py-2.5 hover:bg-emerald-50 transition-colors flex items-center justify-between gap-2 border-b border-gray-50 last:border-0"
+                        onClick={() => handleSelectCustomer(customer)}
+                      >
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm text-gray-900 truncate">{customer.nama}</p>
+                          <p className="text-xs text-gray-400 truncate">{customer.noHp} • {customer.alamat}</p>
+                        </div>
+                        <Receipt className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="nohp" className="text-sm">

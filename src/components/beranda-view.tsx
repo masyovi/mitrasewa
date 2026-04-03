@@ -440,7 +440,8 @@ export function BerandaView() {
                   </div>
                   <div>
                     <p className="font-medium text-gray-900 text-sm">Telepon / WhatsApp</p>
-                    <p className="text-sm text-gray-500 mt-0.5">Hubungi kami untuk informasi harga & ketersediaan alat</p>
+                    <p className="text-sm text-emerald-600 font-medium mt-0.5">0812-3456-7890</p>
+                    <p className="text-xs text-gray-400 mt-0.5">Hubungi kami untuk informasi harga & ketersediaan alat</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 hover-lift rounded-xl p-2 -m-2">
@@ -460,11 +461,12 @@ export function BerandaView() {
 
       {/* Floating WhatsApp Button */}
       <a
-        href="https://wa.me/"
+        href="https://wa.me/6281234567890"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-3.5 shadow-lg hover:shadow-xl transition-all animate-float no-print"
-        aria-label="Hubungi via WhatsApp"
+        className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-3.5 shadow-lg hover:shadow-xl transition-all animate-float no-print tooltip-modern"
+        data-tooltip="Chat via WhatsApp"
+        aria-label="Chat via WhatsApp"
       >
         <MessageCircle className="w-6 h-6" />
       </a>

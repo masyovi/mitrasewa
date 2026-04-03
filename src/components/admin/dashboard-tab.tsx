@@ -38,6 +38,7 @@ export function DashboardTab({
   rentals: RentalWithItems[];
 }) {
   const [warningDismissed, setWarningDismissed] = useState(false);
+  const [lowStockDismissed, setLowStockDismissed] = useState(false);
   const scaffolding = stockData.find((s) => s.item === "scaffolding");
   const totalAktif = rentals.filter((r) => r.status === "aktif").length;
   const totalKembali = rentals.filter((r) => r.status === "kembali").length;
@@ -46,6 +47,11 @@ export function DashboardTab({
   const totalAllItems = stockData.reduce((sum, s) => sum + s.total, 0);
 
   const overdueRentals = rentals.filter((r) => r.isOverdue);
+
+  // Low stock: tersedia <= 10% of total, excluding fully disewa items (tersedia > 0)
+  const lowStockItems = stockData.filter(
+    (s) => s.total > 0 && s.tersedia > 0 && s.tersedia <= s.total * 0.1
+  );
 
   return (
     <div className="space-y-6">
@@ -109,6 +115,73 @@ export function DashboardTab({
             </div>
             <button
               onClick={() => setWarningDismissed(true)}
+              className="flex-shrink-0 p-1 rounded-md text-amber-400 hover:text-amber-600 hover:bg-amber-100 transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Low Stock Warning Alert */}
+      {lowStockItems.length > 0 && !lowStockDismissed && (
+        <div className="animate-fade-in-up rounded-xl border border-amber-200 bg-gradient-to-r from-yellow-50 to-amber-50 p-4 sm:p-5 shadow-md">
+          <div className="flex items-start gap-3">
+            <div className="relative flex-shrink-0">
+              <div className="bg-amber-100 p-2 rounded-lg">
+                <Package className="w-5 h-5 text-amber-600" />
+              </div>
+              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-yellow-500" />
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="font-bold text-amber-800 text-sm sm:text-base">
+                  Peringatan Stok Rendah!
+                </h3>
+                <Badge className="bg-yellow-500 text-white badge-pulse border-0">
+                  {lowStockItems.length} alat
+                </Badge>
+              </div>
+              <p className="text-xs sm:text-sm text-amber-700 mb-3">
+                Beberapa alat memiliki ketersediaan di bawah 10%. Pertimbangkan untuk menambah stok.
+              </p>
+              <div className="bg-white/60 rounded-lg border border-amber-100 p-3 max-h-48 overflow-y-auto">
+                <div className="space-y-3">
+                  {lowStockItems.map((item) => {
+                    const pct = item.total > 0 ? (item.tersedia / item.total) * 100 : 0;
+                    return (
+                      <div key={item.item} className="space-y-1.5">
+                        <div className="flex items-center justify-between gap-2 text-sm">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <AlertCircle className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" />
+                            <span className="font-medium text-gray-800 truncate">{item.label}</span>
+                          </div>
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <Badge className="bg-red-100 text-red-700 border-0 text-[11px] px-1.5 py-0">
+                              {item.tersedia} / {item.total} {item.unit}
+                            </Badge>
+                            <span className="text-xs text-gray-500 font-medium">
+                              {pct.toFixed(0)}% tersedia
+                            </span>
+                          </div>
+                        </div>
+                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-yellow-400 to-amber-500 progress-bar-animate rounded-full"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => setLowStockDismissed(true)}
               className="flex-shrink-0 p-1 rounded-md text-amber-400 hover:text-amber-600 hover:bg-amber-100 transition-colors"
             >
               <X className="w-4 h-4" />

@@ -1050,3 +1050,399 @@ html {
 .dark .border-gray-200 {
   border-color: oklch(0.35 0.02 260) !important;
 }
+
+/* ==========================================================================
+   TASK 5 — Massive CSS Enhancement Round 2
+   ========================================================================== */
+
+/* ----- 1. Page Transition Animations ----- */
+
+@keyframes pageSlideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes pageSlideOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-20px); }
+}
+.animate-page-slide-in { animation: pageSlideIn 0.3s ease-out; }
+
+/* ----- 2. Number Counter Pulse Animation ----- */
+
+@keyframes countPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.stat-number-pulse { animation: countPulse 2s ease-in-out infinite; }
+
+/* ----- 3. Staggered Children Animation ----- */
+
+.stagger-children > * {
+  opacity: 0;
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+
+/* ----- 4. Enhanced Button Styles ----- */
+
+.btn-emerald-gradient {
+  background: linear-gradient(135deg, oklch(0.55 0.17 163), oklch(0.50 0.19 160));
+  color: white;
+  box-shadow: 0 2px 8px oklch(0.55 0.17 163 / 0.3);
+  transition: all 0.2s ease;
+}
+.btn-emerald-gradient:hover {
+  background: linear-gradient(135deg, oklch(0.50 0.19 160), oklch(0.45 0.20 158));
+  box-shadow: 0 4px 12px oklch(0.55 0.17 163 / 0.4);
+  transform: translateY(-1px);
+}
+.btn-emerald-gradient:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px oklch(0.55 0.17 163 / 0.2);
+}
+
+/* Button with shine sweep */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -75%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transform: skewX(-25deg);
+  transition: left 0.5s ease;
+}
+.btn-shine:hover::after {
+  left: 125%;
+}
+
+/* ----- 5. Card Hover Effects Enhancement ----- */
+
+.card-hover-glow {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-hover-glow:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 6px -1px rgba(0,0,0,0.07),
+    0 10px 15px -3px rgba(0,0,0,0.07),
+    0 0 0 1px oklch(0.55 0.17 163 / 0.1);
+}
+
+/* Card with left accent border */
+.card-accent-left {
+  border-left: 3px solid oklch(0.55 0.17 163);
+}
+.card-accent-left-amber {
+  border-left: 3px solid oklch(0.75 0.18 75);
+}
+.card-accent-left-red {
+  border-left: 3px solid oklch(0.60 0.22 25);
+}
+
+/* ----- 6. Table Enhancements ----- */
+
+/* Modern table with hover rows */
+.table-modern th {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: oklch(0.55 0.02 260);
+  font-weight: 600;
+  border-bottom: 2px solid oklch(0.92 0.01 260);
+}
+.table-modern tr {
+  transition: background-color 0.15s ease;
+}
+.table-modern tbody tr:hover {
+  background-color: oklch(0.97 0.01 160 / 0.5);
+}
+
+/* ----- 7. Gradient Text ----- */
+
+.gradient-text-emerald {
+  background: linear-gradient(135deg, oklch(0.50 0.17 163), oklch(0.55 0.19 155));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ----- 8. Badge Glow Enhancements ----- */
+
+.badge-glow-emerald {
+  box-shadow: 0 0 8px oklch(0.55 0.17 163 / 0.3);
+}
+.badge-glow-red {
+  box-shadow: 0 0 8px oklch(0.60 0.22 25 / 0.3);
+}
+.badge-glow-amber {
+  box-shadow: 0 0 8px oklch(0.75 0.18 75 / 0.3);
+}
+
+/* ----- 9. Input Focus Enhancements ----- */
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: oklch(0.55 0.17 163) !important;
+  box-shadow: 0 0 0 3px oklch(0.55 0.17 163 / 0.1) !important;
+}
+
+/* ----- 10. Scrollbar Enhancements for Specific Containers ----- */
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: oklch(0.80 0.05 160);
+  border-radius: 999px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.65 0.12 160);
+}
+
+/* ----- 11. Dark Mode Enhancements for New Classes ----- */
+
+.dark .card-hover-glow:hover {
+  box-shadow: 
+    0 4px 6px -1px rgba(0,0,0,0.3),
+    0 10px 15px -3px rgba(0,0,0,0.3),
+    0 0 0 1px oklch(0.55 0.17 163 / 0.2);
+}
+.dark .table-modern th {
+  color: oklch(0.70 0.02 260);
+  border-bottom-color: oklch(0.30 0.01 260);
+}
+.dark .table-modern tbody tr:hover {
+  background-color: oklch(0.20 0.01 160 / 0.3);
+}
+.dark .card-accent-left {
+  border-left-color: oklch(0.55 0.17 163);
+}
+.dark input:focus, .dark textarea:focus, .dark select:focus {
+  border-color: oklch(0.55 0.17 163) !important;
+  box-shadow: 0 0 0 3px oklch(0.55 0.17 163 / 0.15) !important;
+}
+.dark .scrollbar-thin::-webkit-scrollbar-thumb {
+  background: oklch(0.40 0.08 160);
+}
+.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.50 0.12 160);
+}
+
+/* ----- 12. Mobile Bottom Navigation ----- */
+
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: oklch(0.98 0.005 260 / 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid oklch(0.91 0.005 260);
+  padding: 0.25rem 0;
+  padding-bottom: max(0.25rem, env(safe-area-inset-bottom));
+}
+.dark .mobile-bottom-nav {
+  background: oklch(0.15 0.01 260 / 0.85);
+  border-top-color: oklch(0.25 0.01 260);
+}
+.mobile-bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 0.375rem 0;
+  font-size: 0.625rem;
+  color: oklch(0.50 0.02 260);
+  transition: color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.mobile-bottom-nav-item.active {
+  color: oklch(0.55 0.17 163);
+}
+.mobile-bottom-nav-item:active {
+  transform: scale(0.95);
+}
+
+/* ----- 13. Skeleton Shimmer Enhancement ----- */
+
+@keyframes shimmer-move {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, oklch(1 0 0 / 0.4) 50%, transparent 100%);
+  animation: shimmer-move 1.5s infinite;
+}
+.dark .skeleton-shimmer::after {
+  background: linear-gradient(90deg, transparent 0%, oklch(1 0 0 / 0.05) 50%, transparent 100%);
+}
+
+/* ----- 14. Responsive Container Utility ----- */
+
+.container-app {
+  width: 100%;
+  max-width: 72rem; /* 1152px */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+@media (min-width: 640px) {
+  .container-app { padding-left: 1.5rem; padding-right: 1.5rem; }
+}
+
+/* ==========================================================================
+   TASK 4 (Round 2) — Additional Micro-interactions & Polish
+   ========================================================================== */
+
+/* ----- 1. Subtle Text Shadow ----- */
+
+.text-shadow-sm {
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+}
+.text-shadow-emerald {
+  text-shadow: 0 1px 4px oklch(0.55 0.17 163 / 0.25);
+}
+.text-shadow-md {
+  text-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+}
+
+/* ----- 2. Emerald Focus Ring Utility ----- */
+
+.ring-focus-emerald {
+  transition: box-shadow 0.2s ease;
+}
+.ring-focus-emerald:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px oklch(0.92 0.05 163), 0 0 0 5px oklch(0.55 0.17 163 / 0.3);
+  border-radius: inherit;
+}
+
+/* ----- 3. Scroll Smooth Utility ----- */
+
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+.scroll-smooth-x {
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ----- 4. Card Spotlight (Mouse-Following Radial Gradient) ----- */
+
+.card-spotlight {
+  position: relative;
+  overflow: hidden;
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+}
+.card-spotlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    600px circle at var(--mouse-x) var(--mouse-y),
+    oklch(0.55 0.17 163 / 0.06),
+    transparent 40%
+  );
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.card-spotlight:hover::before {
+  opacity: 1;
+}
+.dark .card-spotlight::before {
+  background: radial-gradient(
+    600px circle at var(--mouse-x) var(--mouse-y),
+    oklch(0.65 0.17 163 / 0.08),
+    transparent 40%
+  );
+}
+
+/* ----- 5. Enhanced Badge Glow Emerald (pulsing) ----- */
+
+.badge-glow-emerald-pulse {
+  animation: badgeGlowEmerald 2s ease-in-out infinite;
+}
+@keyframes badgeGlowEmerald {
+  0%, 100% {
+    box-shadow: 0 0 6px oklch(0.55 0.17 163 / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 14px oklch(0.55 0.17 163 / 0.5), 0 0 4px oklch(0.55 0.17 163 / 0.3);
+  }
+}
+
+/* ----- 6. Entrance Micro-Animations ----- */
+
+@keyframes bounceIn {
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { opacity: 1; transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+.animate-bounce-in {
+  animation: bounceIn 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up {
+  animation: slideUp 0.35s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-down {
+  animation: slideDown 0.35s ease-out;
+}
+
+/* ----- 7. Dark Mode Additions ----- */
+
+.dark .text-shadow-sm {
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+.dark .ring-focus-emerald:focus-visible {
+  box-shadow: 0 0 0 3px oklch(0.30 0.06 163), 0 0 0 5px oklch(0.55 0.17 163 / 0.25);
+}
+.dark .badge-glow-emerald-pulse {
+  animation-name: badgeGlowEmeraldDark;
+}
+@keyframes badgeGlowEmeraldDark {
+  0%, 100% {
+    box-shadow: 0 0 6px oklch(0.55 0.17 163 / 0.2);
+  }
+  50% {
+    box-shadow: 0 0 14px oklch(0.55 0.17 163 / 0.35), 0 0 4px oklch(0.55 0.17 163 / 0.2);
+  }
+}
