@@ -301,3 +301,52 @@ Stage Summary:
 - Hours: Buka setiap hari 07.00 – 17.00 WIB (simplified from 7-day table)
 - Floating button: smaller, cleaner, official WhatsApp logo, brand green color
 - ESLint clean, dev server no errors
+
+---
+Task ID: 19
+Agent: Main Agent (Cron Review — QA, Styling, Features)
+
+### Phase 1: QA Testing (All Pass)
+- Desktop: all homepage sections verified, WhatsApp button/number/address/hours confirmed correct
+- Mobile (375×812): responsive layout verified, no horizontal overflow, WA button visible
+- Admin: all 6 tabs verified (Dashboard, Input Sewa, Setting Harga, History, Pelanggan, Laporan)
+- Zero ESLint errors, zero JS runtime errors
+
+### Phase 2: Bug Fixes
+1. Footer address text was still showing "Pengelola Gedung Pusat BMT NU Ngasem Group" (old text) — fixed to "Gedung Pusat Penggerak Ekonomi BMT NU Ngasem Group"
+2. Phone number in Hubungi Kami changed from static text to clickable WhatsApp link (a href)
+
+### Phase 3: New Features
+
+**Feature 1: WhatsApp CTA Button in Contact Section**
+- Full-width green "Hubungi via WhatsApp" button added inside Hubungi Kami card
+- Uses official WhatsApp SVG logo + brand green (#25D366)
+- Pre-filled WhatsApp message: "Halo, saya ingin bertanya tentang penyewaan alat."
+- Links to wa.me/6285185924243
+
+**Feature 2: Scroll-to-Top Button**
+- Fixed position button (bottom-right, next to WhatsApp button)
+- Appears after scrolling 600px down, fades out with translate animation
+- White/dark mode compatible with arrow-up icon
+- Smooth scroll to top on click
+- z-index 50, no-print class
+
+**Feature 3: Enhanced "Kenapa Memilih Kami" Feature Cards**
+- Card #3 changed: "Proses Cepat" → "Pengiriman Cepat" with Truck icon (amber)
+- Card #4 changed: "Layanan 24/7" → "Layanan Profesional" with Wrench icon (violet)
+- All feature cards now have `group` class with `group-hover:scale-110` on icon containers
+- Hover micro-interaction: icons scale up when hovering parent card
+
+### Phase 4: New Imports
+- ArrowUp (scroll-to-top), Truck (delivery feature), Wrench (professional service)
+
+### Phase 5: Verification
+- All 3 new features confirmed working via agent-browser QA
+- ESLint clean, dev server no errors
+- No regressions in existing functionality
+
+Stage Summary:
+- 2 bug fixes (footer address, clickable phone link)
+- 3 new features (WhatsApp CTA, scroll-to-top, enhanced feature cards)
+- 2 new icon imports (Truck, Wrench + ArrowUp)
+- All QA checks passed
