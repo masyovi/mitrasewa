@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   DollarSign,
   History,
@@ -52,6 +52,26 @@ export function DashboardTab({
   const lowStockItems = stockData.filter(
     (s) => s.total > 0 && s.tersedia > 0 && s.tersedia <= s.total * 0.1
   );
+
+  // Popular equipment: top 3 most rented by total units
+  const popularEquipment = useMemo(() => {
+    const itemMap: Record<string, { item: string; label: string; totalJumlah: number }> = {};
+    for (const rental of rentals) {
+      for (const ri of rental.items) {
+        if (!itemMap[ri.item]) {
+          itemMap[ri.item] = { item: ri.item, label: ri.label, totalJumlah: 0 };
+        }
+        itemMap[ri.item].totalJumlah += ri.jumlah;
+      }
+    }
+    return Object.values(itemMap)
+      .sort((a, b) => b.totalJumlah - a.totalJumlah)
+      .slice(0, 3);
+  }, [rentals]);
+
+  const maxRentedUnits = popularEquipment.length > 0
+    ? popularEquipment[0].totalJumlah
+    : 1;
 
   return (
     <div className="space-y-6">
@@ -192,7 +212,7 @@ export function DashboardTab({
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <Card className="border-0 shadow-md card-elevated animate-fade-in-up">
+        <Card className="border-0 shadow-md card-elevated hover-lift animate-fade-in-up">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="bg-emerald-100 p-2 rounded-lg">
@@ -206,7 +226,7 @@ export function DashboardTab({
             <p className="text-xs text-gray-500">Total Scaffolding (Set)</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-md card-elevated animate-fade-in-up animate-fade-in-up-delay-1">
+        <Card className="border-0 shadow-md card-elevated hover-lift animate-fade-in-up animate-fade-in-up-delay-1">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="bg-amber-100 p-2 rounded-lg">
@@ -220,7 +240,7 @@ export function DashboardTab({
             <p className="text-xs text-gray-500">Scaffolding Disewa</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-md card-elevated animate-fade-in-up animate-fade-in-up-delay-2">
+        <Card className="border-0 shadow-md card-elevated hover-lift animate-fade-in-up animate-fade-in-up-delay-2">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="bg-emerald-100 p-2 rounded-lg">
@@ -233,7 +253,7 @@ export function DashboardTab({
             <p className="text-xs text-gray-500">Scaffolding Tersedia</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-md card-elevated animate-fade-in-up animate-fade-in-up-delay-3">
+        <Card className="border-0 shadow-md card-elevated hover-lift animate-fade-in-up animate-fade-in-up-delay-3">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="bg-emerald-100 p-2 rounded-lg">
@@ -250,13 +270,13 @@ export function DashboardTab({
 
       {/* Stats Row */}
       <div className="grid grid-cols-3 gap-3 sm:gap-4">
-        <Card className="border-0 shadow-md bg-emerald-50 card-elevated animate-fade-in-up">
+        <Card className="border-0 shadow-md bg-emerald-50 card-elevated hover-lift animate-fade-in-up">
           <CardContent className="p-4 text-center">
             <p className="text-3xl font-bold text-emerald-700 animate-count-up stat-number">{totalAktif}</p>
             <p className="text-sm text-emerald-600">Sewa Aktif</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-md bg-gray-50 card-elevated animate-fade-in-up animate-fade-in-up-delay-1">
+        <Card className="border-0 shadow-md bg-gray-50 card-elevated hover-lift animate-fade-in-up animate-fade-in-up-delay-1">
           <CardContent className="p-4 text-center">
             <p className="text-3xl font-bold text-gray-700 animate-count-up stat-number">
               {totalKembali}
@@ -264,7 +284,7 @@ export function DashboardTab({
             <p className="text-sm text-gray-600">Sudah Kembali</p>
           </CardContent>
         </Card>
-        <Card className={`border-0 shadow-md card-elevated animate-fade-in-up animate-fade-in-up-delay-2 ${totalPerbaikan > 0 ? "bg-orange-50" : "bg-gray-50"}`}>
+        <Card className={`border-0 shadow-md card-elevated hover-lift animate-fade-in-up animate-fade-in-up-delay-2 ${totalPerbaikan > 0 ? "bg-orange-50" : "bg-gray-50"}`}>
           <CardContent className="p-4 text-center">
             <p className={`text-3xl font-bold animate-count-up stat-number ${totalPerbaikan > 0 ? "text-orange-700" : "text-gray-700"}`}>
               {totalPerbaikan}
@@ -287,7 +307,7 @@ export function DashboardTab({
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
-            <Table>
+            <Table className="table-modern">
               <TableHeader>
                 <TableRow>
                   <TableHead>Barang</TableHead>
@@ -360,13 +380,15 @@ export function DashboardTab({
         </CardHeader>
         <CardContent>
           {rentals.length === 0 ? (
-            <div className="text-center py-10">
-              <Clock className="w-10 h-10 text-gray-200 mx-auto mb-3" />
-              <p className="text-gray-400 text-sm">
+            <div className="text-center py-14">
+              <div className="mx-auto mb-4 bg-emerald-50 rounded-2xl p-4 w-fit">
+                <Clock className="w-14 h-14 text-emerald-200" />
+              </div>
+              <p className="text-gray-500 text-sm font-medium">
                 Belum ada data penyewaan
               </p>
-              <p className="text-gray-300 text-xs mt-1">
-                Data akan muncul setelah input sewa pertama
+              <p className="text-gray-400 text-xs mt-1.5 max-w-[240px] mx-auto">
+                Data akan muncul setelah input sewa pertama melalui tab "Input Sewa"
               </p>
             </div>
           ) : (
@@ -414,6 +436,49 @@ export function DashboardTab({
           )}
         </CardContent>
       </Card>
+
+      {/* Popular Equipment Quick View */}
+      {popularEquipment.length > 0 && (
+        <Card className="border-0 shadow-md card-elevated animate-fade-in-up animate-fade-in-up-delay-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base font-bold flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-emerald-600" />
+              Peralatan Populer
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {popularEquipment.map((eq, idx) => {
+                const pct = maxRentedUnits > 0 ? (eq.totalJumlah / maxRentedUnits) * 100 : 0;
+                return (
+                  <div
+                    key={eq.item}
+                    className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                        #{idx + 1}
+                      </span>
+                      <Badge className="bg-emerald-100 text-emerald-700 text-[10px] px-1.5 py-0 border-0">
+                        {eq.totalJumlah} unit
+                      </Badge>
+                    </div>
+                    <p className="font-bold text-gray-900 dark:text-gray-100 text-sm mb-3">
+                      {eq.label}
+                    </p>
+                    <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 progress-bar-animate rounded-full"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

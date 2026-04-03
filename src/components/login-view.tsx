@@ -63,7 +63,7 @@ export function LoginView() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-mitra-gradient-light">
+    <div className="min-h-screen flex flex-col bg-mitra-gradient-light hero-pattern">
       <header className="bg-mitra-gradient text-white shadow-lg">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-3 animate-fade-in">
           <button
@@ -80,7 +80,7 @@ export function LoginView() {
       </header>
 
       <main className="flex-1 flex items-center justify-center px-4 py-8">
-        <Card className="w-full max-w-md border-0 shadow-xl animate-scale-in">
+        <Card className="w-full max-w-md border-0 shadow-xl animate-scale-in card-elevated">
           <CardHeader className="text-center pb-2">
             <div className="mx-auto mb-4 bg-emerald-100 rounded-2xl p-4 w-fit animate-fade-in-up">
               <Lock className="w-8 h-8 text-emerald-600" />
@@ -94,7 +94,7 @@ export function LoginView() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4 animate-fade-in-up animate-fade-in-up-delay-3">
-              <div className="space-y-2">
+              <div className="space-y-2 animate-fade-in-up animate-fade-in-up-delay-4">
                 <Label htmlFor="username" className="text-sm font-medium">
                   Username
                 </Label>
@@ -113,7 +113,7 @@ export function LoginView() {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 animate-fade-in-up animate-fade-in-up-delay-5">
                 <Label htmlFor="password" className="text-sm font-medium">
                   Password
                 </Label>
@@ -145,7 +145,7 @@ export function LoginView() {
 
               <Button
                 type="submit"
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 transition-all hover:shadow-lg"
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 transition-all hover:shadow-lg btn-emerald-gradient btn-press animate-fade-in-up animate-fade-in-up-delay-6"
                 disabled={loading}
               >
                 {loading ? (
@@ -158,6 +158,16 @@ export function LoginView() {
                 )}
               </Button>
             </form>
+            <div className="mt-4 text-center animate-fade-in-up animate-fade-in-up-delay-6">
+              <button
+                type="button"
+                onClick={() => setView("beranda")}
+                className="text-sm text-gray-400 hover:text-emerald-600 transition-colors inline-flex items-center gap-1.5 group"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+                Kembali ke Beranda
+              </button>
+            </div>
           </CardContent>
         </Card>
       </main>

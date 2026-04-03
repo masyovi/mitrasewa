@@ -5,11 +5,11 @@ import {
   Download,
   RotateCcw,
   Trash2,
-  Package,
   RefreshCw,
   Printer,
-  FileText,
   AlertTriangle,
+  Search,
+  ClipboardList,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -183,7 +183,7 @@ export function HistoryTab({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 animate-fade-in-up">
         <div>
           <h2 className="text-xl font-bold text-gray-900">
             History Penyewaan
@@ -213,12 +213,12 @@ export function HistoryTab({
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-3 animate-fade-in-up animate-fade-in-up-delay-1">
         <Input
           placeholder="Cari nama, no HP, alamat..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1"
+          className="flex-1 transition-all focus:ring-2 focus:ring-emerald-500/20"
         />
         <div className="flex gap-2">
           {(["semua", "aktif", "kembali"] as const).map((status) => (
@@ -244,20 +244,31 @@ export function HistoryTab({
       </div>
 
       {filteredRentals.length === 0 ? (
-        <Card className="border-0 shadow-md">
-          <CardContent className="py-12 text-center">
-            <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 text-sm">
+        <Card className="border-0 shadow-md card-elevated">
+          <CardContent className="py-16 text-center">
+            <div className="mx-auto mb-4 bg-emerald-50 rounded-2xl p-5 w-fit">
+              {search || filterStatus !== "semua" ? (
+                <Search className="w-14 h-14 text-emerald-200" />
+              ) : (
+                <ClipboardList className="w-14 h-14 text-emerald-200" />
+              )}
+            </div>
+            <p className="text-gray-500 text-sm font-medium">
               {search || filterStatus !== "semua"
                 ? "Tidak ada data yang cocok"
                 : "Belum ada data penyewaan"}
             </p>
+            {(search || filterStatus !== "semua") && (
+              <p className="text-gray-400 text-xs mt-2 max-w-[280px] mx-auto">
+                Coba ubah kata kunci pencarian atau filter status untuk menemukan data yang Anda cari.
+              </p>
+            )}
           </CardContent>
         </Card>
       ) : (
         <div className="space-y-4">
           {filteredRentals.map((rental) => (
-            <Card key={rental.id} className={`border-0 shadow-md overflow-hidden ${rental.isOverdue ? "border-l-4 border-l-red-500" : ""}`}>
+            <Card key={rental.id} className={`border-0 shadow-md overflow-hidden card-elevated animate-bounce-in ${rental.isOverdue ? "border-l-4 border-l-red-500" : ""}`}>
               <CardContent className="p-0">
                 <div className="flex items-center justify-between p-4 pb-3 border-b border-gray-50">
                   <div>
@@ -275,7 +286,7 @@ export function HistoryTab({
                       {rental.isOverdue && (
                         <>
                           <span className="text-xs text-gray-400">•</span>
-                          <Badge className="bg-red-100 text-red-700 border-0 text-[11px] px-1.5 py-0 gap-1">
+                          <Badge className="bg-red-100 text-red-700 border-0 text-[11px] px-1.5 py-0 gap-1 badge-glow-red">
                             <AlertTriangle className="w-3 h-3" />
                             Terlambat {rental.daysOverdue} hari
                           </Badge>
@@ -285,7 +296,7 @@ export function HistoryTab({
                   </div>
                   <div className="flex items-center gap-2">
                     {rental.isOverdue && (
-                      <Badge className="bg-red-500 text-white border-0 animate-pulse">
+                      <Badge className="bg-red-500 text-white border-0 animate-pulse badge-glow-red">
                         Terlambat
                       </Badge>
                     )}

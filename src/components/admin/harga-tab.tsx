@@ -136,7 +136,7 @@ export function HargaTab({
         </p>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 animate-fade-in-up">
         <Button
           variant={activeTab === "harga" ? "default" : "outline"}
           size="sm"
@@ -179,7 +179,7 @@ export function HargaTab({
       </div>
 
       {activeTab === "harga" && (
-        <Card className="border-0 shadow-md">
+        <Card className="border-0 shadow-md card-elevated animate-fade-in-up">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-bold">
               Harga Sewa
@@ -189,7 +189,7 @@ export function HargaTab({
             {priceData.map((price) => (
               <div
                 key={price.item}
-                className="flex flex-col sm:flex-row sm:items-center gap-2 p-4 rounded-lg border border-gray-100"
+                className="flex flex-col sm:flex-row sm:items-center gap-2 p-4 rounded-lg border border-gray-100 hover-lift transition-all hover:border-emerald-200 hover:bg-emerald-50/30"
               >
                 <div className="flex-1">
                   <p className="font-medium text-sm">{price.label}</p>
@@ -221,7 +221,7 @@ export function HargaTab({
                         [price.item]: e.target.value,
                       }))
                     }
-                    className="w-36 h-9 text-right text-sm"
+                    className="w-36 h-9 text-right text-sm transition-all"
                     min={0}
                   />
                 </div>
@@ -229,7 +229,7 @@ export function HargaTab({
             ))}
             <Button
               onClick={savePrices}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white btn-press btn-emerald-gradient"
               disabled={loading}
             >
               {loading ? "Menyimpan..." : "Simpan Harga"}
@@ -239,7 +239,7 @@ export function HargaTab({
       )}
 
       {activeTab === "stok" && (
-        <Card className="border-0 shadow-md">
+        <Card className="border-0 shadow-md card-elevated animate-fade-in-up">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-bold">
               Total Stok Alat
@@ -249,7 +249,7 @@ export function HargaTab({
             {stockData.map((stock) => (
               <div
                 key={stock.item}
-                className="flex flex-col sm:flex-row sm:items-center gap-2 p-4 rounded-lg border border-gray-100"
+                className="flex flex-col sm:flex-row sm:items-center gap-2 p-4 rounded-lg border border-gray-100 hover-lift transition-all hover:border-emerald-200 hover:bg-emerald-50/30"
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
@@ -275,7 +275,7 @@ export function HargaTab({
                         [stock.item]: e.target.value,
                       }))
                     }
-                    className="w-28 h-9 text-center text-sm"
+                    className="w-28 h-9 text-center text-sm transition-all"
                     min={0}
                   />
                   <span className="text-sm text-gray-500">{stock.unit}</span>
@@ -284,7 +284,7 @@ export function HargaTab({
             ))}
             <Button
               onClick={saveStocks}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white btn-press btn-emerald-gradient"
               disabled={loading}
             >
               {loading ? "Menyimpan..." : "Simpan Stok"}
@@ -294,7 +294,7 @@ export function HargaTab({
       )}
 
       {activeTab === "status" && (
-        <Card className="border-0 shadow-md">
+        <Card className="border-0 shadow-md card-elevated animate-fade-in-up">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-bold flex items-center gap-2">
               <Wrench className="w-4 h-4 text-orange-500" />
@@ -315,7 +315,7 @@ export function HargaTab({
               return (
                 <div
                   key={stock.item}
-                  className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-lg border border-gray-100 bg-white"
+                  className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-lg border border-gray-100 bg-white hover-lift transition-all hover:border-emerald-200 hover:bg-emerald-50/30"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
@@ -374,7 +374,7 @@ export function HargaTab({
                             [stock.item]: e.target.value,
                           }))
                         }
-                        className="w-20 h-9 text-center text-sm"
+                        className="w-20 h-9 text-center text-sm transition-all"
                         min={0}
                         max={stock.total}
                       />
@@ -386,7 +386,7 @@ export function HargaTab({
             })}
             <Button
               onClick={saveStocks}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white btn-press btn-emerald-gradient"
               disabled={loading}
             >
               {loading ? "Menyimpan..." : "Simpan Status Alat"}

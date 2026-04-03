@@ -194,6 +194,9 @@ html {
 .animate-fade-in-up-delay-1 { animation-delay: 0.1s; }
 .animate-fade-in-up-delay-2 { animation-delay: 0.2s; }
 .animate-fade-in-up-delay-3 { animation-delay: 0.3s; }
+.animate-fade-in-up-delay-4 { animation-delay: 0.4s; }
+.animate-fade-in-up-delay-5 { animation-delay: 0.5s; }
+.animate-fade-in-up-delay-6 { animation-delay: 0.6s; }
 
 /* Fade in animation */
 @keyframes fadeIn {
