@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from "react";
 import {
-  DollarSign,
   History,
   HardHat,
   Truck,
@@ -64,7 +63,6 @@ export function DashboardTab({
   const scaffolding = stockData.find((s) => s.item === "scaffolding");
   const totalAktif = rentals.filter((r) => r.status === "aktif").length;
   const totalKembali = rentals.filter((r) => r.status === "kembali").length;
-  const totalPendapatan = rentals.reduce((sum, r) => sum + r.totalHarga, 0);
   const totalPerbaikan = stockData.reduce((sum, s) => sum + s.perbaikan, 0);
   const totalAllItems = stockData.reduce((sum, s) => sum + s.total, 0);
 
@@ -72,14 +70,6 @@ export function DashboardTab({
   const totalTersedia = stockData.reduce((sum, s) => sum + s.tersedia, 0);
   const totalDisewa = stockData.reduce((sum, s) => sum + s.disewa, 0);
   const uniqueCustomers = new Set(rentals.map((r) => r.namaPenyewa.toLowerCase())).size;
-  const thisMonthRevenue = rentals
-    .filter((r) => {
-      const d = new Date(r.createdAt);
-      const now = new Date();
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-    })
-    .reduce((sum, r) => sum + r.totalHarga, 0);
-
   // Monthly summary values
   const sewaBaruBulanIni = rentals.filter((r) => {
     const d = new Date(r.createdAt);
@@ -273,7 +263,7 @@ export function DashboardTab({
       )}
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-3 gap-3 sm:gap-4">
         <Card className="border-0 shadow-md card-elevated hover-lift animate-fade-in-up">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
@@ -300,20 +290,8 @@ export function DashboardTab({
             <p className="text-xs text-gray-500 dark:text-gray-400">Total Disewa</p>
           </CardContent>
         </Card>
+
         <Card className="border-0 shadow-md card-elevated hover-lift animate-fade-in-up animate-fade-in-up-delay-2">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <div className="bg-blue-100 dark:bg-blue-900/40 p-2 rounded-lg">
-                <DollarSign className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-              </div>
-            </div>
-            <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 animate-count-up stat-number">
-              {formatCurrency(thisMonthRevenue)}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Pendapatan Bulan Ini</p>
-          </CardContent>
-        </Card>
-        <Card className="border-0 shadow-md card-elevated hover-lift animate-fade-in-up animate-fade-in-up-delay-3">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="bg-violet-100 dark:bg-violet-900/40 p-2 rounded-lg">

@@ -17,12 +17,9 @@ import {
   Clock,
   HeadphonesIcon,
   Star,
-  Trophy,
-  Receipt,
   X,
   HelpCircle,
   ChevronDown,
-  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -37,7 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { AboutModal } from "@/components/about-modal";
 import { formatCurrency } from "@/components/admin/helpers";
 import {
@@ -73,15 +70,7 @@ export function BerandaView() {
   const [loading, setLoading] = useState(true);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [analyticsData, setAnalyticsData] = useState<{
-    totalRevenue: number;
-    totalRentals: number;
-    activeRentals: number;
-    avgDuration: number;
-    monthlyBreakdown: { monthKey: string; month: string; revenue: number; count: number }[];
-    topItems: { item: string; label: string; totalJumlah: number; rentalCount: number }[];
-    utilization: { item: string; label: string; unit: string; total: number; disewa: number; tersedia: number; rate: number }[];
-  } | null>(null);
+
 
   // Calculator state
   const [selectedEquipment, setSelectedEquipment] = useState<string>("");
@@ -90,7 +79,7 @@ export function BerandaView() {
   const [estimatedCost, setEstimatedCost] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-  const [promoDismissed, setPromoDismissed] = useState(false);
+
 
   // Equipment detail modal state
   const [selectedEquipDetail, setSelectedEquipDetail] = useState<StockItem | null>(null);
@@ -129,14 +118,12 @@ export function BerandaView() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [stockRes, priceRes, analyticsRes] = await Promise.all([
+        const [stockRes, priceRes] = await Promise.all([
           fetch("/api/stock"),
           fetch("/api/prices"),
-          fetch("/api/analytics?from=2025-01-01&to=2026-12-31"),
         ]);
         const stockJson = await stockRes.json();
         const priceJson = await priceRes.json();
-        const analyticsJson = await analyticsRes.json();
         if (stockJson.success) {
           setStockData(stockJson.data);
         }
@@ -146,9 +133,6 @@ export function BerandaView() {
             setSelectedEquipment(priceJson.data[0].item);
           }
         }
-        if (analyticsJson.success && analyticsJson.data) {
-          setAnalyticsData(analyticsJson.data);
-        }
       } catch (err) {
         console.error("Failed to fetch data:", err);
       } finally {
@@ -157,22 +141,6 @@ export function BerandaView() {
     }
     fetchData();
   }, []);
-
-  // Compute current month's revenue and total transactions from analytics
-  const currentMonthKey = useMemo(() => {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-  }, []);
-
-  const currentMonthRevenue = useMemo(() => {
-    if (!analyticsData) return 0;
-    const entry = analyticsData.monthlyBreakdown.find(
-      (m) => m.monthKey === currentMonthKey
-    );
-    return entry ? entry.revenue : 0;
-  }, [analyticsData, currentMonthKey]);
-
-  const totalTransactions = analyticsData?.totalRentals ?? 0;
 
   const scaffolding = stockData.find((s) => s.item === "scaffolding");
   const machines = stockData.filter(
@@ -309,85 +277,16 @@ export function BerandaView() {
                   Dalam Perbaikan
                 </p>
               </div>
-              {analyticsData && (currentMonthRevenue > 0 || totalTransactions > 0) && (
-                <>
-                  <div className="w-px h-10 bg-gray-200" />
-                  <div className="text-center hover-lift rounded-xl px-4 py-2">
-                    <div className="flex items-center justify-center gap-1">
-                      <Trophy className="w-4 h-4 text-amber-500" />
-                      <p className="text-2xl sm:text-3xl font-bold text-amber-600 stat-number">
-                        {currentMonthRevenue > 0 ? formatCurrency(currentMonthRevenue) : "Rp 0"}
-                      </p>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                      Pendapatan Bulan Ini
-                    </p>
-                  </div>
-                  <div className="w-px h-10 bg-gray-200" />
-                  <div className="text-center hover-lift rounded-xl px-4 py-2">
-                    <div className="flex items-center justify-center gap-1">
-                      <Receipt className="w-4 h-4 text-blue-500" />
-                      <p className="text-2xl sm:text-3xl font-bold text-blue-600 stat-number">
-                        {totalTransactions}
-                      </p>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                      Total Transaksi
-                    </p>
-                  </div>
-                </>
-              )}
+
             </div>
           )}
-          {/* CTA: Check Availability */}
-          {!loading && (
-            <div className="mt-6 animate-fade-in-up animate-fade-in-up-delay-4">
-              <a
-                href="#status-alat"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-white font-semibold btn-press transition-all shadow-lg shadow-emerald-500/25"
-              >
-                <Search className="w-4 h-4" />
-                Cek Ketersediaan Alat
-              </a>
-            </div>
-          )}
+
         </div>
         </div>
       </section>
 
       {/* Main Content */}
       <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-8 space-y-8">
-        {/* Promotional Banner */}
-        {!promoDismissed && (
-          <div className="no-print animate-slide-down">
-            <div className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 rounded-xl p-3 sm:p-4 flex items-center justify-between gap-3 shadow-lg">
-              <div className="flex items-center gap-2 sm:gap-3 text-white min-w-0">
-                <span className="text-lg sm:text-xl flex-shrink-0">🎉</span>
-                <p className="text-sm sm:text-base font-medium truncate">
-                  PROMO: Diskon 10% untuk penyewaan pertama! Hubungi kami sekarang.
-                </p>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <a
-                  href="https://wa.me/6281234567890?text=Halo, saya tertarik dengan promo diskon MITRA SEWA"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white text-xs sm:text-sm font-semibold rounded-lg transition-all btn-press whitespace-nowrap"
-                >
-                  Hubungi
-                </a>
-                <button
-                  onClick={() => setPromoDismissed(true)}
-                  className="p-1.5 hover:bg-white/20 rounded-lg transition-colors text-white/80 hover:text-white"
-                  aria-label="Tutup promo"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Scaffolding Stats */}
         <section
           ref={(el) => { sectionRefs.current[0] = el; }}
