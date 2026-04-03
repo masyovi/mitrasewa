@@ -44,4 +44,6 @@ export interface RentalWithItems {
   createdAt: string;
   updatedAt: string;
   items: RentalItem[];
+  isOverdue?: boolean;
+  daysOverdue?: number;
 }

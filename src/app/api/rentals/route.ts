@@ -9,13 +9,41 @@ interface RentalItemInput {
   billingType: string;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const overdueOnly = searchParams.get("overdue") === "true";
+
     const rentals = await db.rental.findMany({
       include: { items: true },
       orderBy: { createdAt: "desc" },
     });
-    return NextResponse.json({ success: true, data: rentals });
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const enriched = rentals.map((rental) => {
+      const kembali = new Date(rental.tanggalKembali);
+      kembali.setHours(0, 0, 0, 0);
+
+      const isOverdue = rental.status === "aktif" && kembali < today;
+      const diffTime = today.getTime() - kembali.getTime();
+      const daysOverdue = isOverdue
+        ? Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+        : 0;
+
+      return {
+        ...rental,
+        isOverdue,
+        daysOverdue: isOverdue ? daysOverdue : 0,
+      };
+    });
+
+    const data = overdueOnly
+      ? enriched.filter((r) => r.isOverdue)
+      : enriched;
+
+    return NextResponse.json({ success: true, data });
   } catch (error) {
     console.error("Error fetching rentals:", error);
     return NextResponse.json(

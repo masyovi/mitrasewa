@@ -949,3 +949,104 @@ html {
 .tooltip-modern:hover::before {
   opacity: 1;
 }
+
+/* ==========================================================================
+   TASK 3c — Dark Mode Refinements for Admin UI
+   ========================================================================== */
+
+/* 1. Admin Sidebar Dark Mode */
+.dark aside {
+  background-color: oklch(0.22 0.02 260) !important;
+  border-color: oklch(0.3 0.02 260) !important;
+}
+
+/* 2. Admin Main Content Area Dark Mode */
+.dark .bg-gray-50 {
+  background-color: oklch(0.16 0.01 260) !important;
+}
+
+/* 3. Table Dark Mode Enhancements */
+.dark table th {
+  color: oklch(0.7 0.02 260);
+  border-bottom-color: oklch(0.3 0.02 260);
+}
+.dark table td {
+  color: oklch(0.85 0.01 260);
+}
+.dark table tr:hover td {
+  background-color: oklch(0.22 0.02 260);
+}
+
+/* 4. Card Dark Mode for Admin Cards */
+.dark .card-hover,
+.dark .card-elevated {
+  background-color: oklch(0.22 0.02 260) !important;
+  border-color: oklch(0.3 0.02 260) !important;
+}
+
+/* 5. Text Color Adjustments in Dark Mode */
+.dark .text-gray-900 {
+  color: oklch(0.95 0 0) !important;
+}
+.dark .text-gray-800 {
+  color: oklch(0.9 0 0) !important;
+}
+.dark .text-gray-700 {
+  color: oklch(0.85 0 0) !important;
+}
+.dark .text-gray-600 {
+  color: oklch(0.75 0.01 260) !important;
+}
+.dark .text-gray-500 {
+  color: oklch(0.65 0.01 260) !important;
+}
+.dark .text-gray-400 {
+  color: oklch(0.55 0.01 260) !important;
+}
+
+/* 6. Footer Dark Mode */
+.dark footer {
+  border-top-color: oklch(0.3 0.02 260);
+}
+
+/* 7. Input Fields Dark Mode */
+.dark input[type="date"],
+.dark input[type="text"],
+.dark input[type="number"],
+.dark input[type="password"],
+.dark textarea,
+.dark select {
+  background-color: oklch(0.2 0.02 260) !important;
+  border-color: oklch(0.35 0.02 260) !important;
+  color: oklch(0.9 0 0) !important;
+}
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: oklch(0.55 0.01 260);
+}
+
+/* 8. Hero Section Dark Mode */
+.dark .hero-pattern {
+  background-image: radial-gradient(oklch(0.35 0.08 163) 1px, transparent 1px);
+}
+
+/* 9. Dialog Dark Mode */
+.dark [role="dialog"] {
+  background-color: oklch(0.22 0.02 260) !important;
+  border-color: oklch(0.3 0.02 260) !important;
+}
+.dark [role="dialog"] h2,
+.dark [role="dialog"] p {
+  color: oklch(0.9 0 0) !important;
+}
+
+/* 10. Mobile Tab Buttons Dark Mode */
+.dark .bg-emerald-600 {
+  background-color: oklch(0.5 0.15 163) !important;
+}
+.dark .bg-white {
+  background-color: oklch(0.2 0.02 260) !important;
+}
+.dark .border-gray-200 {
+  border-color: oklch(0.35 0.02 260) !important;
+}

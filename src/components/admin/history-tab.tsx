@@ -9,6 +9,7 @@ import {
   RefreshCw,
   Printer,
   FileText,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -256,14 +257,14 @@ export function HistoryTab({
       ) : (
         <div className="space-y-4">
           {filteredRentals.map((rental) => (
-            <Card key={rental.id} className="border-0 shadow-md overflow-hidden">
+            <Card key={rental.id} className={`border-0 shadow-md overflow-hidden ${rental.isOverdue ? "border-l-4 border-l-red-500" : ""}`}>
               <CardContent className="p-0">
                 <div className="flex items-center justify-between p-4 pb-3 border-b border-gray-50">
                   <div>
                     <h4 className="font-bold text-gray-900">
                       {rental.namaPenyewa}
                     </h4>
-                    <div className="flex flex-wrap gap-2 mt-1">
+                    <div className="flex flex-wrap items-center gap-2 mt-1">
                       <span className="text-xs text-gray-500">
                         {rental.noHp}
                       </span>
@@ -271,17 +272,33 @@ export function HistoryTab({
                       <span className="text-xs text-gray-500">
                         {rental.alamat}
                       </span>
+                      {rental.isOverdue && (
+                        <>
+                          <span className="text-xs text-gray-400">•</span>
+                          <Badge className="bg-red-100 text-red-700 border-0 text-[11px] px-1.5 py-0 gap-1">
+                            <AlertTriangle className="w-3 h-3" />
+                            Terlambat {rental.daysOverdue} hari
+                          </Badge>
+                        </>
+                      )}
                     </div>
                   </div>
-                  <Badge
-                    className={
-                      rental.status === "aktif"
-                        ? "status-disewa"
-                        : "bg-emerald-100 text-emerald-700"
-                    }
-                  >
-                    {rental.status === "aktif" ? "Disewa" : "Kembali"}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    {rental.isOverdue && (
+                      <Badge className="bg-red-500 text-white border-0 animate-pulse">
+                        Terlambat
+                      </Badge>
+                    )}
+                    <Badge
+                      className={
+                        rental.status === "aktif"
+                          ? "status-disewa"
+                          : "bg-emerald-100 text-emerald-700"
+                      }
+                    >
+                      {rental.status === "aktif" ? "Disewa" : "Kembali"}
+                    </Badge>
+                  </div>
                 </div>
 
                 <div className="p-4 pb-2">

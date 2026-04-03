@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   DollarSign,
   History,
@@ -9,9 +10,12 @@ import {
   AlertTriangle,
   TrendingUp,
   Clock,
+  X,
+  AlertCircle,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -33,12 +37,15 @@ export function DashboardTab({
   stockData: StockData[];
   rentals: RentalWithItems[];
 }) {
+  const [warningDismissed, setWarningDismissed] = useState(false);
   const scaffolding = stockData.find((s) => s.item === "scaffolding");
   const totalAktif = rentals.filter((r) => r.status === "aktif").length;
   const totalKembali = rentals.filter((r) => r.status === "kembali").length;
   const totalPendapatan = rentals.reduce((sum, r) => sum + r.totalHarga, 0);
   const totalPerbaikan = stockData.reduce((sum, s) => sum + s.perbaikan, 0);
   const totalAllItems = stockData.reduce((sum, s) => sum + s.total, 0);
+
+  const overdueRentals = rentals.filter((r) => r.isOverdue);
 
   return (
     <div className="space-y-6">
@@ -48,6 +55,67 @@ export function DashboardTab({
           Ringkasan data penyewaan & stok alat
         </p>
       </div>
+
+      {/* Overdue Warning Alert */}
+      {overdueRentals.length > 0 && !warningDismissed && (
+        <div className="animate-fade-in-up rounded-xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-4 sm:p-5 shadow-md">
+          <div className="flex items-start gap-3">
+            <div className="relative flex-shrink-0">
+              <div className="bg-amber-100 p-2 rounded-lg">
+                <AlertTriangle className="w-5 h-5 text-amber-600" />
+              </div>
+              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500" />
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="font-bold text-amber-800 text-sm sm:text-base">
+                  Peringatan: {overdueRentals.length} Penyewaan Terlambat!
+                </h3>
+                <Badge className="bg-amber-500 text-white badge-pulse border-0">
+                  {overdueRentals.length} telat
+                </Badge>
+              </div>
+              <p className="text-xs sm:text-sm text-amber-700 mb-3">
+                Ada penyewaan yang sudah melewati tanggal pengembalian. Segera hubungi penyewa untuk mengembalikan alat.
+              </p>
+              <div className="bg-white/60 rounded-lg border border-amber-100 p-3 max-h-40 overflow-y-auto">
+                <div className="space-y-2">
+                  {overdueRentals.map((r) => (
+                    <div
+                      key={r.id}
+                      className="flex items-center justify-between gap-2 text-sm"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <AlertCircle className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" />
+                        <span className="font-medium text-gray-800 truncate">
+                          {r.namaPenyewa}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <Badge className="bg-red-100 text-red-700 border-0 text-[11px] px-1.5 py-0">
+                          Terlambat {r.daysOverdue} hari
+                        </Badge>
+                        <span className="text-xs text-gray-500 font-medium">
+                          {formatCurrency(r.totalHarga)}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => setWarningDismissed(true)}
+              className="flex-shrink-0 p-1 rounded-md text-amber-400 hover:text-amber-600 hover:bg-amber-100 transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
