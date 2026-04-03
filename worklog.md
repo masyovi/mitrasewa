@@ -271,3 +271,33 @@ Stage Summary:
 - Admin header: new notification bell with animated overdue count badge
 - Beranda: equipment availability badges in Status Alat section
 - Beranda: live status pulse indicator in header subtitle
+
+---
+Task ID: 18
+Agent: Main Agent
+Task: Update contact info (WhatsApp, address, hours) and redesign floating WhatsApp button
+
+Work Log:
+- Updated WhatsApp number from 0812-3456-7890 to 0851-8592-4243 in 4 locations:
+  1. Hubungi Kami phone display
+  2. FAQ answer text
+  3. Floating WhatsApp button href (wa.me/6285185924243)
+  4. Equipment detail modal CTA href (wa.me/6285185924243)
+- Updated address from "Pengelola Gedung Pusat BMT NU Ngasem Group" to "Gedung Pusat Penggerak Ekonomi BMT NU Ngasem Group" in 2 locations:
+  1. Hubungi Kami location card
+  2. Footer "Didukung oleh" text
+- Updated Jam Operasional from 7-day schedule (Mon-Fri 08:00-17:00, Sat 08:00-12:00, Sun closed) to simple "Buka Setiap Hari 07.00 – 17.00 WIB" with single status line
+- Redesigned floating WhatsApp button:
+  - Changed from generic MessageCircle icon to official WhatsApp SVG logo (white)
+  - Smaller size: w-12 h-12 (was p-3.5 which was larger)
+  - WhatsApp brand green: bg-[#25D366] / hover:bg-[#20BD5A]
+  - Added hover:scale-110 micro-interaction
+  - Removed animate-float and tooltip-modern for cleaner look
+  - Position adjusted: bottom-5 right-5 (was bottom-6 right-6)
+
+Stage Summary:
+- WhatsApp: +62 851-8592-4243 (updated in all 4 locations)
+- Address: Gedung Pusat Penggerak Ekonomi BMT NU Ngasem Group
+- Hours: Buka setiap hari 07.00 – 17.00 WIB (simplified from 7-day table)
+- Floating button: smaller, cleaner, official WhatsApp logo, brand green color
+- ESLint clean, dev server no errors
