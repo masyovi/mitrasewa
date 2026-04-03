@@ -19,6 +19,9 @@ import {
   Star,
   Trophy,
   Receipt,
+  X,
+  HelpCircle,
+  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,9 +36,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { AboutModal } from "@/components/about-modal";
 import { formatCurrency } from "@/components/admin/helpers";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface StockItem {
   item: string;
@@ -79,10 +88,41 @@ export function BerandaView() {
   const [duration, setDuration] = useState<number>(1);
   const [estimatedCost, setEstimatedCost] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+
+  // Equipment detail modal state
+  const [selectedEquipDetail, setSelectedEquipDetail] = useState<StockItem | null>(null);
+
+  // Scroll reveal refs
+  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Scroll reveal observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    sectionRefs.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  function handleEquipmentClick(item: StockItem) {
+    setSelectedEquipDetail(item);
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -295,7 +335,10 @@ export function BerandaView() {
       {/* Main Content */}
       <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-8 space-y-8">
         {/* Scaffolding Stats */}
-        <section className="animate-fade-in-up">
+        <section
+          ref={(el) => { sectionRefs.current[0] = el; }}
+          className="reveal"
+        >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
             <h3 className="text-lg font-bold text-gray-900">Scaffolding</h3>
@@ -347,7 +390,10 @@ export function BerandaView() {
         </section>
 
         {/* Equipment Status */}
-        <section className="animate-fade-in-up animate-fade-in-up-delay-1">
+        <section
+          ref={(el) => { sectionRefs.current[1] = el; }}
+          className="reveal"
+        >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
             <h3 className="text-lg font-bold text-gray-900">Status Alat</h3>
@@ -368,7 +414,8 @@ export function BerandaView() {
                 return (
                   <Card
                     key={machine.item}
-                    className="border-0 shadow-md bg-white overflow-hidden card-elevated"
+                    className="border-0 shadow-md bg-white overflow-hidden card-elevated cursor-pointer"
+                    onClick={() => handleEquipmentClick(machine)}
                   >
                     <CardContent className="p-5 sm:p-6">
                       <div className="flex items-center justify-between">
@@ -478,7 +525,10 @@ export function BerandaView() {
         </section>
 
         {/* Komponen Scaffolding */}
-        <section className="animate-fade-in-up animate-fade-in-up-delay-2">
+        <section
+          ref={(el) => { sectionRefs.current[2] = el; }}
+          className="reveal"
+        >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
             <h3 className="text-lg font-bold text-gray-900">
@@ -500,9 +550,10 @@ export function BerandaView() {
                 return (
                   <Card
                     key={item.item}
-                    className={`border-0 shadow-md bg-white overflow-hidden card-elevated ${
+                    className={`border-0 shadow-md bg-white overflow-hidden card-elevated cursor-pointer ${
                       isPerbaikan ? "ring-1 ring-orange-200" : ""
                     }`}
+                    onClick={() => handleEquipmentClick(item)}
                   >
                     <CardContent className="p-5 sm:p-6">
                       <div className="flex items-center justify-between mb-3">
@@ -558,7 +609,10 @@ export function BerandaView() {
         </section>
 
         {/* Contact Section */}
-        <section className="animate-fade-in-up">
+        <section
+          ref={(el) => { sectionRefs.current[3] = el; }}
+          className="reveal"
+        >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
             <h3 className="text-lg font-bold text-gray-900">Hubungi Kami</h3>
@@ -598,8 +652,150 @@ export function BerandaView() {
           </Card>
         </section>
 
-        {/* ===== NEW SECTION: Kalkulator Biaya Sewa ===== */}
+        {/* ===== NEW SECTION: Jam Operasional ===== */}
         <section className="animate-fade-in-up">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1 h-6 bg-emerald-500 rounded-full" />
+            <h3 className="text-lg font-bold text-gray-900">Jam Operasional</h3>
+          </div>
+          <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated">
+            <CardContent className="p-5 sm:p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="bg-emerald-100 dark:bg-emerald-900/40 p-2 rounded-xl">
+                  <Clock className="w-5 h-5 text-emerald-600" />
+                </div>
+                <h4 className="font-bold text-gray-900 dark:text-gray-100 text-sm">Jam Operasional</h4>
+              </div>
+              <div className="space-y-0 divide-y divide-gray-100 dark:divide-gray-800">
+                {[
+                  { day: "Senin", hours: "08:00 - 17:00", status: "open" as const },
+                  { day: "Selasa", hours: "08:00 - 17:00", status: "open" as const },
+                  { day: "Rabu", hours: "08:00 - 17:00", status: "open" as const },
+                  { day: "Kamis", hours: "08:00 - 17:00", status: "open" as const },
+                  { day: "Jumat", hours: "08:00 - 17:00", status: "open" as const },
+                  { day: "Sabtu", hours: "08:00 - 12:00", status: "partial" as const },
+                  { day: "Minggu", hours: "Tutup", status: "closed" as const },
+                ].map((row) => (
+                  <div
+                    key={row.day}
+                    className="flex items-center justify-between py-2.5 first:pt-0 last:pb-0"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span
+                        className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
+                          row.status === "open"
+                            ? "bg-emerald-500"
+                            : row.status === "partial"
+                              ? "bg-amber-500"
+                              : "bg-red-500"
+                        }`}
+                      />
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        {row.day}
+                      </span>
+                    </div>
+                    <span
+                      className={`text-sm ${
+                        row.status === "closed"
+                          ? "text-red-500 font-medium"
+                          : row.status === "partial"
+                            ? "text-amber-600 font-medium"
+                            : "text-gray-600 dark:text-gray-400"
+                      }`}
+                    >
+                      {row.hours}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg px-4 py-3">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Untuk pemesanan di luar jam operasional, silakan hubungi kami via{" "}
+                  <span className="text-emerald-600 dark:text-emerald-400 font-medium">WhatsApp</span>
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* ===== NEW SECTION: FAQ (Pertanyaan Umum) ===== */}
+        <section className="animate-fade-in-up">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1 h-6 bg-emerald-500 rounded-full" />
+            <h3 className="text-lg font-bold text-gray-900">Pertanyaan Umum</h3>
+          </div>
+          <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated">
+            <CardContent className="p-5 sm:p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="bg-emerald-100 dark:bg-emerald-900/40 p-2 rounded-xl">
+                  <HelpCircle className="w-5 h-5 text-emerald-600" />
+                </div>
+                <h4 className="font-bold text-gray-900 dark:text-gray-100 text-sm">Pertanyaan Umum</h4>
+              </div>
+              <div className="space-y-3">
+                {[
+                  {
+                    q: "Bagaimana cara menyewa alat?",
+                    a: "Hubungi kami via WhatsApp atau telepon di 0812-3456-7890. Pilih alat yang dibutuhkan, tentukan tanggal sewa dan durasi, lalu kami akan menyiapkan alat untuk Anda.",
+                  },
+                  {
+                    q: "Apa syarat penyewaan?",
+                    a: "Cukup menyebutkan identitas diri (nama, alamat, no HP) dan lokasi proyek. Tidak perlu deposit untuk penyewaan pertama.",
+                  },
+                  {
+                    q: "Berapa lama minimum sewa?",
+                    a: "Minimum sewa adalah 1 hari. Untuk mesin molen dan mesin stamper, tersedia paket bulanan dengan harga lebih hemat.",
+                  },
+                  {
+                    q: "Apakah ada pengiriman alat?",
+                    a: "Ya, kami menyediakan jasa pengiriman untuk area Surabaya dan sekitarnya. Biaya pengiriman disesuaikan dengan jarak lokasi.",
+                  },
+                  {
+                    q: "Bagaimana jika alat rusak saat disewa?",
+                    a: "Segala kerusakan akibat pemakaian normal ditanggung oleh kami. Kerusakan akibat kelalaian penyewa akan dikenakan biaya perbaikan sesuai tingkat kerusakan.",
+                  },
+                ].map((faq, idx) => {
+                  const isOpen = openFaqIndex === idx;
+                  return (
+                    <div
+                      key={idx}
+                      className="bg-gray-50 dark:bg-gray-800/50 rounded-xl overflow-hidden transition-all hover-lift"
+                    >
+                      <button
+                        onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
+                        className="w-full flex items-center justify-between gap-3 p-4 text-left transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                      >
+                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {faq.q}
+                        </span>
+                        <ChevronDown
+                          className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-300 ${
+                            isOpen ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+                      <div
+                        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                        }`}
+                      >
+                        <p className="px-4 pb-4 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                          {faq.a}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* ===== NEW SECTION: Kalkulator Biaya Sewa ===== */}
+        <section
+          ref={(el) => { sectionRefs.current[4] = el; }}
+          className="reveal"
+        >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
             <h3 className="text-lg font-bold text-gray-900">
@@ -758,7 +954,10 @@ export function BerandaView() {
         </section>
 
         {/* ===== NEW SECTION: Kenapa Memilih Kami ===== */}
-        <section className="animate-fade-in-up">
+        <section
+          ref={(el) => { sectionRefs.current[5] = el; }}
+          className="reveal"
+        >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
             <h3 className="text-lg font-bold text-gray-900">
@@ -829,7 +1028,10 @@ export function BerandaView() {
         </section>
 
         {/* ===== NEW SECTION: Testimoni Pelanggan ===== */}
-        <section className="animate-fade-in-up">
+        <section
+          ref={(el) => { sectionRefs.current[6] = el; }}
+          className="reveal"
+        >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
             <h3 className="text-lg font-bold text-gray-900">
@@ -977,6 +1179,148 @@ export function BerandaView() {
           </div>
         </div>
       </footer>
+
+      {/* Equipment Detail Modal */}
+      {selectedEquipDetail && (() => {
+        const eq = selectedEquipDetail;
+        const eqPrice = priceData.find((p) => p.item === eq.item);
+        const isPerbaikan = eq.perbaikan > 0;
+        const isHabis = eq.tersedia <= 0 && !isPerbaikan;
+        const statusLabel = isPerbaikan ? "Perbaikan" : isHabis ? "Habis" : "Ready";
+        const statusColor = isPerbaikan ? "bg-orange-100 text-orange-700" : isHabis ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700";
+        const dotColor = isPerbaikan ? "bg-orange-500" : isHabis ? "bg-red-500" : "bg-emerald-500";
+        const gradientBg = isPerbaikan
+          ? "from-orange-500 to-orange-400"
+          : isHabis
+            ? "from-red-500 to-red-400"
+            : "from-emerald-600 to-emerald-500";
+
+        const descriptions: Record<string, string> = {
+          scaffolding: "Scaffolding merupakan sistem rangka baja yang digunakan untuk menopang pekerjaan konstruksi bangunan bertingkat. Tersedia dalam bentuk set lengkap termasuk frame, joint pin, dan u head.",
+          mesin_stamper: "Mesin stamper digunakan untuk memadatkan tanah pada proyek konstruksi. Cocok untuk persiapan lahan, pembuatan jalan, dan pekerjaan fondasi.",
+          mesin_molen: "Mesin molen (pengaduk beton) digunakan untuk mencampur adukan beton secara merata. Tersedia dalam kapasitas standar untuk proyek skala kecil hingga menengah.",
+          catwalk: "Catwalk (pijakan scaffolding) adalah platform kerja yang dipasang pada rangka scaffolding untuk memberikan area berdiri yang aman bagi pekerja.",
+          shock: "Joint Pin (Shock) adalah penghubung vertikal yang digunakan untuk mengunci frame scaffolding satu dengan lainnya.",
+          u_head: "U Head adalah komponen penopang yang dipasang di atas scaffolding untuk menahan beban balok atau pelat lantai kerja.",
+        };
+
+        return (
+          <Dialog open={!!selectedEquipDetail} onOpenChange={(open) => { if (!open) setSelectedEquipDetail(null); }}>
+            <DialogContent className="card-elevated max-w-lg w-[95vw] p-0 overflow-hidden">
+              {/* Header with gradient */}
+              <div className={`bg-gradient-to-r ${gradientBg} px-6 py-5 relative`}>
+                <DialogHeader className="text-left">
+                  <DialogTitle className="text-white text-lg font-bold">
+                    {eq.label}
+                  </DialogTitle>
+                </DialogHeader>
+                <Badge className={`absolute top-5 right-14 ${statusColor} border-0 text-xs`}>
+                  <span className={`inline-block w-2 h-2 rounded-full mr-1.5 ${dotColor}`} />
+                  {statusLabel}
+                </Badge>
+              </div>
+
+              <div className="px-6 py-5 space-y-5 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                {/* Availability Stats */}
+                <div className="animate-fade-in-up">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Ketersediaan</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl py-3 px-2 text-center">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Total</p>
+                      <p className="text-xl font-bold text-gray-900 dark:text-gray-100 stat-number">{eq.total}</p>
+                      <p className="text-[10px] text-gray-400">{eq.unit}</p>
+                    </div>
+                    <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl py-3 px-2 text-center">
+                      <p className="text-xs text-emerald-600">Tersedia</p>
+                      <p className="text-xl font-bold text-emerald-700 dark:text-emerald-300 stat-number">{eq.tersedia}</p>
+                      <p className="text-[10px] text-emerald-500">{eq.unit}</p>
+                    </div>
+                    <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl py-3 px-2 text-center">
+                      <p className="text-xs text-amber-600">Disewa</p>
+                      <p className="text-xl font-bold text-amber-700 dark:text-amber-300 stat-number">{eq.disewa}</p>
+                      <p className="text-[10px] text-amber-500">{eq.unit}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="animate-fade-in-up">
+                  <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden flex">
+                    {eq.disewa > 0 && (
+                      <div
+                        className="h-full bg-amber-400 progress-bar-animate"
+                        style={{ width: `${eq.total > 0 ? (eq.disewa / eq.total) * 100 : 0}%` }}
+                      />
+                    )}
+                    {isPerbaikan && (
+                      <div
+                        className="h-full bg-orange-400 progress-bar-animate"
+                        style={{ width: `${eq.total > 0 ? (eq.perbaikan / eq.total) * 100 : 0}%` }}
+                      />
+                    )}
+                    {eq.tersedia > 0 && (
+                      <div
+                        className="h-full bg-emerald-500 progress-bar-animate"
+                        style={{ width: `${eq.total > 0 ? (eq.tersedia / eq.total) * 100 : 0}%` }}
+                      />
+                    )}
+                  </div>
+                  <div className="flex gap-3 mt-1.5">
+                    {eq.tersedia > 0 && (
+                      <span className="text-[10px] text-emerald-600">■ Tersedia</span>
+                    )}
+                    {eq.disewa > 0 && (
+                      <span className="text-[10px] text-amber-500">■ Disewa</span>
+                    )}
+                    {isPerbaikan && (
+                      <span className="text-[10px] text-orange-500">■ Perbaikan</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Pricing Section */}
+                {eqPrice && (
+                  <div className="animate-fade-in-up">
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Harga Sewa</p>
+                    <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl px-4 py-3 space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-emerald-700 dark:text-emerald-300">Harga per {eqPrice.unit}</span>
+                        <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 stat-number">
+                          {formatCurrency(eqPrice.price)}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                        {eqPrice.billingType === "bulanan"
+                          ? "Hitungan per bulan (1 bulan = 30 hari)"
+                          : "Hitungan per hari"}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Equipment Info */}
+                <div className="animate-fade-in-up">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Informasi Alat</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                    {descriptions[eq.item] ?? "Peralatan konstruksi berkualitas untuk kebutuhan proyek Anda."}
+                  </p>
+                </div>
+
+                {/* CTA Button */}
+                <a
+                  href={`https://wa.me/6281234567890?text=Halo, saya ingin menyewa ${eq.label}. Mohon info ketersediaan.`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full h-11 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-all btn-press animate-fade-in-up"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  Sewa Sekarang via WhatsApp
+                </a>
+              </div>
+            </DialogContent>
+          </Dialog>
+        );
+      })()}
 
       <AboutModal open={aboutOpen} onOpenChange={setAboutOpen} />
     </div>

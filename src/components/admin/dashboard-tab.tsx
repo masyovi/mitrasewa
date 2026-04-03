@@ -12,6 +12,9 @@ import {
   Clock,
   X,
   AlertCircle,
+  ArrowDownCircle,
+  ArrowUpCircle,
+  ArrowDown,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +32,21 @@ import {
   type StockData,
 } from "@/lib/types";
 import { formatCurrency, formatDateShort } from "./helpers";
+
+function timeAgo(dateStr: string): string {
+  const now = new Date();
+  const date = new Date(dateStr);
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  if (diffMins < 1) return "Baru saja";
+  if (diffMins < 60) return `${diffMins} menit lalu`;
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `${diffHours} jam lalu`;
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays < 30) return `${diffDays} hari lalu`;
+  const diffMonths = Math.floor(diffDays / 30);
+  return `${diffMonths} bulan lalu`;
+}
 
 export function DashboardTab({
   stockData,
@@ -73,12 +91,19 @@ export function DashboardTab({
     ? popularEquipment[0].totalJumlah
     : 1;
 
+  // Recent activities for timeline (sorted by createdAt desc, last 8)
+  const recentActivities = useMemo(() => {
+    return [...rentals]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 8);
+  }, [rentals]);
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold text-gray-900">Dashboard</h2>
         <p className="text-sm text-gray-500">
-          Ringkasan data penyewaan & stok alat
+          Ringkasan data penyewaan &amp; stok alat
         </p>
       </div>
 
@@ -388,7 +413,7 @@ export function DashboardTab({
                 Belum ada data penyewaan
               </p>
               <p className="text-gray-400 text-xs mt-1.5 max-w-[240px] mx-auto">
-                Data akan muncul setelah input sewa pertama melalui tab "Input Sewa"
+                Data akan muncul setelah input sewa pertama melalui tab &quot;Input Sewa&quot;
               </p>
             </div>
           ) : (
@@ -479,6 +504,141 @@ export function DashboardTab({
           </CardContent>
         </Card>
       )}
+
+      {/* Recent Activity Timeline */}
+      <Card className="border-0 shadow-md card-elevated animate-fade-in-up animate-fade-in-up-delay-3">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-bold flex items-center gap-2">
+            <ArrowDown className="w-5 h-5 text-emerald-600" />
+            Aktivitas Terkini
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {recentActivities.length === 0 ? (
+            <div className="text-center py-10">
+              <p className="text-gray-400 text-sm">Belum ada aktivitas</p>
+            </div>
+          ) : (
+            <div className="relative">
+              {/* Timeline line */}
+              <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gray-200 dark:bg-gray-700 hidden sm:block" />
+              <div className="space-y-3">
+                {recentActivities.map((r, idx) => {
+                  const isReturned = r.status === "kembali";
+                  const isOverdue = r.isOverdue;
+                  const dotColor = isReturned
+                    ? "bg-emerald-500"
+                    : isOverdue
+                      ? "bg-red-500"
+                      : "bg-amber-500";
+                  const iconBg = isReturned
+                    ? "bg-emerald-100 text-emerald-600"
+                    : isOverdue
+                      ? "bg-red-100 text-red-600"
+                      : "bg-amber-100 text-amber-600";
+                  const ActivityIcon = isReturned
+                    ? ArrowUpCircle
+                    : isOverdue
+                      ? AlertTriangle
+                      : ArrowDownCircle;
+                  const activityLabel = isReturned
+                    ? "mengembalikan"
+                    : isOverdue
+                      ? "terlambat"
+                      : "menyewa";
+                  const itemCount = r.items.length;
+                  const itemText =
+                    itemCount === 1
+                      ? r.items[0].label
+                      : r.items.map((i) => i.label).join(", ");
+
+                  return (
+                    <div
+                      key={r.id}
+                      className="flex items-start gap-3 sm:gap-4 animate-fade-in-up"
+                      style={{
+                        animationDelay: `${idx * 80}ms`,
+                        animationFillMode: "both",
+                      }}
+                    >
+                      {/* Left: dot + line (desktop) */}
+                      <div className="hidden sm:flex flex-col items-center relative z-10 flex-shrink-0 w-[22px]">
+                        <div
+                          className={`w-3 h-3 rounded-full ${dotColor} ring-4 ring-white dark:ring-gray-900 flex-shrink-0`}
+                        />
+                      </div>
+
+                      {/* Right: activity card */}
+                      <div className="flex-1 min-w-0">
+                        {/* Desktop version */}
+                        <div className="hidden sm:block bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex items-start gap-2.5 min-w-0">
+                              <div
+                                className={`${iconBg} p-1.5 rounded-lg flex-shrink-0 mt-0.5`}
+                              >
+                                <ActivityIcon className="w-3.5 h-3.5" />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-sm">
+                                  <span className="font-bold text-gray-900 dark:text-gray-100">
+                                    {r.namaPenyewa}
+                                  </span>{" "}
+                                  <span className="text-gray-500 dark:text-gray-400">
+                                    {activityLabel} {itemCount} alat
+                                  </span>
+                                </p>
+                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate">
+                                  {itemText}
+                                </p>
+                                <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
+                                  {timeAgo(r.createdAt)}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right flex-shrink-0">
+                              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                {formatCurrency(r.totalHarga)}
+                              </p>
+                              {isOverdue && r.daysOverdue !== undefined && (
+                                <Badge className="bg-red-100 text-red-700 border-0 text-[10px] px-1.5 py-0 mt-1">
+                                  Terlambat {r.daysOverdue} hari
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Mobile version (simplified) */}
+                        <div className="sm:hidden bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3 flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <div
+                              className={`${iconBg} p-1.5 rounded-lg flex-shrink-0`}
+                            >
+                              <ActivityIcon className="w-3.5 h-3.5" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                {r.namaPenyewa}
+                              </p>
+                              <p className="text-[11px] text-gray-400">
+                                {timeAgo(r.createdAt)}
+                              </p>
+                            </div>
+                          </div>
+                          <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 flex-shrink-0">
+                            {formatCurrency(r.totalHarga)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
