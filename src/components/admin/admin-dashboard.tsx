@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { useAppStore, type AdminTab } from "@/store/use-store";
+import { useTheme } from "next-themes";
 import {
   Building2,
   LogOut,
@@ -10,9 +11,12 @@ import {
   FilePlus,
   DollarSign,
   History,
+  BarChart3,
   Menu,
   X,
   Info,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -36,11 +40,16 @@ const HargaTab = dynamic(() => import("./harga-tab").then((mod) => ({ default: m
 const HistoryTab = dynamic(() => import("./history-tab").then((mod) => ({ default: mod.HistoryTab })), {
   loading: () => <Skeleton className="h-64 rounded-xl" />,
 });
+const LaporanTab = dynamic(() => import("./laporan-tab").then((mod) => ({ default: mod.LaporanTab })), {
+  loading: () => <Skeleton className="h-64 rounded-xl" />,
+});
 
 export function AdminDashboard() {
   const { adminTab, setAdminTab, logout, sidebarOpen, setSidebarOpen } =
     useAppStore();
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   const [stockData, setStockData] = useState<StockData[]>([]);
   const [priceData, setPriceData] = useState<PriceData[]>([]);
@@ -68,6 +77,10 @@ export function AdminDashboard() {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
   }, []);
 
   useEffect(() => {
@@ -104,6 +117,7 @@ export function AdminDashboard() {
     { id: "input", label: "Input Sewa", icon: <FilePlus className="w-4 h-4" /> },
     { id: "harga", label: "Setting Harga", icon: <DollarSign className="w-4 h-4" /> },
     { id: "history", label: "History", icon: <History className="w-4 h-4" /> },
+    { id: "laporan", label: "Laporan", icon: <BarChart3 className="w-4 h-4" /> },
   ];
 
   return (
@@ -134,6 +148,17 @@ export function AdminDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {mounted && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="text-white/80 hover:text-white hover:bg-white/20"
+                aria-label="Toggle dark mode"
+              >
+                {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="icon"
@@ -162,11 +187,7 @@ export function AdminDashboard() {
               <button
                 key={tab.id}
                 onClick={() => setAdminTab(tab.id)}
-                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  adminTab === tab.id
-                    ? "bg-emerald-50 text-emerald-700 shadow-sm"
-                    : "text-gray-600 hover:bg-gray-50"
-                }`}
+                className={`sidebar-item ${adminTab === tab.id ? "sidebar-item-active" : ""}`}
               >
                 {tab.icon}
                 {tab.label}
@@ -181,7 +202,7 @@ export function AdminDashboard() {
               className="fixed inset-0 bg-black/40"
               onClick={() => setSidebarOpen(false)}
             />
-            <aside className="fixed left-0 top-[52px] bottom-0 w-64 bg-white shadow-xl p-4 z-50">
+            <aside className="fixed left-0 top-[52px] bottom-0 w-64 bg-white shadow-xl p-4 z-50 animate-slide-in-left">
               <nav className="space-y-1">
                 {tabs.map((tab) => (
                   <button
@@ -190,11 +211,7 @@ export function AdminDashboard() {
                       setAdminTab(tab.id);
                       setSidebarOpen(false);
                     }}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                      adminTab === tab.id
-                        ? "bg-emerald-50 text-emerald-700"
-                        : "text-gray-600 hover:bg-gray-50"
-                    }`}
+                    className={`sidebar-item ${adminTab === tab.id ? "sidebar-item-active" : ""}`}
                   >
                     {tab.icon}
                     {tab.label}
@@ -258,6 +275,7 @@ export function AdminDashboard() {
                   onExport={handleExportCSV}
                 />
               )}
+              {adminTab === "laporan" && <LaporanTab />}
             </>
           )}
         </main>

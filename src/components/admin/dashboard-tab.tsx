@@ -51,7 +51,7 @@ export function DashboardTab({
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <Card className="border-0 shadow-md card-hover animate-fade-in-up">
+        <Card className="border-0 shadow-md card-elevated animate-fade-in-up">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="bg-emerald-100 p-2 rounded-lg">
@@ -59,13 +59,13 @@ export function DashboardTab({
               </div>
               <TrendingUp className="w-4 h-4 text-emerald-400" />
             </div>
-            <p className="text-2xl font-bold text-gray-900 animate-count-up">
+            <p className="text-2xl font-bold text-gray-900 animate-count-up stat-number">
               {scaffolding?.total ?? 0}
             </p>
             <p className="text-xs text-gray-500">Total Scaffolding (Set)</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-md card-hover animate-fade-in-up animate-fade-in-up-delay-1">
+        <Card className="border-0 shadow-md card-elevated animate-fade-in-up animate-fade-in-up-delay-1">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="bg-amber-100 p-2 rounded-lg">
@@ -73,33 +73,33 @@ export function DashboardTab({
               </div>
               <TrendingUp className="w-4 h-4 text-amber-400" />
             </div>
-            <p className="text-2xl font-bold text-gray-900 animate-count-up">
+            <p className="text-2xl font-bold text-gray-900 animate-count-up stat-number">
               {scaffolding?.disewa ?? 0}
             </p>
             <p className="text-xs text-gray-500">Scaffolding Disewa</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-md card-hover animate-fade-in-up animate-fade-in-up-delay-2">
+        <Card className="border-0 shadow-md card-elevated animate-fade-in-up animate-fade-in-up-delay-2">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="bg-emerald-100 p-2 rounded-lg">
                 <Package className="w-4 h-4 text-emerald-600" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900 animate-count-up">
+            <p className="text-2xl font-bold text-gray-900 animate-count-up stat-number">
               {scaffolding?.tersedia ?? 0}
             </p>
             <p className="text-xs text-gray-500">Scaffolding Tersedia</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-md card-hover animate-fade-in-up animate-fade-in-up-delay-3">
+        <Card className="border-0 shadow-md card-elevated animate-fade-in-up animate-fade-in-up-delay-3">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="bg-emerald-100 p-2 rounded-lg">
                 <DollarSign className="w-4 h-4 text-emerald-600" />
               </div>
             </div>
-            <p className="text-lg sm:text-xl font-bold text-gray-900 animate-count-up">
+            <p className="text-lg sm:text-xl font-bold text-gray-900 animate-count-up stat-number">
               {formatCurrency(totalPendapatan)}
             </p>
             <p className="text-xs text-gray-500">Total Pendapatan</p>
@@ -109,23 +109,23 @@ export function DashboardTab({
 
       {/* Stats Row */}
       <div className="grid grid-cols-3 gap-3 sm:gap-4">
-        <Card className="border-0 shadow-md bg-emerald-50 card-hover animate-fade-in-up">
+        <Card className="border-0 shadow-md bg-emerald-50 card-elevated animate-fade-in-up">
           <CardContent className="p-4 text-center">
-            <p className="text-3xl font-bold text-emerald-700 animate-count-up">{totalAktif}</p>
+            <p className="text-3xl font-bold text-emerald-700 animate-count-up stat-number">{totalAktif}</p>
             <p className="text-sm text-emerald-600">Sewa Aktif</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-md bg-gray-50 card-hover animate-fade-in-up animate-fade-in-up-delay-1">
+        <Card className="border-0 shadow-md bg-gray-50 card-elevated animate-fade-in-up animate-fade-in-up-delay-1">
           <CardContent className="p-4 text-center">
-            <p className="text-3xl font-bold text-gray-700 animate-count-up">
+            <p className="text-3xl font-bold text-gray-700 animate-count-up stat-number">
               {totalKembali}
             </p>
             <p className="text-sm text-gray-600">Sudah Kembali</p>
           </CardContent>
         </Card>
-        <Card className={`border-0 shadow-md card-hover animate-fade-in-up animate-fade-in-up-delay-2 ${totalPerbaikan > 0 ? "bg-orange-50" : "bg-gray-50"}`}>
+        <Card className={`border-0 shadow-md card-elevated animate-fade-in-up animate-fade-in-up-delay-2 ${totalPerbaikan > 0 ? "bg-orange-50" : "bg-gray-50"}`}>
           <CardContent className="p-4 text-center">
-            <p className={`text-3xl font-bold animate-count-up ${totalPerbaikan > 0 ? "text-orange-700" : "text-gray-700"}`}>
+            <p className={`text-3xl font-bold animate-count-up stat-number ${totalPerbaikan > 0 ? "text-orange-700" : "text-gray-700"}`}>
               {totalPerbaikan}
             </p>
             <p className={`text-sm ${totalPerbaikan > 0 ? "text-orange-600" : "text-gray-600"}`}>
@@ -137,7 +137,7 @@ export function DashboardTab({
       </div>
 
       {/* Stock Table */}
-      <Card className="border-0 shadow-md animate-fade-in-up">
+      <Card className="border-0 shadow-md card-elevated animate-fade-in-up">
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-bold flex items-center gap-2">
             <HardHat className="w-5 h-5 text-emerald-600" />
@@ -210,7 +210,7 @@ export function DashboardTab({
       </Card>
 
       {/* Recent Rentals */}
-      <Card className="border-0 shadow-md animate-fade-in-up animate-fade-in-up-delay-1">
+      <Card className="border-0 shadow-md card-elevated animate-fade-in-up animate-fade-in-up-delay-1">
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-bold flex items-center gap-2">
             <History className="w-5 h-5 text-emerald-600" />

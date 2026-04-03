@@ -1,7 +1,8 @@
 "use client";
 
 import { useAppStore } from "@/store/use-store";
-import { Building2, ShieldCheck, AlertTriangle, Info, Phone, MapPin, MessageCircle } from "lucide-react";
+import { useTheme } from "next-themes";
+import { Building2, ShieldCheck, AlertTriangle, Info, Phone, MapPin, MessageCircle, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,9 +22,15 @@ interface StockItem {
 
 export function BerandaView() {
   const { setView } = useAppStore();
+  const { theme, setTheme } = useTheme();
   const [stockData, setStockData] = useState<StockItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     async function fetchStock() {
@@ -69,6 +76,17 @@ export function BerandaView() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {mounted && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="text-white/80 hover:text-white hover:bg-white/20 transition-all"
+                aria-label="Toggle dark mode"
+              >
+                {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="icon"
@@ -99,7 +117,7 @@ export function BerandaView() {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-mitra-gradient-light hero-pattern px-4 py-10 sm:py-16 animate-fade-in">
+      <section className="bg-mesh-gradient hero-pattern px-4 py-10 sm:py-16 animate-fade-in">
         <div className="max-w-6xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 px-4 py-1.5 rounded-full text-sm font-medium mb-4 animate-fade-in-up">
             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse-green" />
@@ -117,25 +135,25 @@ export function BerandaView() {
           {/* Quick stats in hero */}
           {!loading && (
             <div className="flex flex-wrap justify-center gap-6 mt-8 animate-fade-in-up animate-fade-in-up-delay-3">
-              <div className="text-center">
-                <p className="text-2xl sm:text-3xl font-bold text-emerald-600">
+              <div className="text-center hover-lift rounded-xl px-4 py-2">
+                <p className="text-2xl sm:text-3xl font-bold text-emerald-600 stat-number">
                   {stockData.length}
                 </p>
-                <p className="text-xs text-gray-500">Jenis Alat</p>
+                <p className="text-xs text-gray-500 mt-0.5">Jenis Alat</p>
               </div>
               <div className="w-px h-10 bg-gray-200" />
-              <div className="text-center">
-                <p className="text-2xl sm:text-3xl font-bold text-emerald-600">
+              <div className="text-center hover-lift rounded-xl px-4 py-2">
+                <p className="text-2xl sm:text-3xl font-bold text-emerald-600 stat-number">
                   {stockData.reduce((sum, s) => sum + s.tersedia, 0)}
                 </p>
-                <p className="text-xs text-gray-500">Unit Tersedia</p>
+                <p className="text-xs text-gray-500 mt-0.5">Unit Tersedia</p>
               </div>
               <div className="w-px h-10 bg-gray-200" />
-              <div className="text-center">
-                <p className="text-2xl sm:text-3xl font-bold text-emerald-600">
+              <div className="text-center hover-lift rounded-xl px-4 py-2">
+                <p className="text-2xl sm:text-3xl font-bold text-emerald-600 stat-number">
                   {stockData.filter(s => s.perbaikan > 0).length}
                 </p>
-                <p className="text-xs text-gray-500">Dalam Perbaikan</p>
+                <p className="text-xs text-gray-500 mt-0.5">Dalam Perbaikan</p>
               </div>
             </div>
           )}
@@ -161,34 +179,34 @@ export function BerandaView() {
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-3 sm:gap-4">
-              <Card className="border-0 shadow-md bg-white card-hover animate-fade-in-up">
+              <Card className="border-0 shadow-md bg-white card-shine animate-fade-in-up">
                 <CardContent className="p-4 sm:p-6 text-center">
                   <p className="text-xs sm:text-sm text-gray-500 mb-1">
                     Total Set
                   </p>
-                  <p className="text-2xl sm:text-3xl font-bold text-gray-900 animate-count-up">
+                  <p className="text-2xl sm:text-3xl font-bold text-gray-900 animate-count-up stat-number">
                     {scaffolding?.total ?? 0}
                   </p>
                   <p className="text-xs text-gray-400 mt-1">set</p>
                 </CardContent>
               </Card>
-              <Card className="border-0 shadow-md bg-emerald-50 card-hover animate-fade-in-up animate-fade-in-up-delay-1">
+              <Card className="border-0 shadow-md bg-emerald-50 card-shine animate-fade-in-up animate-fade-in-up-delay-1">
                 <CardContent className="p-4 sm:p-6 text-center">
                   <p className="text-xs sm:text-sm text-emerald-700 mb-1">
                     Tersedia
                   </p>
-                  <p className="text-2xl sm:text-3xl font-bold text-emerald-600 animate-count-up">
+                  <p className="text-2xl sm:text-3xl font-bold text-emerald-600 animate-count-up stat-number">
                     {scaffolding?.tersedia ?? 0}
                   </p>
                   <p className="text-xs text-emerald-500 mt-1">set</p>
                 </CardContent>
               </Card>
-              <Card className="border-0 shadow-md bg-amber-50 card-hover animate-fade-in-up animate-fade-in-up-delay-2">
+              <Card className="border-0 shadow-md bg-amber-50 card-shine animate-fade-in-up animate-fade-in-up-delay-2">
                 <CardContent className="p-4 sm:p-6 text-center">
                   <p className="text-xs sm:text-sm text-amber-700 mb-1">
                     Disewa
                   </p>
-                  <p className="text-2xl sm:text-3xl font-bold text-amber-600 animate-count-up">
+                  <p className="text-2xl sm:text-3xl font-bold text-amber-600 animate-count-up stat-number">
                     {scaffolding?.disewa ?? 0}
                   </p>
                   <p className="text-xs text-amber-500 mt-1">set</p>
@@ -222,7 +240,7 @@ export function BerandaView() {
                 return (
                   <Card
                     key={machine.item}
-                    className="border-0 shadow-md bg-white overflow-hidden card-hover"
+                    className="border-0 shadow-md bg-white overflow-hidden card-elevated"
                   >
                     <CardContent className="p-5 sm:p-6">
                       <div className="flex items-center justify-between">
@@ -348,7 +366,7 @@ export function BerandaView() {
                 return (
                   <Card
                     key={item.item}
-                    className={`border-0 shadow-md bg-white overflow-hidden card-hover ${
+                    className={`border-0 shadow-md bg-white overflow-hidden card-elevated ${
                       isPerbaikan ? "ring-1 ring-orange-200" : ""
                     }`}
                   >
@@ -413,10 +431,10 @@ export function BerandaView() {
               Hubungi Kami
             </h3>
           </div>
-          <Card className="border-0 shadow-md bg-white overflow-hidden card-hover">
+          <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated">
             <CardContent className="p-5 sm:p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3 hover-lift rounded-xl p-2 -m-2">
                   <div className="bg-emerald-100 p-2.5 rounded-xl flex-shrink-0">
                     <Phone className="w-5 h-5 text-emerald-600" />
                   </div>
@@ -425,7 +443,7 @@ export function BerandaView() {
                     <p className="text-sm text-gray-500 mt-0.5">Hubungi kami untuk informasi harga & ketersediaan alat</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3 hover-lift rounded-xl p-2 -m-2">
                   <div className="bg-emerald-100 p-2.5 rounded-xl flex-shrink-0">
                     <MapPin className="w-5 h-5 text-emerald-600" />
                   </div>
