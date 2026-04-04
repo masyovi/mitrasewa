@@ -16,7 +16,6 @@ import {
   Boxes,
   Instagram,
   Facebook,
-  ClipboardList,
   CheckCircle2,
   TrendingUp,
 } from "lucide-react";
@@ -356,36 +355,6 @@ export function BerandaView() {
                 100+ Pelanggan
               </span>
             </div>
-          </div>
-        </section>
-
-        {/* ===== Cara Pemesanan Step-by-Step Section ===== */}
-        <section className="reveal">
-          <div className="text-center mb-6">
-            <div className="flex items-center gap-2 mb-4 justify-center">
-              <div className="w-1 h-6 bg-emerald-500 rounded-full" />
-              <h3 className="text-lg font-bold text-gray-900">Cara Pemesanan</h3>
-            </div>
-            <p className="text-sm text-gray-500">Proses penyewaan alat konstruksi yang mudah dan cepat</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 relative">
-            {/* Dotted connector line (desktop only) */}
-            <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] border-t-2 border-dashed border-emerald-200" />
-            {[
-              { icon: Phone, title: "Hubungi Kami", desc: "Hubungi via WhatsApp atau telepon untuk konsultasi" },
-              { icon: ClipboardList, title: "Pilih Alat", desc: "Pilih alat konstruksi sesuai kebutuhan proyek" },
-              { icon: Truck, title: "Pengiriman", desc: "Kami antar alat langsung ke lokasi proyek Anda" },
-              { icon: CheckCircle2, title: "Mulai Sewa", desc: "Alat siap digunakan, tinggal bayar sewa" },
-            ].map((step, idx) => (
-              <div key={idx} className="relative flex flex-col items-center text-center group">
-                {/* Step number circle */}
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-white flex items-center justify-center text-lg sm:text-xl font-bold shadow-lg shadow-emerald-200 mb-3 group-hover:scale-110 transition-transform relative z-10">
-                  {idx + 1}
-                </div>
-                <h4 className="font-bold text-gray-900 text-sm sm:text-base mb-1">{step.title}</h4>
-                <p className="text-xs sm:text-sm text-gray-500 leading-relaxed max-w-[180px]">{step.desc}</p>
-              </div>
-            ))}
           </div>
         </section>
 
