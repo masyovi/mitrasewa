@@ -1667,3 +1667,123 @@ input:focus, textarea:focus, select:focus {
 .animate-notif-slide-down {
   animation: notifSlideDown 0.2s ease-out;
 }
+
+/* ==========================================================================
+   Loading Screen — Animated Green Car
+   ========================================================================== */
+
+/* Road line animation */
+@keyframes roadMove {
+  from { transform: translateX(0); }
+  to { transform: translateX(-40px); }
+}
+
+/* Car body bounce */
+@keyframes carBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+/* Wheel spin */
+@keyframes wheelSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Cloud drift */
+@keyframes cloudDrift {
+  from { transform: translateX(80px); }
+  to { transform: translateX(-200px); }
+}
+
+/* Smoke puff */
+@keyframes smokePuff {
+  0% { opacity: 0.6; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-20px, -8px) scale(2); }
+}
+
+.loading-car-scene {
+  position: relative;
+  width: 200px;
+  height: 100px;
+}
+
+.loading-car-scene .road {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: oklch(0.70 0.06 155);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loading-car-scene .road::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 80px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 10px,
+    oklch(0.985 0.002 155) 10px,
+    oklch(0.985 0.002 155) 20px
+  );
+  animation: roadMove 0.6s linear infinite;
+}
+
+.loading-car-scene .car {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: carBounce 0.4s ease-in-out infinite;
+}
+
+.loading-car-scene .wheel {
+  animation: wheelSpin 0.3s linear infinite;
+  transform-origin: center;
+}
+
+.loading-car-scene .cloud {
+  position: absolute;
+  top: 5px;
+  animation: cloudDrift 4s linear infinite;
+}
+
+.loading-car-scene .cloud:nth-child(2) {
+  animation-delay: -2s;
+  top: 15px;
+  opacity: 0.5;
+}
+
+.loading-car-scene .smoke {
+  position: absolute;
+  bottom: 18px;
+  right: calc(50% - 55px);
+}
+
+.loading-car-scene .smoke-circle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: oklch(0.80 0.04 155);
+  animation: smokePuff 1s ease-out infinite;
+}
+
+.loading-car-scene .smoke-circle:nth-child(2) {
+  animation-delay: 0.3s;
+  width: 4px;
+  height: 4px;
+}
+
+.loading-car-scene .smoke-circle:nth-child(3) {
+  animation-delay: 0.6s;
+  width: 5px;
+  height: 5px;
+}
