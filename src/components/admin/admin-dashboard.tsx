@@ -17,8 +17,8 @@ import {
   Info,
   CalendarDays,
   Tag,
-  Bell,
 } from "lucide-react";
+import { NotificationPanel } from "./notification-panel";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
@@ -157,24 +157,11 @@ export function AdminDashboard() {
             >
               <Info className="w-4 h-4" />
             </Button>
-            <div className="relative">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  if (adminTab !== "dashboard") setAdminTab("dashboard");
-                }}
-                className="text-white/80 hover:text-white hover:bg-white/20 transition-all"
-                aria-label="Notifikasi"
-              >
-                <Bell className="w-4 h-4" />
-              </Button>
-              {overdueCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-pulse">
-                  {overdueCount > 9 ? "9+" : overdueCount}
-                </span>
-              )}
-            </div>
+            <NotificationPanel
+              rentals={rentals}
+              stockData={stockData}
+              overdueCount={overdueCount}
+            />
             <Button
               variant="ghost"
               size="sm"
