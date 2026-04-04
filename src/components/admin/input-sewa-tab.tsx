@@ -311,7 +311,7 @@ export function InputSewaTab({
               </div>
               <div className="space-y-2">
                 <Label htmlFor="nik" className="text-sm">
-                  NIK
+                  NIK <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="nik"
@@ -319,6 +319,7 @@ export function InputSewaTab({
                   value={nik}
                   onChange={(e) => setNik(e.target.value)}
                   maxLength={16}
+                  required
                 />
               </div>
               <div className="space-y-2">
