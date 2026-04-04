@@ -826,48 +826,6 @@ export function BerandaView() {
             </CardContent>
           </Card>
         </section>
-
-        {/* ===== Lokasi Kami ===== */}
-        <section className="reveal border-b border-gray-100 pb-4">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-6 bg-emerald-500 rounded-full" />
-            <h3 className="text-lg font-bold text-gray-900">Lokasi Kami</h3>
-          </div>
-          <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated">
-            <CardContent className="p-0">
-              {/* Google Maps embed */}
-              <div className="w-full h-56 sm:h-64 overflow-hidden">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.8!2d111.876!3d-7.1529!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e78422c0e1b18d%3A0x2e7841a1b1b18d1c!2s7.1529%3A111.8787!5e0!3m2!1sid!2s0x2e78422c0e1b18d%3A0x2e7841a1b1b18d1c!4v1722000000000!5m2!1sid!2s0x2e78422c0e1b18d%3A0x2e7841a1b1b18d1c"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Lokasi MITRA SEWA"
-                />
-              </div>
-              {/* Address card */}
-              <div className="p-5 flex items-start gap-3 sm:items-center bg-gradient-to-r from-emerald-50/50 to-white">
-                <div className="bg-emerald-100 w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900 text-sm sm:text-base">
-                    MITRA SEWA — Kantor Pusat
-                  </p>
-                  <p className="text-xs sm:text-sm text-gray-500 mt-0.5 leading-relaxed">
-                    Gedung Pusat Penggerak Ekonomi BMT NU Ngasem Group, Bojonegoro
-                  </p>
-                  <p className="text-[10px] sm:text-xs text-gray-400 mt-1">
-                    Area layanan: Bojonegoro dan sekitarnya
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
       </main>
 
       {/* Scroll to Top Button */}
