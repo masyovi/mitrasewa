@@ -801,3 +801,23 @@ Stage Summary:
 - Fixed: Loading spinner shown during rehydration to avoid flash of wrong view
 - Fixed: Removed dead bottom nav padding from admin dashboard
 - Files modified: `src/store/use-store.ts`, `src/app/page.tsx`, `src/components/admin/admin-dashboard.tsx`
+
+---
+Task ID: 2
+Agent: Main Agent
+Task: Make notification panel scrollable + Add logout confirmation popup
+
+Work Log:
+- Notification panel: Changed ScrollArea max-height from max-h-80 (320px) to max-h-[420px] (420px) for better scrollability when there are many notifications
+- Admin dashboard: Added AlertDialog component wrapping the logout button
+  - Imported AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger from @/components/ui/alert-dialog
+  - Added logoutOpen state for controlled dialog
+  - Dialog shows "Konfirmasi Keluar" title with LogOut icon (red), description text, "Batal" cancel button, and "Ya, Keluar" red action button
+  - Only calls logout() when user confirms via the action button
+
+Stage Summary:
+- Files modified: src/components/admin/notification-panel.tsx, src/components/admin/admin-dashboard.tsx
+- ESLint: 0 errors, 0 warnings
+- Dev server: Compiled successfully
+- Notification panel scroll area increased to 420px max height
+- Logout now requires confirmation via popup dialog

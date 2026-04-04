@@ -268,7 +268,7 @@ export function NotificationPanel({
           )}
 
           {/* Notification list */}
-          <ScrollArea className="max-h-80">
+          <ScrollArea className="max-h-[420px]">
             {notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 px-4">
                 <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-3">

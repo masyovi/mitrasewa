@@ -18,6 +18,17 @@ import {
   CalendarDays,
   Tag,
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { NotificationPanel } from "./notification-panel";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -58,6 +69,7 @@ export function AdminDashboard() {
   const [rentals, setRentals] = useState<RentalWithItems[]>([]);
   const [loading, setLoading] = useState(true);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
 
   const overdueCount = rentals.filter((r) => r.isOverdue && r.status === "aktif").length;
 
@@ -162,15 +174,38 @@ export function AdminDashboard() {
               stockData={stockData}
               overdueCount={overdueCount}
             />
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={logout}
-              className="text-white/90 hover:text-white hover:bg-white/20 gap-2"
-            >
-              <LogOut className="w-4 h-4" />
-              <span className="hidden sm:inline">Keluar</span>
-            </Button>
+            <AlertDialog open={logoutOpen} onOpenChange={setLogoutOpen}>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white/90 hover:text-white hover:bg-white/20 gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden sm:inline">Keluar</span>
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="flex items-center gap-2">
+                    <LogOut className="w-5 h-5 text-red-500" />
+                    Konfirmasi Keluar
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Apakah Anda yakin ingin keluar dari panel admin? Anda perlu login ulang untuk mengakses kembali.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Batal</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={logout}
+                    className="bg-red-500 hover:bg-red-600 text-white"
+                  >
+                    Ya, Keluar
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </header>
