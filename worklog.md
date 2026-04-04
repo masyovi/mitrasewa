@@ -731,3 +731,28 @@ Task: Fix section spacing + Replace hero green box with bubble animation
 4. Equipment comparison table feature
 5. Add customer review/rating submission form
 6. PDF export for rental receipts
+
+---
+Task ID: 25
+Agent: Main Agent
+Task: Reduce spacing, remove WhatsApp button, remove FAQ, make sections collapsible
+
+### Work Log
+- Reduced main container spacing: space-y-5 → space-y-3, py-8 → py-6
+- Reduced section padding: pb-8 → pb-4 across all sections with border dividers
+- Removed floating WhatsApp button (green round circle, bottom-right)
+- Moved scroll-to-top button from right-[4.25rem] to right-5
+- Removed entire FAQ/Pertanyaan Umum section (5 accordion items)
+- Cleaned up unused imports: HelpCircle, X removed; added ChevronUp
+- Replaced openFaqIndex state with kenapaOpen and testimoniOpen states
+- Made Kenapa Memilih Kami section collapsible with toggle button (Buka/Tutup)
+- Made Testimoni Pelanggan section collapsible with toggle button (Buka/Tutup)
+- Both collapsible sections start expanded by default with smooth animation
+
+### Stage Summary
+- File modified: src/components/beranda-view.tsx
+- ESLint: 0 errors, 0 warnings
+- Dev server: Compiled successfully
+- Spacing significantly reduced between all sections
+- Removed: Floating WhatsApp button + FAQ/Pertanyaan Umum section
+- Collapsible: Kenapa Memilih Kami + Testimoni Pelanggan (start expanded, toggle with Buka/Tutup)
