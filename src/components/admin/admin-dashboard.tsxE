@@ -203,10 +203,10 @@ export function AdminDashboard() {
             ))}
           </nav>
           {/* Dashboard Info */}
-          <div className="mt-auto pt-4 border-t border-gray-100">
+          <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700/50">
             <div className="flex items-center gap-2 mb-2">
               <CalendarDays className="w-3.5 h-3.5 text-gray-400" />
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-400 dark:text-gray-500">
                 {new Date().toLocaleDateString("id-ID", {
                   weekday: "long",
                   day: "numeric",
@@ -217,7 +217,7 @@ export function AdminDashboard() {
             </div>
             <div className="flex items-center gap-2">
               <Tag className="w-3.5 h-3.5 text-gray-400" />
-              <span className="text-[11px] font-medium text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
+              <span className="text-[11px] font-medium text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">
                 Versi 2.0
               </span>
             </div>

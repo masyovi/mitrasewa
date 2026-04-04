@@ -1478,3 +1478,51 @@ input:focus, textarea:focus, select:focus {
 .reveal > div > .relative.overflow-hidden.rounded-xl:nth-child(4) { animation-delay: 0.24s; }
 .reveal > div > .relative.overflow-hidden.rounded-xl:nth-child(5) { animation-delay: 0.32s; }
 .reveal > div > .relative.overflow-hidden.rounded-xl:nth-child(6) { animation-delay: 0.40s; }
+
+/* ==========================================================================
+   TASK 22-b — Text Shimmer & Testimonial Hover Enhancements
+   ========================================================================== */
+
+/* ----- Text Shimmer Effect for Hero ----- */
+@keyframes textShimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    oklch(0.45 0.15 155) 0%,
+    oklch(0.55 0.17 163) 25%,
+    oklch(0.72 0.19 155) 50%,
+    oklch(0.55 0.17 163) 75%,
+    oklch(0.45 0.15 155) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textShimmer 3s ease-in-out infinite;
+}
+
+/* ----- Testimonial Card Hover Effect ----- */
+.testimonial-card {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.testimonial-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow:
+    0 4px 6px rgb(0 0 0 / 0.04),
+    0 12px 28px rgb(0 0 0 / 0.08),
+    0 24px 48px rgb(0 0 0 / 0.06);
+}
+
+/* ----- Footer CTA Glow Effect ----- */
+.footer-cta-glow {
+  transition: all 0.3s ease;
+}
+.footer-cta-glow:hover {
+  box-shadow:
+    0 0 16px oklch(1 0 0 / 0.25),
+    0 0 32px oklch(1 0 0 / 0.15);
+  transform: translateY(-1px);
+}

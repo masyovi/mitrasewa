@@ -271,9 +271,9 @@ export function LaporanTab() {
         <div className="animate-fade-in-up">
           <div className="flex items-center gap-2 mb-1">
             <BarChart3 className="w-5 h-5 text-emerald-600" />
-            <h2 className="text-xl font-bold text-gray-800">Laporan Analitik</h2>
+            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">Laporan Analitik</h2>
           </div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Analisis data penyewaan alat konstruksi
           </p>
         </div>
@@ -298,7 +298,7 @@ export function LaporanTab() {
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
                   activePreset === preset.key
                     ? "bg-emerald-600 text-white shadow-sm"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                 }`}
               >
                 <span className="flex items-center gap-1.5">
@@ -310,7 +310,7 @@ export function LaporanTab() {
           </div>
           <div className="flex items-end gap-3">
             <div className="space-y-1">
-              <Label className="text-xs text-gray-500">Dari</Label>
+              <Label className="text-xs text-gray-500 dark:text-gray-400">Dari</Label>
               <div className="relative">
                 <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
                 <Input
@@ -322,7 +322,7 @@ export function LaporanTab() {
               </div>
             </div>
             <div className="space-y-1">
-              <Label className="text-xs text-gray-500">Sampai</Label>
+              <Label className="text-xs text-gray-500 dark:text-gray-400">Sampai</Label>
               <div className="relative">
                 <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
                 <Input
@@ -338,7 +338,7 @@ export function LaporanTab() {
             onClick={fetchAnalytics}
             variant="outline"
             size="sm"
-            className="h-9 gap-1.5 text-emerald-700 border-emerald-200 hover:bg-emerald-50"
+            className="h-9 gap-1.5 text-emerald-700 border-emerald-200 hover:bg-emerald-50 dark:text-emerald-400 dark:border-emerald-800 dark:hover:bg-emerald-950"
             disabled={loading}
           >
             <Activity className="w-3.5 h-3.5" />
@@ -348,7 +348,7 @@ export function LaporanTab() {
             onClick={handleExport}
             variant="outline"
             size="sm"
-            className="h-9 gap-1.5 text-emerald-700 border-emerald-200 hover:bg-emerald-50"
+            className="h-9 gap-1.5 text-emerald-700 border-emerald-200 hover:bg-emerald-50 dark:text-emerald-400 dark:border-emerald-800 dark:hover:bg-emerald-950"
             disabled={loading || exporting || !data}
           >
             <Download className="w-3.5 h-3.5" />
@@ -403,14 +403,14 @@ export function LaporanTab() {
             <Card className="border-0 shadow-md card-hover animate-fade-in-up" style={{ animationDelay: "0.18s" }}>
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
-                    <TrendingUp className="w-4 h-4 text-emerald-600" />
+                  <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center">
+                    <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <div>
-                    <CardTitle className="text-base font-semibold text-gray-800">
+                    <CardTitle className="text-base font-semibold text-gray-800 dark:text-gray-100">
                       Pendapatan Bulanan
                     </CardTitle>
-                    <p className="text-xs text-gray-500 mt-0.5">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                       Grafik pendapatan per bulan
                     </p>
                   </div>
@@ -479,14 +479,14 @@ export function LaporanTab() {
             <Card className="border-0 shadow-md card-hover animate-fade-in-up" style={{ animationDelay: "0.22s" }}>
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
-                    <FileBarChart className="w-4 h-4 text-amber-600" />
+                  <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center">
+                    <FileBarChart className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   </div>
                   <div>
-                    <CardTitle className="text-base font-semibold text-gray-800">
+                    <CardTitle className="text-base font-semibold text-gray-800 dark:text-gray-100">
                       Distribusi Stok Alat
                     </CardTitle>
-                    <p className="text-xs text-gray-500 mt-0.5">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                       Proporsi jumlah alat berdasarkan jenis
                     </p>
                   </div>
@@ -547,14 +547,14 @@ export function LaporanTab() {
           <Card className="border-0 shadow-md card-hover animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-emerald-600" />
+                <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-base font-semibold text-gray-800">
+                  <CardTitle className="text-base font-semibold text-gray-800 dark:text-gray-100">
                     Detail Pendapatan Bulanan
                   </CardTitle>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                     Breakdown pendapatan per bulan
                   </p>
                 </div>
@@ -567,17 +567,17 @@ export function LaporanTab() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gray-100">
-                        <th className="text-left py-2.5 px-3 font-medium text-gray-500 text-xs uppercase tracking-wider">
+                      <tr className="border-b border-gray-100 dark:border-gray-700">
+                        <th className="text-left py-2.5 px-3 font-medium text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
                           Bulan
                         </th>
-                        <th className="text-right py-2.5 px-3 font-medium text-gray-500 text-xs uppercase tracking-wider">
+                        <th className="text-right py-2.5 px-3 font-medium text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
                           Pendapatan
                         </th>
-                        <th className="text-center py-2.5 px-3 font-medium text-gray-500 text-xs uppercase tracking-wider">
+                        <th className="text-center py-2.5 px-3 font-medium text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
                           Transaksi
                         </th>
-                        <th className="text-right py-2.5 px-3 font-medium text-gray-500 text-xs uppercase tracking-wider hidden sm:table-cell">
+                        <th className="text-right py-2.5 px-3 font-medium text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider hidden sm:table-cell">
                           Visualisasi
                         </th>
                       </tr>
@@ -596,25 +596,25 @@ export function LaporanTab() {
                         return (
                           <tr
                             key={m.monthKey}
-                            className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors"
+                            className="border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors"
                           >
-                            <td className="py-2.5 px-3 font-medium text-gray-700 whitespace-nowrap">
+                            <td className="py-2.5 px-3 font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
                               {m.month}
                             </td>
-                            <td className="py-2.5 px-3 text-right font-semibold text-gray-800">
+                            <td className="py-2.5 px-3 text-right font-semibold text-gray-800 dark:text-gray-100">
                               {formatCurrency(m.revenue)}
                             </td>
                             <td className="py-2.5 px-3 text-center">
                               <Badge
                                 variant="secondary"
-                                className="bg-gray-100 text-gray-600 text-xs"
+                                className="bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300 text-xs"
                               >
                                 {m.count}
                               </Badge>
                             </td>
                             <td className="py-2.5 px-3 hidden sm:table-cell">
                               <div className="flex items-center gap-2 justify-end">
-                                <div className="w-32 h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                                <div className="w-32 h-2.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                                   <div
                                     className="h-full bg-emerald-500 rounded-full progress-bar-animate"
                                     style={{ width: `${pct}%` }}
@@ -646,14 +646,14 @@ export function LaporanTab() {
             <Card className="border-0 shadow-md card-hover animate-fade-in-up" style={{ animationDelay: "0.25s" }}>
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                    <Package className="w-4 h-4 text-blue-600" />
+                  <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
+                    <Package className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <CardTitle className="text-base font-semibold text-gray-800">
+                    <CardTitle className="text-base font-semibold text-gray-800 dark:text-gray-100">
                       Alat Paling Banyak Disewa
                     </CardTitle>
-                    <p className="text-xs text-gray-500 mt-0.5">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                       Berdasarkan jumlah unit yang disewakan
                     </p>
                   </div>
@@ -673,23 +673,23 @@ export function LaporanTab() {
                         <div key={item.item} className="space-y-1.5">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <span className="text-xs font-bold text-gray-400 w-5">
+                              <span className="text-xs font-bold text-gray-400 dark:text-gray-500 w-5">
                                 #{idx + 1}
                               </span>
-                              <span className="text-sm font-medium text-gray-700">
+                              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                                 {item.label}
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
                               <Badge
                                 variant="secondary"
-                                className="bg-blue-50 text-blue-700 text-xs"
+                                className="bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 text-xs"
                               >
                                 {item.totalJumlah} unit
                               </Badge>
                             </div>
                           </div>
-                          <div className="ml-7 h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="ml-7 h-2.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                             <div
                               className="h-full bg-blue-500 rounded-full progress-bar-animate"
                               style={{ width: `${pct}%` }}
@@ -707,14 +707,14 @@ export function LaporanTab() {
             <Card className="border-0 shadow-md card-hover animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
-                    <FileBarChart className="w-4 h-4 text-amber-600" />
+                  <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center">
+                    <FileBarChart className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   </div>
                   <div>
-                    <CardTitle className="text-base font-semibold text-gray-800">
+                    <CardTitle className="text-base font-semibold text-gray-800 dark:text-gray-100">
                       Utilisasi Alat
                     </CardTitle>
-                    <p className="text-xs text-gray-500 mt-0.5">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                       Persentase alat yang sedang disewa
                     </p>
                   </div>
@@ -734,19 +734,19 @@ export function LaporanTab() {
                             : "bg-emerald-500";
                       const badgeColor =
                         u.rate >= 80
-                          ? "bg-red-50 text-red-700"
+                          ? "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300"
                           : u.rate >= 50
-                            ? "bg-amber-50 text-amber-700"
-                            : "bg-emerald-50 text-emerald-700";
+                            ? "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
+                            : "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300";
 
                       return (
                         <div key={u.item} className="space-y-1.5">
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium text-gray-700">
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                               {u.label}
                             </span>
                             <div className="flex items-center gap-2">
-                              <span className="text-xs text-gray-500">
+                              <span className="text-xs text-gray-500 dark:text-gray-400">
                                 {u.disewa}/{u.total}
                               </span>
                               <Badge
@@ -757,7 +757,7 @@ export function LaporanTab() {
                               </Badge>
                             </div>
                           </div>
-                          <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-2.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                             <div
                               className={`h-full ${barColor} rounded-full progress-bar-animate`}
                               style={{ width: `${Math.min(u.rate, 100)}%` }}
@@ -777,14 +777,14 @@ export function LaporanTab() {
             <Card className="border-0 shadow-md card-hover animate-fade-in-up" style={{ animationDelay: "0.35s" }}>
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                    <BarChart3 className="w-4 h-4 text-blue-600" />
+                  <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
+                    <BarChart3 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <CardTitle className="text-base font-semibold text-gray-800">
+                    <CardTitle className="text-base font-semibold text-gray-800 dark:text-gray-100">
                       Perbandingan Alat Disewa
                     </CardTitle>
-                    <p className="text-xs text-gray-500 mt-0.5">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                       Grafik perbandingan jumlah unit per jenis alat
                     </p>
                   </div>
@@ -864,32 +864,32 @@ function StatCard({
 }) {
   const colorMap = {
     emerald: {
-      bg: "bg-emerald-50",
+      bg: "bg-emerald-50 dark:bg-emerald-950/40",
       iconBg: "bg-emerald-600",
       iconText: "text-white",
-      valueText: "text-emerald-700",
-      border: "border-emerald-100",
+      valueText: "text-emerald-700 dark:text-emerald-400",
+      border: "border-emerald-100 dark:border-emerald-900/60",
     },
     blue: {
-      bg: "bg-blue-50",
+      bg: "bg-blue-50 dark:bg-blue-950/40",
       iconBg: "bg-blue-600",
       iconText: "text-white",
-      valueText: "text-blue-700",
-      border: "border-blue-100",
+      valueText: "text-blue-700 dark:text-blue-400",
+      border: "border-blue-100 dark:border-blue-900/60",
     },
     amber: {
-      bg: "bg-amber-50",
+      bg: "bg-amber-50 dark:bg-amber-950/40",
       iconBg: "bg-amber-600",
       iconText: "text-white",
-      valueText: "text-amber-700",
-      border: "border-amber-100",
+      valueText: "text-amber-700 dark:text-amber-400",
+      border: "border-amber-100 dark:border-amber-900/60",
     },
     violet: {
-      bg: "bg-violet-50",
+      bg: "bg-violet-50 dark:bg-violet-950/40",
       iconBg: "bg-violet-600",
       iconText: "text-white",
-      valueText: "text-violet-700",
-      border: "border-violet-100",
+      valueText: "text-violet-700 dark:text-violet-400",
+      border: "border-violet-100 dark:border-violet-900/60",
     },
   };
 
@@ -903,12 +903,12 @@ function StatCard({
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               {title}
             </p>
             <p className={`text-xl font-bold ${c.valueText}`}>{value}</p>
             {subtitle && (
-              <p className="text-xs text-gray-500">{subtitle}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{subtitle}</p>
             )}
           </div>
           <div
@@ -925,8 +925,8 @@ function StatCard({
 function EmptyState({ message }: { message: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-10 text-center">
-      <BarChart3 className="w-10 h-10 text-gray-300 mb-3" />
-      <p className="text-sm text-gray-400">{message}</p>
+      <BarChart3 className="w-10 h-10 text-gray-300 dark:text-gray-600 mb-3" />
+      <p className="text-sm text-gray-400 dark:text-gray-500">{message}</p>
     </div>
   );
 }

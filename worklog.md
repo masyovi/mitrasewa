@@ -426,3 +426,170 @@ Stage Summary:
 - 3 homepage sections removed: Hubungi Kami, Jam Operasional, Galeri Alat Kami
 - Perawatan Alat removed from footer Layanan Kami links
 - Homepage now has: Hero, Scaffolding Stats, Status Alat, Komponen Scaffolding, FAQ, Kalkulator Biaya, Kenapa Memilih Kami, Testimoni Pelanggan, Footer
+
+---
+Task ID: 22-b
+Agent: Full-Stack Development Agent
+Task: Styling improvements + new features for MITRA SEWA homepage
+
+### TASK 1: Styling Improvements
+
+**1. Scroll-to-Top Button**
+- Changed from gray hover to emerald-tinted hover: `hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200`
+- Default text color changed from `text-gray-600` to `text-gray-500`
+
+**2. Enhanced FAQ Section**
+- Replaced simple bg-emerald-100 icon header with full emerald gradient header matching Kalkulator Biaya style
+- Added subtitle text: "Jawaban atas pertanyaan yang sering diajukan"
+- Added left emerald border (`border-l-[3px] border-emerald-400`) to each FAQ accordion item
+
+**3. Hero Shimmer Effect on "Terlengkap"**
+- Added `.text-shimmer` CSS animation with gradient text effect
+- Creates a subtle animated shine that sweeps across the "Terlengkap" word
+- 3-second ease-in-out infinite loop using oklch color gradients
+
+**4. Testimonial Card Hover Effect**
+- Added `.testimonial-card` CSS class with scale + shadow transition
+- On hover: `translateY(-4px) scale(1.01)` with enhanced multi-layer box shadow
+- Uses cubic-bezier easing for smooth interaction
+
+**5. Smooth Section Transitions**
+- Added `border-b border-gray-100 pb-8` dividers between all major sections
+- Sections: Tentang Kami, Scaffolding, Status Alat, Komponen, FAQ, Kalkulator, Kenapa Memilih Kami
+- Existing `space-y-8` on main preserved for consistent spacing
+
+**6. Footer CTA Glow Effect**
+- Changed "Chat WhatsApp" button from transparent (`bg-white/20`) to prominent white button (`bg-white text-emerald-700`)
+- Added `.footer-cta-glow` CSS class with glow + translateY on hover
+- Changed from `font-medium` to `font-semibold` for emphasis
+
+### TASK 2: New Features
+
+**1. "Tentang Kami" Summary Section**
+- New section inserted between Hero and Scaffolding Stats
+- Emerald Building2 icon in rounded container
+- Tagline: "Mitra Terpercaya untuk Kebutuhan Konstruksi Anda"
+- Description text about MITRA SEWA services in Bojonegoro
+- 3 stat badges with icons: "5+ Tahun Pengalaman" (Clock), "500+ Proyek" (Hammer), "100+ Pelanggan" (ShieldCheck)
+- Centered layout with emerald accents
+
+**2. Enhanced Footer with Social Links**
+- Added social media icons row in Brand column after description
+- 3 circular buttons: WhatsApp (SVG logo), Instagram, Facebook (lucide-react)
+- Styled as `bg-white/15` circles with `hover:bg-white/30` + `hover:scale-110`
+- New imports: `Instagram`, `Facebook` from lucide-react
+
+**3. Smooth Number Counting Animation**
+- Created `useAnimatedNumber` custom hook with ease-out cubic easing
+- Uses `requestAnimationFrame` for smooth 60fps animation
+- Three separate animated values: Jenis Alat (1000ms), Unit Tersedia (1200ms), Dalam Perbaikan (800ms)
+- Replaced static conditional rendering with hook-based animated counting
+- Ref-based animation guard prevents re-triggering
+
+### Files Modified
+- `/home/z/my-project/src/components/beranda-view.tsx` — JSX changes, hook, imports
+- `/home/z/my-project/src/app/globals.css` — CSS animations (text-shimmer, testimonial-card, footer-cta-glow)
+
+### Verification
+- ESLint: 0 errors, 0 warnings
+- Dev server: Compiled successfully
+- No dark: classes used
+
+---
+Task ID: 22
+Agent: Main Agent (Cron Review — QA, Styling, Features)
+
+### Phase 1: QA Testing (All Pass)
+- agent-browser testing: desktop (1920x1080) and mobile (iPhone 14)
+- Homepage: all sections verified — Hero, Scaffolding, Status Alat, Komponen, FAQ, Kalkulator, Kenapa Memilih Kami, Testimoni, Footer
+- Confirmed removed: Hubungi Kami section, Jam Operasional section, Galeri Alat Kami section, Perawatan Alat in footer, dark mode toggle button
+- Admin: login (admin/operasional123) successful, all 6 tabs present, notification bell visible, overdue alert working
+- Zero ESLint errors, zero JS runtime errors on both desktop and mobile
+
+### Phase 2: Bug Fixes
+
+**1. Dead Code Cleanup — Removed 230 `dark:` Classes from 20 Files**
+Dark mode was removed in Task 21 but 230 `dark:` Tailwind CSS class references remained as dead code. All cleaned up:
+- beranda-view.tsx: 95 occurrences
+- laporan-tab.tsx: 67 occurrences
+- dashboard-tab.tsx: 44 occurrences
+- button.tsx: 4, admin-dashboard.tsx: 3, switch.tsx: 2, input.tsx: 2, badge.tsx: 2
+- toggle.tsx, textarea.tsx, tabs.tsx, select.tsx, radio-group.tsx, menubar.tsx, input-otp.tsx, dropdown-menu.tsx, context-menu.tsx, checkbox.tsx, calendar.tsx: 1 each
+- Note: `chart.tsx` has `THEMES = { light: "", dark: ".dark" }` as JS object key (not CSS class), left untouched
+
+### Phase 3: Styling Improvements (6 items)
+
+1. **Scroll-to-top button**: Changed from gray hover to emerald-tinted hover (`hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200`)
+2. **FAQ section enhancement**: Added emerald gradient header bar (matching Kalkulator Biaya style), left emerald border accent on each FAQ item
+3. **Hero shimmer effect**: Added `text-shimmer` CSS animation on "Terlengkap" text — gradient sweep effect for visual flair
+4. **Testimonial card hover**: Added `testimonial-card` class with subtle scale + shadow increase on hover (cubic-bezier transition)
+5. **Section dividers**: Added `border-b border-gray-100 pb-8` between major homepage sections for visual separation
+6. **Footer CTA glow**: Enhanced "Chat WhatsApp" button in footer with `footer-cta-glow` class — glow + lift animation on hover
+
+### Phase 4: New Features (3 features)
+
+**Feature 1: Tentang Kami Section**
+- New section placed between Hero and Scaffolding Stats
+- Building2 icon with emerald gradient background
+- Tagline: "Mitra Terpercaya untuk Kebutuhan Konstruksi Anda"
+- Description text mentioning Bojonegoro and competitive pricing
+- 3 stat badges: "5+ Tahun Pengalaman", "500+ Proyek", "100+ Pelanggan"
+- Clean centered layout with emerald accents
+
+**Feature 2: Social Media Links in Footer**
+- Added WhatsApp, Instagram, Facebook icon buttons in footer brand column
+- Circular styled buttons with hover effects
+- Uses lucide-react icons
+
+**Feature 3: Enhanced Animated Number Counting**
+- New `useAnimatedNumber` hook using requestAnimationFrame with ease-out cubic easing
+- 3 different durations for visual variety: 1000ms, 1200ms, 800ms
+- Applied to hero quick stats (Jenis Alat, Unit Tersedia, Dalam Perbaikan)
+
+### Phase 5: CSS Additions (3 new classes)
+- `.text-shimmer` — Gradient text sweep animation for hero heading
+- `.testimonial-card` — Hover scale + shadow transition for testimonial cards
+- `.footer-cta-glow` — Glow + lift effect for footer WhatsApp CTA button
+
+### Phase 6: Final Verification
+- 4 QA screenshots captured (desktop before, desktop after, mobile before, mobile after)
+- All downloaded to /home/z/my-project/download/
+- Zero JS errors on desktop and mobile
+- All 3 new features confirmed visible in accessibility tree
+- ESLint clean, dev server compiled successfully
+
+### Current Project Status
+
+**Homepage Sections (10 sections):**
+1. Header (sticky, emerald gradient, no dark mode toggle)
+2. Hero (animated gradient border, shimmer text, quick stats with eased counting)
+3. **Tentang Kami** (NEW — brand summary, 3 stat badges)
+4. Scaffolding Stats (Total, Tersedia, Disewa cards)
+5. Status Alat (machine cards with progress bars + availability badges)
+6. Komponen Scaffolding (3 component cards)
+7. Pertanyaan Umum (FAQ with gradient header, emerald borders)
+8. Kalkulator Biaya Sewa (interactive calculator)
+9. Kenapa Memilih Kami (4 feature cards with hover effects)
+10. Testimoni Pelanggan (6 testimonials with hover effect)
+11. Footer (4-column, social links, CTA with glow)
+12. Floating WhatsApp + Scroll-to-Top buttons
+
+**Admin Features (unchanged):**
+- 6 tabs: Dashboard, Input Sewa, Setting Harga, History, Pelanggan, Laporan
+- Notification bell, overdue alerts, summary cards
+
+**Removed Features (confirmed):**
+- Dark mode (fully removed, 230 dead dark: classes cleaned)
+- Hubungi Kami section, Jam Operasional section, Galeri Alat Kami section
+- Perawatan Alat from footer links
+
+### Unresolved Issues / Risks
+- None. All systems operational, ESLint clean, zero JS errors.
+
+### Priority Recommendations for Next Phase
+1. Add real equipment image gallery with uploaded photos (replace emoji icons)
+2. Add WhatsApp Chat Widget (floating chat bubble with auto-reply)
+3. Add "Cara Pemesanan" step-by-step guide section
+4. Equipment comparison table feature
+5. Add customer review/rating submission form
+6. PDF export for rental receipts (not just print)
