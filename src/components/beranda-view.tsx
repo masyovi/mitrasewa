@@ -329,35 +329,6 @@ export function BerandaView() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-6 space-y-3 relative z-10">
-        {/* ===== Tentang Kami Summary Section ===== */}
-        <section className="reveal border-b border-gray-100 pb-4">
-          <div className="text-center max-w-2xl mx-auto">
-            <div className="bg-emerald-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Building2 className="w-8 h-8 text-emerald-600" />
-            </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
-              Mitra Terpercaya untuk Kebutuhan Konstruksi Anda
-            </h3>
-            <p className="text-sm sm:text-base text-gray-500 leading-relaxed mb-5">
-              MITRA SEWA hadir sebagai solusi penyewaan alat konstruksi di Bojonegoro dan sekitarnya. Dengan peralatan berkualitas dan harga kompetitif, kami siap mendukung kesuksesan proyek Anda.
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-xs font-medium px-3 py-1.5 rounded-full border border-emerald-100">
-                <Clock className="w-3.5 h-3.5" />
-                5+ Tahun Pengalaman
-              </span>
-              <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-xs font-medium px-3 py-1.5 rounded-full border border-emerald-100">
-                <Hammer className="w-3.5 h-3.5" />
-                500+ Proyek
-              </span>
-              <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-xs font-medium px-3 py-1.5 rounded-full border border-emerald-100">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                100+ Pelanggan
-              </span>
-            </div>
-          </div>
-        </section>
-
         {/* Scaffolding Stats */}
         <section
           ref={(el) => { sectionRefs.current[0] = el; }}
