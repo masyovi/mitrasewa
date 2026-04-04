@@ -225,7 +225,7 @@ export function BerandaView() {
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
                 MITRA SEWA
               </h1>
-              <p className="text-xs sm:text-sm text-white/80 flex items-center gap-1.5">
+              <p className="text-[10px] sm:text-xs text-white/80 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
                 Penyewaan Alat Konstruksi Terpercaya
               </p>
