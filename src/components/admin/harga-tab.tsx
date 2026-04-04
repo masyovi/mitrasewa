@@ -136,19 +136,20 @@ export function HargaTab({
         </p>
       </div>
 
-      <div className="flex gap-2 animate-fade-in-up">
+      <div className="flex flex-wrap gap-2 animate-fade-in-up">
         <Button
           variant={activeTab === "harga" ? "default" : "outline"}
           size="sm"
           onClick={() => setActiveTab("harga")}
           className={
             activeTab === "harga"
-              ? "bg-emerald-600 hover:bg-emerald-700"
-              : ""
+              ? "bg-emerald-600 hover:bg-emerald-700 shrink-0"
+              : "shrink-0"
           }
         >
-          <DollarSign className="w-4 h-4 mr-2" />
-          Setting Harga
+          <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-2" />
+          <span className="hidden sm:inline">Setting Harga</span>
+          <span className="sm:hidden">Harga</span>
         </Button>
         <Button
           variant={activeTab === "stok" ? "default" : "outline"}
@@ -156,12 +157,13 @@ export function HargaTab({
           onClick={() => setActiveTab("stok")}
           className={
             activeTab === "stok"
-              ? "bg-emerald-600 hover:bg-emerald-700"
-              : ""
+              ? "bg-emerald-600 hover:bg-emerald-700 shrink-0"
+              : "shrink-0"
           }
         >
-          <Package className="w-4 h-4 mr-2" />
-          Setting Stok
+          <Package className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-2" />
+          <span className="hidden sm:inline">Setting Stok</span>
+          <span className="sm:hidden">Stok</span>
         </Button>
         <Button
           variant={activeTab === "status" ? "default" : "outline"}
@@ -169,12 +171,13 @@ export function HargaTab({
           onClick={() => setActiveTab("status")}
           className={
             activeTab === "status"
-              ? "bg-emerald-600 hover:bg-emerald-700"
-              : ""
+              ? "bg-emerald-600 hover:bg-emerald-700 shrink-0"
+              : "shrink-0"
           }
         >
-          <Wrench className="w-4 h-4 mr-2" />
-          Status Alat
+          <Wrench className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-2" />
+          <span className="hidden sm:inline">Status Alat</span>
+          <span className="sm:hidden">Status</span>
         </Button>
       </div>
 
