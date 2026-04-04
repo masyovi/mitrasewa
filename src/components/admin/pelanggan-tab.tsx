@@ -152,7 +152,7 @@ export function PelangganTab({ rentals }: { rentals: RentalWithItems[] }) {
         </div>
         <Card className="border-0 shadow-md card-elevated">
           <CardContent className="py-16 text-center">
-            <div className="mx-auto mb-4 bg-emerald-50 rounded-2xl p-5 w-fit">
+            <div className="mx-auto mb-4 bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-5 w-fit">
               <Users className="w-14 h-14 text-emerald-200" />
             </div>
             <p className="text-gray-500 text-sm font-medium">
@@ -198,7 +198,7 @@ export function PelangganTab({ rentals }: { rentals: RentalWithItems[] }) {
 
         <Card className="border-0 shadow-md card-elevated animate-fade-in-up animate-fade-in-up-delay-1">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="bg-emerald-50 rounded-xl p-3">
+            <div className="bg-gradient-to-br from-emerald-50 to-white rounded-xl p-3">
               <UserCheck className="w-6 h-6 text-emerald-600" />
             </div>
             <div>
@@ -254,7 +254,7 @@ export function PelangganTab({ rentals }: { rentals: RentalWithItems[] }) {
                 onClick={() => setFilterStatus(f.key)}
                 className={
                   filterStatus === f.key
-                    ? "bg-emerald-600 hover:bg-emerald-700"
+                    ? "bg-emerald-600 hover:bg-emerald-700 btn-emerald-gradient"
                     : ""
                 }
               >
@@ -277,7 +277,7 @@ export function PelangganTab({ rentals }: { rentals: RentalWithItems[] }) {
                 onClick={() => setSortBy(s.key)}
                 className={
                   sortBy === s.key
-                    ? "bg-emerald-600 hover:bg-emerald-700"
+                    ? "bg-emerald-600 hover:bg-emerald-700 btn-emerald-gradient"
                     : ""
                 }
               >
@@ -292,7 +292,7 @@ export function PelangganTab({ rentals }: { rentals: RentalWithItems[] }) {
       {filteredCustomers.length === 0 ? (
         <Card className="border-0 shadow-md card-elevated animate-fade-in-up">
           <CardContent className="py-16 text-center">
-            <div className="mx-auto mb-4 bg-emerald-50 rounded-2xl p-5 w-fit">
+            <div className="mx-auto mb-4 bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-5 w-fit">
               <Search className="w-14 h-14 text-emerald-200" />
             </div>
             <p className="text-gray-500 text-sm font-medium">

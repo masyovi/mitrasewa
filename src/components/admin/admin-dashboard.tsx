@@ -270,7 +270,7 @@ export function AdminDashboard() {
             >
               <div className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all ${
                 adminTab === tab.id
-                  ? "bg-emerald-50"
+                  ? "bg-gradient-to-br from-emerald-50 to-white"
                   : ""
               }`}>
                 {tab.icon}

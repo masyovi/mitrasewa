@@ -205,7 +205,7 @@ export function HistoryTab({
           <Button
             size="sm"
             onClick={onExport}
-            className="gap-1.5 bg-emerald-600 hover:bg-emerald-700"
+            className="gap-1.5 bg-emerald-600 hover:bg-emerald-700 btn-emerald-gradient"
           >
             <Download className="w-3.5 h-3.5" />
             Export CSV
@@ -229,7 +229,7 @@ export function HistoryTab({
               onClick={() => setFilterStatus(status)}
               className={
                 filterStatus === status
-                  ? "bg-emerald-600 hover:bg-emerald-700"
+                  ? "bg-emerald-600 hover:bg-emerald-700 btn-emerald-gradient"
                   : ""
               }
             >
@@ -409,7 +409,7 @@ export function HistoryTab({
                             <DialogClose asChild>
                               <Button
                                 size="sm"
-                                className="bg-emerald-600 hover:bg-emerald-700"
+                                className="bg-emerald-600 hover:bg-emerald-700 btn-emerald-gradient"
                                 onClick={() =>
                                   handleReturn(rental.id, rental.namaPenyewa)
                                 }

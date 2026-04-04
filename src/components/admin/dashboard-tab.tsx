@@ -267,7 +267,7 @@ export function DashboardTab({
         <Card className="border-0 shadow-md card-elevated hover-lift animate-fade-in-up">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <div className="bg-emerald-100 p-2 rounded-lg">
+              <div className="bg-gradient-to-br from-emerald-100 to-emerald-50 p-2 rounded-lg">
                 <Package className="w-4 h-4 text-emerald-600" />
               </div>
             </div>
@@ -308,8 +308,8 @@ export function DashboardTab({
 
       {/* Ringkasan Bulanan */}
       <div className="grid grid-cols-3 gap-3 sm:gap-4">
-        <div className="bg-emerald-50 rounded-xl p-3 sm:p-4 flex items-center gap-3 animate-fade-in-up">
-          <div className="bg-emerald-100 p-2 rounded-lg flex-shrink-0">
+        <div className="bg-gradient-to-br from-emerald-50 to-white rounded-xl p-3 sm:p-4 flex items-center gap-3 animate-fade-in-up">
+          <div className="bg-gradient-to-br from-emerald-100 to-emerald-50 p-2 rounded-lg flex-shrink-0">
             <PlusCircle className="w-4 h-4 text-emerald-600" />
           </div>
           <div className="min-w-0">
@@ -345,7 +345,7 @@ export function DashboardTab({
 
       {/* Stats Row */}
       <div className="grid grid-cols-3 gap-3 sm:gap-4">
-        <Card className="border-0 shadow-md bg-emerald-50 card-elevated hover-lift animate-fade-in-up">
+        <Card className="border-0 shadow-md bg-gradient-to-br from-emerald-50 to-white card-elevated hover-lift animate-fade-in-up">
           <CardContent className="p-4 text-center">
             <p className="text-3xl font-bold text-emerald-700 animate-count-up stat-number">{totalAktif}</p>
             <p className="text-sm text-emerald-600">Sewa Aktif</p>
@@ -456,7 +456,7 @@ export function DashboardTab({
         <CardContent>
           {rentals.length === 0 ? (
             <div className="text-center py-14">
-              <div className="mx-auto mb-4 bg-emerald-50 rounded-2xl p-4 w-fit">
+              <div className="mx-auto mb-4 bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-4 w-fit">
                 <Clock className="w-14 h-14 text-emerald-200" />
               </div>
               <p className="text-gray-500 text-sm font-medium">

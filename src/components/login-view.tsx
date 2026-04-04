@@ -82,7 +82,7 @@ export function LoginView() {
       <main className="flex-1 flex items-center justify-center px-4 py-8">
         <Card className="w-full max-w-md border-0 shadow-xl animate-scale-in card-elevated">
           <CardHeader className="text-center pb-2">
-            <div className="mx-auto mb-4 bg-emerald-100 rounded-2xl p-4 w-fit animate-fade-in-up">
+            <div className="mx-auto mb-4 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-2xl p-4 w-fit animate-fade-in-up">
               <Lock className="w-8 h-8 text-emerald-600" />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900 animate-fade-in-up animate-fade-in-up-delay-1">

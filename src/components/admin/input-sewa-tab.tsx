@@ -555,7 +555,7 @@ export function InputSewaTab({
                   <div key={item.item} className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">
+                        <span className="w-5 h-5 rounded-full bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">
                           {idx + 1}
                         </span>
                         <p className="font-medium text-sm text-gray-900 truncate">
@@ -575,7 +575,7 @@ export function InputSewaTab({
 
               <Separator />
 
-              <div className="flex items-center justify-between bg-emerald-600 text-white rounded-lg p-4">
+              <div className="flex items-center justify-between bg-mitra-gradient text-white rounded-lg p-4">
                 <div>
                   <p className="text-sm text-emerald-100">Total Tagihan</p>
                   <p className="text-xs text-emerald-200 mt-0.5">
@@ -592,7 +592,7 @@ export function InputSewaTab({
 
         <Button
           type="submit"
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 text-base"
+          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 text-base btn-emerald-gradient"
           disabled={loading || selectedItemDetails.length === 0}
         >
           {loading ? (

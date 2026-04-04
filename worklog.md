@@ -843,6 +843,76 @@ Stage Summary:
 - Text no longer overlaps in notification items
 
 ---
+Task ID: 5
+Agent: Styling Agent
+Task: Convert solid emerald backgrounds to gradients throughout admin dashboard and homepage
+
+### Work Task
+Replace all solid green/emerald background colors with gradient equivalents across 10 files, following a detailed set of rules (skip hover states, text colors, borders, focus rings, small elements, notification backgrounds, and already-converted elements).
+
+### Work Summary
+
+**Files Modified (10 files, ~30 changes):**
+
+1. **input-sewa-tab.tsx** (3 changes)
+   - Line 558: Number badge `bg-emerald-100` → `bg-gradient-to-br from-emerald-100 to-emerald-50`
+   - Line 578: Total tagihan banner `bg-emerald-600` → `bg-mitra-gradient`
+   - Line 595: Submit button → added `btn-emerald-gradient`
+
+2. **pelanggan-tab.tsx** (5 changes)
+   - Line 155: Empty state icon container `bg-emerald-50` → `bg-gradient-to-br from-emerald-50 to-white`
+   - Line 201: Active customer card icon `bg-emerald-50` → `bg-gradient-to-br from-emerald-50 to-white`
+   - Lines 257, 280: Filter & sort active buttons → added `btn-emerald-gradient`
+   - Line 295: Search empty state icon `bg-emerald-50` → `bg-gradient-to-br from-emerald-50 to-white`
+
+3. **history-tab.tsx** (3 changes)
+   - Line 208: Export CSV button → added `btn-emerald-gradient` (already had it from prior work)
+   - Line 232: Filter status active buttons → added `btn-emerald-gradient`
+   - Line 412: Return confirmation button → added `btn-emerald-gradient`
+
+4. **harga-tab.tsx** (3 changes)
+   - Lines 146, 160, 174: Tab active buttons (Harga, Stok, Status) → added `btn-emerald-gradient`
+
+5. **laporan-tab.tsx** (3 changes)
+   - Line 300: Active preset date button `bg-emerald-600` → `bg-mitra-gradient`
+   - Line 406: Pendapatan Bulanan icon container `bg-emerald-100` → `bg-gradient-to-br from-emerald-100 to-emerald-50`
+   - Line 550: Detail Pendapatan icon container `bg-emerald-100` → `bg-gradient-to-br from-emerald-100 to-emerald-50`
+
+6. **dashboard-tab.tsx** (4 changes)
+   - Line 270: Package icon container `bg-emerald-100` → `bg-gradient-to-br from-emerald-100 to-emerald-50`
+   - Line 311: Monthly summary card `bg-emerald-50` → `bg-gradient-to-br from-emerald-50 to-white`
+   - Line 312: PlusCircle icon container `bg-emerald-100` → `bg-gradient-to-br from-emerald-100 to-emerald-50`
+   - Line 348: Sewa Aktif stat card `bg-emerald-50` → `bg-gradient-to-br from-emerald-50 to-white`
+   - Line 459: Clock icon container `bg-emerald-50` → `bg-gradient-to-br from-emerald-50 to-white`
+
+7. **admin-dashboard.tsx** (1 change)
+   - Line 273: Mobile nav active tab `bg-emerald-50` → `bg-gradient-to-br from-emerald-50 to-white`
+
+8. **beranda-view.tsx** (4 changes)
+   - Line 738: Calculator "Hitung Estimasi" button → added `btn-emerald-gradient`
+   - Line 667: Price info box `bg-emerald-50` → `bg-gradient-to-br from-emerald-50 to-white`
+   - Line 975: Equipment detail tersedia cell `bg-emerald-50` → `bg-gradient-to-br from-emerald-50 to-white`
+   - Line 1027: Equipment detail pricing section `bg-emerald-50` → `bg-gradient-to-br from-emerald-50 to-white`
+
+9. **about-modal.tsx** (1 change)
+   - Line 45: "Didukung oleh" container `bg-emerald-50` → `bg-gradient-to-br from-emerald-50 to-white`
+
+10. **login-view.tsx** (1 change)
+    - Line 85: Lock icon container `bg-emerald-100` → `bg-gradient-to-br from-emerald-100 to-emerald-50`
+
+**Rules Applied:**
+- Buttons with `bg-emerald-600 hover:bg-emerald-700` → added `btn-emerald-gradient` (keeps original classes)
+- Banner/section backgrounds → `bg-mitra-gradient`
+- Card/panel backgrounds → `bg-gradient-to-br from-emerald-50 to-white`
+- Icon containers → `bg-gradient-to-br from-emerald-100 to-emerald-50`
+- Skipped: hover states, text colors, borders, focus rings, small elements (dots, badges), notification backgrounds
+
+### Verification
+- ESLint: 0 errors, 0 warnings
+- Dev server: Compiled successfully (✓ Compiled in 140ms)
+- All routes returning HTTP 200
+
+---
 Task ID: 4
 Agent: Main Agent
 Task: Restructure admin navigation - desktop top nav + mobile bottom nav
@@ -875,3 +945,47 @@ Stage Summary:
 - Dev server: Compiled successfully
 - Desktop: horizontal tab nav below header, full-width content area
 - Mobile: fixed bottom navigation bar with 6 tabs
+
+---
+Task ID: 5
+Agent: Main Agent
+Task: Convert all solid green/emerald colors to gradients
+
+Work Log:
+- Removed 19 stale .tsxE backup files from src/components/ (admin + ui)
+- Converted ~30 solid green elements to gradients across 10 files:
+
+**Buttons (bg-emerald-600 → btn-emerald-gradient):**
+- input-sewa-tab.tsx: submit button
+- pelanggan-tab.tsx: filter + sort buttons (×2)
+- history-tab.tsx: filter + action buttons (×3)
+- harga-tab.tsx: tab buttons Harga/Stok/Status (×3)
+- beranda-view.tsx: calculator CTA button
+
+**Banners/Sections (bg-emerald-600 → bg-mitra-gradient):**
+- input-sewa-tab.tsx: summary total banner
+- laporan-tab.tsx: active preset tab indicator
+
+**Card Backgrounds (bg-emerald-50 → bg-gradient-to-br from-emerald-50 to-white):**
+- dashboard-tab.tsx: alert card, stat card, icon container (×3)
+- pelanggan-tab.tsx: summary containers (×3)
+- history-tab.tsx: icon container
+- admin-dashboard.tsx: mobile nav active tab
+- beranda-view.tsx: info containers (×3)
+- about-modal.tsx: "Didukung oleh" container
+
+**Icon Containers (bg-emerald-100 → bg-gradient-to-br from-emerald-100 to-emerald-50):**
+- dashboard-tab.tsx: icon containers (×2)
+- laporan-tab.tsx: chart icon containers (×2)
+- login-view.tsx: lock icon container
+- input-sewa-tab.tsx: count badge circle
+
+**Skipped (per design rules):**
+- Text colors (text-emerald-*), hover states, borders, focus rings, small dots/badges, notification backgrounds
+
+Stage Summary:
+- Files modified: 10 component files
+- Files deleted: 19 stale .tsxE backup files
+- ESLint: 0 errors, 0 warnings
+- Dev server: Compiled successfully
+- All solid green backgrounds now use gradient variants

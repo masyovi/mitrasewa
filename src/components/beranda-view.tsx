@@ -664,7 +664,7 @@ export function BerandaView() {
 
               {/* Price info */}
               {selectedPriceItem && (
-                <div className="bg-emerald-50 rounded-lg px-4 py-2.5 flex items-center justify-between">
+                <div className="bg-gradient-to-br from-emerald-50 to-white rounded-lg px-4 py-2.5 flex items-center justify-between">
                   <span className="text-sm text-emerald-700">
                     Harga per {selectedPriceItem.unit}
                   </span>
@@ -735,7 +735,7 @@ export function BerandaView() {
               {/* Calculate button */}
               <Button
                 onClick={handleCalculate}
-                className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold btn-press transition-all"
+                className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold btn-press transition-all btn-emerald-gradient"
                 disabled={!selectedPriceItem}
               >
                 <Calculator className="w-4 h-4 mr-2" />
@@ -972,7 +972,7 @@ export function BerandaView() {
                       <p className="text-xl font-bold text-gray-900 stat-number">{eq.total}</p>
                       <p className="text-[10px] text-gray-400">{eq.unit}</p>
                     </div>
-                    <div className="bg-emerald-50 rounded-xl py-3 px-2 text-center">
+                    <div className="bg-gradient-to-br from-emerald-50 to-white rounded-xl py-3 px-2 text-center">
                       <p className="text-xs text-emerald-600">Tersedia</p>
                       <p className="text-xl font-bold text-emerald-700 stat-number">{eq.tersedia}</p>
                       <p className="text-[10px] text-emerald-500">{eq.unit}</p>
@@ -1024,7 +1024,7 @@ export function BerandaView() {
                 {eqPrice && (
                   <div className="animate-fade-in-up">
                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Harga Sewa</p>
-                    <div className="bg-emerald-50 rounded-xl px-4 py-3 space-y-1.5">
+                    <div className="bg-gradient-to-br from-emerald-50 to-white rounded-xl px-4 py-3 space-y-1.5">
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-emerald-700">Harga per {eqPrice.unit}</span>
                         <span className="text-sm font-bold text-emerald-600 stat-number">

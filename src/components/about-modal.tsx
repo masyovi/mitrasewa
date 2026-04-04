@@ -42,7 +42,7 @@ export function AboutModal({ open, onOpenChange }: AboutModalProps) {
             <p className="text-[10px] uppercase tracking-wider text-gray-400 font-medium">
               Didukung oleh
             </p>
-            <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-800 px-4 py-2.5 rounded-xl">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-br from-emerald-50 to-white text-emerald-800 px-4 py-2.5 rounded-xl">
               <Building2 className="w-4 h-4 text-emerald-600" />
               <span className="text-sm font-semibold">
                 Pengelola Gedung Pusat BMT NU Ngasem Group

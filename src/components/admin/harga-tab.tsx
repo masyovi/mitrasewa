@@ -143,7 +143,7 @@ export function HargaTab({
           onClick={() => setActiveTab("harga")}
           className={
             activeTab === "harga"
-              ? "bg-emerald-600 hover:bg-emerald-700 shrink-0"
+              ? "bg-emerald-600 hover:bg-emerald-700 shrink-0 btn-emerald-gradient"
               : "shrink-0"
           }
         >
@@ -157,7 +157,7 @@ export function HargaTab({
           onClick={() => setActiveTab("stok")}
           className={
             activeTab === "stok"
-              ? "bg-emerald-600 hover:bg-emerald-700 shrink-0"
+              ? "bg-emerald-600 hover:bg-emerald-700 shrink-0 btn-emerald-gradient"
               : "shrink-0"
           }
         >
@@ -171,7 +171,7 @@ export function HargaTab({
           onClick={() => setActiveTab("status")}
           className={
             activeTab === "status"
-              ? "bg-emerald-600 hover:bg-emerald-700 shrink-0"
+              ? "bg-emerald-600 hover:bg-emerald-700 shrink-0 btn-emerald-gradient"
               : "shrink-0"
           }
         >

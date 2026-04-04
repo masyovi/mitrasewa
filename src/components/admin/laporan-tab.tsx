@@ -297,7 +297,7 @@ export function LaporanTab() {
                 onClick={() => handlePresetClick(preset.key)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
                   activePreset === preset.key
-                    ? "bg-emerald-600 text-white shadow-sm"
+                    ? "bg-mitra-gradient text-white shadow-sm"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
@@ -403,7 +403,7 @@ export function LaporanTab() {
             <Card className="border-0 shadow-md card-hover animate-fade-in-up" style={{ animationDelay: "0.18s" }}>
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center">
                     <TrendingUp className="w-4 h-4 text-emerald-600" />
                   </div>
                   <div>
@@ -547,7 +547,7 @@ export function LaporanTab() {
           <Card className="border-0 shadow-md card-hover animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center">
                   <TrendingUp className="w-4 h-4 text-emerald-600" />
                 </div>
                 <div>
