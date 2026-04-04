@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useTheme } from "next-themes";
 import {
   BarChart3,
   TrendingUp,
@@ -113,8 +112,7 @@ function getPresetRange(preset: string): { from: string; to: string } {
 
 export function LaporanTab() {
   const { from: defaultFrom, to: defaultTo } = getDefaultDates();
-  const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
+  const isDark = false;
 
   const [from, setFrom] = useState(defaultFrom);
   const [to, setTo] = useState(defaultTo);

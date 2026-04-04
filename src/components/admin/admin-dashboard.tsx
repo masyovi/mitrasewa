@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { useAppStore, type AdminTab } from "@/store/use-store";
-import { useTheme } from "next-themes";
 import {
   Building2,
   LogOut,
@@ -16,8 +15,6 @@ import {
   Menu,
   X,
   Info,
-  Sun,
-  Moon,
   CalendarDays,
   Tag,
   Bell,
@@ -55,8 +52,6 @@ export function AdminDashboard() {
   const { adminTab, setAdminTab, logout, sidebarOpen, setSidebarOpen } =
     useAppStore();
   const { toast } = useToast();
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
 
   const [stockData, setStockData] = useState<StockData[]>([]);
   const [priceData, setPriceData] = useState<PriceData[]>([]);
@@ -86,10 +81,6 @@ export function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  useEffect(() => {
-    setMounted(true);
   }, []);
 
   useEffect(() => {
@@ -158,17 +149,6 @@ export function AdminDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {mounted && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="text-white/80 hover:text-white hover:bg-white/20"
-                aria-label="Toggle dark mode"
-              >
-                {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-              </Button>
-            )}
             <Button
               variant="ghost"
               size="icon"

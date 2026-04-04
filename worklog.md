@@ -401,3 +401,28 @@ Stage Summary:
 - 3 CSS additions (pb-safe, galleryFadeIn, stagger delays)
 - 5 new icon imports
 - All QA checks passed
+
+---
+Task ID: 21
+Agent: Main Agent
+Task: Remove dark mode, Galeri Alat, Jam Operasional, Hubungi Kami, Perawatan Alat
+
+Work Log:
+- Removed ThemeProvider from layout.tsx (import + wrapper + suppressHydrationWarning)
+- Removed dark mode toggle from beranda-view.tsx header (useTheme, Sun/Moon, mounted state, useEffect, toggle button)
+- Removed dark mode toggle from admin-dashboard.tsx header (useTheme, Sun/Moon, mounted state, useEffect, toggle button)
+- Removed useTheme from laporan-tab.tsx, hardcoded isDark = false for chart theme colors
+- Removed equipmentGallery constant from beranda-view.tsx
+- Removed Galeri Alat Kami section (equipment showcase grid) from beranda-view.tsx
+- Removed Jam Operasional section from beranda-view.tsx
+- Removed Hubungi Kami section (contact card with phone/location/WhatsApp CTA) from beranda-view.tsx
+- Removed "Perawatan Alat" item from Layanan Kami footer links
+- Cleaned up unused imports: HeadphonesIcon, ImageIcon, ChevronLeft, ChevronRight
+- Re-added Wrench import (still used in Kenapa Memilih Kami section)
+- ESLint clean, dev server compiled successfully, HTTP 200 verified
+
+Stage Summary:
+- Dark mode feature completely removed from all 4 files
+- 3 homepage sections removed: Hubungi Kami, Jam Operasional, Galeri Alat Kami
+- Perawatan Alat removed from footer Layanan Kami links
+- Homepage now has: Hero, Scaffolding Stats, Status Alat, Komponen Scaffolding, FAQ, Kalkulator Biaya, Kenapa Memilih Kami, Testimoni Pelanggan, Footer
