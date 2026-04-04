@@ -689,3 +689,45 @@ Agent: Main Agent (Cron Review — QA, Styling, Features)
 5. Add customer review/rating submission form
 6. PDF export for rental receipts
 7. Add "Promo Spesial" section with time-limited offers
+
+---
+## Task ID: 24
+Agent: Main Agent
+Task: Fix section spacing + Replace hero green box with bubble animation
+
+### Work Task
+1. Fix excessive spacing above Scaffolding and Testimoni Pelanggan sections
+2. Replace the rotating green gradient box in the hero section with floating bubble animation
+
+### Work Summary
+
+**Change 1: Fix Section Spacing**
+- File: `/home/z/my-project/src/components/beranda-view.tsx`, line 387 (was line 376)
+- Changed `space-y-8` to `space-y-5` on the `<main>` container
+- This reduces the gap between all sections from 32px to 20px
+- Combined with the existing `border-b border-gray-100 pb-8` dividers, total spacing goes from ~64px to ~52px between sections
+
+**Change 2: Replace Hero Green Box with Bubble Animation**
+- File: `/home/z/my-project/src/components/beranda-view.tsx`, lines 318-338 (hero section)
+- Removed `hero-pattern` class from the hero section's `<section>` element (line 319)
+- Removed the animated gradient border div (`<div className="absolute inset-0 bg-gradient-to-r from-emerald-400/20 via-teal-400/10 to-emerald-400/20 animate-spin-slow" style={{ animationDuration: '8s' }} />`) that was at lines 326-327
+- Added 10 floating bubble elements inside a wrapper `<div className="absolute inset-0 overflow-hidden pointer-events-none">` positioned within the hero section
+- Each bubble has unique: left position (10%-90%), bottom offset (-10px to -40px), size (8px-40px), animation delay (0s-5s), animation duration (6s-11s)
+
+**Change 3: Add Bubble CSS Animation**
+- File: `/home/z/my-project/src/app/globals.css`, lines 1565-1597
+- Added `@keyframes bubbleRise` animation: bubbles rise 350px upward, fade in at 10% (opacity 0.6), gradually fade out (0.3 at 50%, 0.1 at 90%), scale down to 0.5 at end
+- Added `.bubble` CSS class with: radial gradient background (emerald/teal tones matching MITRA SEWA theme), subtle border, `pointer-events: none`, CSS variable-based duration and delay
+
+### Verification
+- ESLint: 0 errors, 0 warnings
+- Dev server: Compiled successfully (✓ Compiled in 294ms)
+- All routes returning HTTP 200
+
+### Priority Recommendations for Next Phase
+1. Add image upload for equipment photos (replace text descriptions with real photos)
+2. Add WhatsApp floating chat widget with auto-reply
+3. Add "Syarat & Ketentuan" page
+4. Equipment comparison table feature
+5. Add customer review/rating submission form
+6. PDF export for rental receipts

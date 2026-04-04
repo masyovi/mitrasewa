@@ -316,15 +316,26 @@ export function BerandaView() {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-mesh-gradient hero-pattern px-4 py-10 sm:py-16 animate-fade-in relative overflow-hidden">
+      <section className="bg-mesh-gradient px-4 py-10 sm:py-16 animate-fade-in relative overflow-hidden">
         {/* Decorative gear pattern */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
              style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'20\' height=\'20\' viewBox=\'0 0 20 20\'%3E%3Ccircle cx=\'10\' cy=\'10\' r=\'4\' fill=\'none\' stroke=\'%2310b981\' stroke-width=\'1\'/%3E%3Ccircle cx=\'10\' cy=\'10\' r=\'1.5\' fill=\'%2310b981\'/%3E%3Cline x1=\'10\' y1=\'1\' x2=\'10\' y2=\'5\' stroke=\'%2310b981\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3Cline x1=\'10\' y1=\'15\' x2=\'10\' y2=\'19\' stroke=\'%2310b981\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3Cline x1=\'1\' y1=\'10\' x2=\'5\' y2=\'10\' stroke=\'%2310b981\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3Cline x1=\'15\' y1=\'10\' x2=\'19\' y2=\'10\' stroke=\'%2310b981\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3C/svg%3E")'}} />
 
+        {/* Floating Bubbles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="bubble" style={{ left: '10%', bottom: '-20px', width: '24px', height: '24px', animationDelay: '0s', animationDuration: '7s' }} />
+          <div className="bubble" style={{ left: '25%', bottom: '-30px', width: '16px', height: '16px', animationDelay: '1.5s', animationDuration: '8s' }} />
+          <div className="bubble" style={{ left: '40%', bottom: '-25px', width: '32px', height: '32px', animationDelay: '0.5s', animationDuration: '6s' }} />
+          <div className="bubble" style={{ left: '55%', bottom: '-15px', width: '12px', height: '12px', animationDelay: '2s', animationDuration: '9s' }} />
+          <div className="bubble" style={{ left: '70%', bottom: '-35px', width: '20px', height: '20px', animationDelay: '3s', animationDuration: '7.5s' }} />
+          <div className="bubble" style={{ left: '85%', bottom: '-20px', width: '28px', height: '28px', animationDelay: '1s', animationDuration: '8.5s' }} />
+          <div className="bubble" style={{ left: '15%', bottom: '-40px', width: '40px', height: '40px', animationDelay: '4s', animationDuration: '10s' }} />
+          <div className="bubble" style={{ left: '60%', bottom: '-10px', width: '8px', height: '8px', animationDelay: '2.5s', animationDuration: '6.5s' }} />
+          <div className="bubble" style={{ left: '90%', bottom: '-30px', width: '18px', height: '18px', animationDelay: '3.5s', animationDuration: '7s' }} />
+          <div className="bubble" style={{ left: '35%', bottom: '-15px', width: '36px', height: '36px', animationDelay: '5s', animationDuration: '11s' }} />
+        </div>
+
         <div className="relative overflow-hidden rounded-2xl">
-          {/* Animated gradient border */}
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/20 via-teal-400/10 to-emerald-400/20 animate-spin-slow"
-               style={{ animationDuration: '8s' }} />
           <div className="max-w-6xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 px-4 py-1.5 rounded-full text-sm font-medium mb-4 animate-fade-in-up">
             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse-green" />
@@ -373,7 +384,7 @@ export function BerandaView() {
       </section>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-8 space-y-8">
+      <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-8 space-y-5">
         {/* ===== Tentang Kami Summary Section ===== */}
         <section className="reveal border-b border-gray-100 pb-8">
           <div className="text-center max-w-2xl mx-auto">
