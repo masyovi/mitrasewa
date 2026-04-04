@@ -593,3 +593,99 @@ Dark mode was removed in Task 21 but 230 `dark:` Tailwind CSS class references r
 4. Equipment comparison table feature
 5. Add customer review/rating submission form
 6. PDF export for rental receipts (not just print)
+
+---
+Task ID: 23
+Agent: Main Agent (Cron Review — QA, Styling, Features)
+
+### Phase 1: QA Testing (All Pass)
+- agent-browser testing: desktop (1920x1080) and mobile (iPhone 14)
+- Homepage: all 10 sections verified with correct heading hierarchy
+- Confirmed: Cara Pemesanan stepper (4 steps), Lokasi Kami (iframe map), all existing sections
+- Admin: login successful, all 6 tabs present, overdue alert visible
+- FAQ accordion, calculator, WhatsApp buttons all functional
+- Zero ESLint errors, zero JS runtime errors
+
+### Phase 2: Styling Improvements (5 items)
+
+1. **Scaffolding Stats Gradient Cards**: Enhanced 3 stat cards with subtle gradient backgrounds:
+   - Total Set: light gray gradient (`linear-gradient(135deg, #f9fafb, #f3f4f6)`)
+   - Tersedia: light emerald gradient + TrendingUp icon
+   - Disewa: light amber gradient
+
+2. **Feature Cards Entrance Animation**: Added `.featureCardFadeIn` CSS class with staggered delays (0s, 0.1s, 0.2s, 0.3s) for Kenapa Memilih Kami cards
+
+3. **Progress Bar Animation**: Added `.progress-animate` CSS class — bars animate width from 0 to actual value when section is revealed (`.revealed .progress-animate`)
+
+4. **Calculator Result Enhancement**: When "Hitung Estimasi" is clicked:
+   - Shows detailed breakdown (equipment, quantity, duration, per-unit price)
+   - Full-width WhatsApp CTA button with pre-filled message including calculation details
+   - Disclaimer badge at bottom
+
+5. **Section Dividers**: Maintained `border-b border-gray-100 pb-8` between major sections
+
+### Phase 3: New Features (3 features)
+
+**Feature 1: Cara Pemesanan Step-by-Step Section**
+- New section between Tentang Kami and Scaffolding Stats
+- 4-step horizontal stepper (desktop) / vertical (mobile):
+  - Step 1: Hubungi Kami (Phone icon)
+  - Step 2: Pilih Alat (ClipboardList icon)
+  - Step 3: Pengiriman (Truck icon)
+  - Step 4: Mulai Sewa (CheckCircle2 icon)
+- Numbered emerald gradient circles with hover scale effect
+- Dotted connector line on desktop (hidden on mobile)
+- New icon imports: ClipboardList, CheckCircle2
+
+**Feature 2: Lokasi Kami Map Section**
+- New section between Kenapa Memilih Kami and Testimoni Pelanggan
+- Embedded Google Maps iframe (Bojonegoro coordinates: -7.1529, 111.8787)
+- Address card below map with MapPin icon
+- "MITRA SEWA — Kantor Pusat" with full address
+- "Area layanan: Bojonegoro dan sekitarnya" subtitle
+- lazy loading for performance
+
+**Feature 3: Equipment Detail Modal WhatsApp CTA**
+- Added "Hubungi via WhatsApp" button at bottom of equipment detail modal
+- Pre-filled message: "Halo, saya tertarik untuk menyewa {equipment name}. Apakah tersedia?"
+- Links to wa.me/6285185924243
+- Full-width emerald button with WhatsApp SVG logo
+
+### Phase 4: CSS Additions (3 new classes)
+- `.featureCardFadeIn` — Staggered fade-in with nth-child delays
+- `.progress-animate` — Width transition for Status Alat progress bars
+- Both added to `/home/z/my-project/src/app/globals.css`
+
+### Phase 5: Final Verification
+- 4 QA screenshots captured (desktop + mobile, before + after)
+- All sections confirmed in accessibility tree
+- Zero JS errors on desktop and mobile
+- ESLint clean, dev server compiled successfully
+
+### Current Homepage Section Order (12 sections):
+1. Header (sticky, emerald gradient)
+2. Hero (shimmer text, animated stats, gradient border)
+3. Tentang Kami (brand summary, 3 stat badges)
+4. **Cara Pemesanan** (NEW — 4-step stepper)
+5. Scaffolding Stats (gradient cards with TrendingUp)
+6. Status Alat (animated progress bars, availability badges)
+7. Komponen Scaffolding (3 component cards)
+8. Pertanyaan Umum (FAQ with gradient header)
+9. Kalkulator Biaya Sewa (enhanced with WhatsApp CTA in results)
+10. Kenapa Memilih Kami (4 feature cards with staggered animation)
+11. **Lokasi Kami** (NEW — Google Maps + address)
+12. Testimoni Pelanggan (6 testimonials with hover effect)
+13. Footer (4-column, social links, CTA with glow)
+14. Floating WhatsApp + Scroll-to-Top buttons
+
+### Unresolved Issues / Risks
+- None. All systems operational, ESLint clean, zero JS errors.
+
+### Priority Recommendations for Next Phase
+1. Add image upload for equipment photos (replace text descriptions with real photos)
+2. Add WhatsApp floating chat widget with auto-reply
+3. Add "Syarat & Ketentuan" page
+4. Equipment comparison table feature
+5. Add customer review/rating submission form
+6. PDF export for rental receipts
+7. Add "Promo Spesial" section with time-limited offers

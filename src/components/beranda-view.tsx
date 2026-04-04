@@ -8,7 +8,6 @@ import {
   Info,
   Phone,
   MapPin,
-  MessageCircle,
   Calculator,
   DollarSign,
   Clock,
@@ -24,6 +23,9 @@ import {
   Boxes,
   Instagram,
   Facebook,
+  ClipboardList,
+  CheckCircle2,
+  TrendingUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -401,6 +403,36 @@ export function BerandaView() {
           </div>
         </section>
 
+        {/* ===== Cara Pemesanan Step-by-Step Section ===== */}
+        <section className="reveal border-b border-gray-100 pb-8">
+          <div className="text-center mb-6">
+            <div className="flex items-center gap-2 mb-4 justify-center">
+              <div className="w-1 h-6 bg-emerald-500 rounded-full" />
+              <h3 className="text-lg font-bold text-gray-900">Cara Pemesanan</h3>
+            </div>
+            <p className="text-sm text-gray-500">Proses penyewaan alat konstruksi yang mudah dan cepat</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 relative">
+            {/* Dotted connector line (desktop only) */}
+            <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] border-t-2 border-dashed border-emerald-200" />
+            {[
+              { icon: Phone, title: "Hubungi Kami", desc: "Hubungi via WhatsApp atau telepon untuk konsultasi" },
+              { icon: ClipboardList, title: "Pilih Alat", desc: "Pilih alat konstruksi sesuai kebutuhan proyek" },
+              { icon: Truck, title: "Pengiriman", desc: "Kami antar alat langsung ke lokasi proyek Anda" },
+              { icon: CheckCircle2, title: "Mulai Sewa", desc: "Alat siap digunakan, tinggal bayar sewa" },
+            ].map((step, idx) => (
+              <div key={idx} className="relative flex flex-col items-center text-center group">
+                {/* Step number circle */}
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-white flex items-center justify-center text-lg sm:text-xl font-bold shadow-lg shadow-emerald-200 mb-3 group-hover:scale-110 transition-transform relative z-10">
+                  {idx + 1}
+                </div>
+                <h4 className="font-bold text-gray-900 text-sm sm:text-base mb-1">{step.title}</h4>
+                <p className="text-xs sm:text-sm text-gray-500 leading-relaxed max-w-[180px]">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* Scaffolding Stats */}
         <section
           ref={(el) => { sectionRefs.current[0] = el; }}
@@ -419,7 +451,7 @@ export function BerandaView() {
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-3 sm:gap-4">
-              <Card className="border-0 shadow-md bg-white card-shine animate-fade-in-up">
+              <Card className="border-0 shadow-md card-shine animate-fade-in-up" style={{ background: 'linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%)' }}>
                 <CardContent className="p-4 sm:p-6 text-center">
                   <p className="text-xs sm:text-sm text-gray-500 mb-1">
                     Total Set
@@ -430,8 +462,11 @@ export function BerandaView() {
                   <p className="text-xs text-gray-400 mt-1">set</p>
                 </CardContent>
               </Card>
-              <Card className="border-0 shadow-md bg-emerald-50 card-shine animate-fade-in-up animate-fade-in-up-delay-1">
+              <Card className="border-0 shadow-md card-shine animate-fade-in-up animate-fade-in-up-delay-1 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)' }}>
                 <CardContent className="p-4 sm:p-6 text-center">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
+                  </div>
                   <p className="text-xs sm:text-sm text-emerald-700 mb-1">
                     Tersedia
                   </p>
@@ -441,7 +476,7 @@ export function BerandaView() {
                   <p className="text-xs text-emerald-500 mt-1">set</p>
                 </CardContent>
               </Card>
-              <Card className="border-0 shadow-md bg-amber-50 card-shine animate-fade-in-up animate-fade-in-up-delay-2">
+              <Card className="border-0 shadow-md card-shine animate-fade-in-up animate-fade-in-up-delay-2" style={{ background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)' }}>
                 <CardContent className="p-4 sm:p-6 text-center">
                   <p className="text-xs sm:text-sm text-amber-700 mb-1">
                     Disewa
@@ -543,38 +578,26 @@ export function BerandaView() {
                       <div className="mt-4 h-2.5 bg-gray-100 rounded-full overflow-hidden flex">
                         {machine.disewa > 0 && (
                           <div
-                            className="h-full bg-amber-400 progress-bar-animate"
+                            className="h-full bg-amber-400 progress-animate"
                             style={{
-                              width: `${
-                                machine.total > 0
-                                  ? (machine.disewa / machine.total) * 100
-                                  : 0
-                              }%`,
-                            }}
+                              '--progress-width': `${machine.total > 0 ? (machine.disewa / machine.total) * 100 : 0}%`,
+                            } as React.CSSProperties}
                           />
                         )}
                         {isPerbaikan && (
                           <div
-                            className="h-full bg-orange-400 progress-bar-animate"
+                            className="h-full bg-orange-400 progress-animate"
                             style={{
-                              width: `${
-                                machine.total > 0
-                                  ? (machine.perbaikan / machine.total) * 100
-                                  : 0
-                              }%`,
-                            }}
+                              '--progress-width': `${machine.total > 0 ? (machine.perbaikan / machine.total) * 100 : 0}%`,
+                            } as React.CSSProperties}
                           />
                         )}
                         {machine.tersedia > 0 && (
                           <div
-                            className="h-full bg-emerald-500 progress-bar-animate"
+                            className="h-full bg-emerald-500 progress-animate"
                             style={{
-                              width: `${
-                                machine.total > 0
-                                  ? (machine.tersedia / machine.total) * 100
-                                  : 0
-                              }%`,
-                            }}
+                              '--progress-width': `${machine.total > 0 ? (machine.tersedia / machine.total) * 100 : 0}%`,
+                            } as React.CSSProperties}
                           />
                         )}
                       </div>
@@ -901,25 +924,55 @@ export function BerandaView() {
               </Button>
 
               {/* Result card */}
-              {showResult && estimatedCost !== null && (
-                <div
-                  className={`bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-xl p-5 text-center animate-fade-in-up`}
-                >
-                  <p className="text-xs text-emerald-600 mb-1 font-medium uppercase tracking-wide">
-                    Estimasi Total Biaya Sewa
-                  </p>
-                  <p className="text-2xl sm:text-3xl font-bold text-emerald-700 stat-number">
-                    {formatCurrency(estimatedCost)}
-                  </p>
-                  <p className="text-xs text-emerald-500 mt-2">
-                    {quantity} {selectedPriceItem?.unit} × {duration} hari
-                    {selectedPriceItem?.billingType === "bulanan"
-                      ? ` (${Math.ceil(duration / 30)} bulan)`
-                      : ""}
-                  </p>
-                  <Badge className="mt-3 bg-emerald-200 text-emerald-800 border-0 badge-glow-emerald text-xs">
-                    *Estimasi, harga dapat berubah sewaktu-waktu
-                  </Badge>
+              {showResult && estimatedCost !== null && selectedPriceItem && (
+                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-xl overflow-hidden animate-fade-in-up">
+                  {/* Success header */}
+                  <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 px-5 py-3 flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-white" />
+                    <p className="text-white font-semibold text-sm">Estimasi Biaya Sewa</p>
+                  </div>
+                  <div className="p-5">
+                    {/* Total */}
+                    <div className="text-center mb-4">
+                      <p className="text-2xl sm:text-3xl font-bold text-emerald-700 stat-number">
+                        {formatCurrency(estimatedCost)}
+                      </p>
+                    </div>
+                    {/* Breakdown */}
+                    <div className="bg-white/60 rounded-lg p-3 space-y-2 mb-4">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-500">Nama Alat</span>
+                        <span className="font-medium text-gray-900">{selectedPriceItem.label}</span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-500">Jumlah</span>
+                        <span className="font-medium text-gray-900">{quantity} {selectedPriceItem.unit}</span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-500">Durasi</span>
+                        <span className="font-medium text-gray-900">{duration} hari{selectedPriceItem.billingType === "bulanan" ? ` (${Math.ceil(duration / 30)} bulan)` : ""}</span>
+                      </div>
+                      <div className="border-t border-emerald-100 pt-2 flex justify-between text-xs">
+                        <span className="text-gray-500">Harga per {selectedPriceItem.unit}</span>
+                        <span className="font-medium text-gray-900">{formatCurrency(selectedPriceItem.price)}</span>
+                      </div>
+                    </div>
+                    {/* WhatsApp CTA */}
+                    <a
+                      href={`https://wa.me/6285185924243?text=${encodeURIComponent(`Halo MITRA SEWA, saya ingin menyewa:\n\nAlat: ${selectedPriceItem.label}\nJumlah: ${quantity} ${selectedPriceItem.unit}\nDurasi: ${duration} hari\n\nEstimasi biaya: ${formatCurrency(estimatedCost)}\n\nApakah tersedia?`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 w-full h-11 bg-[#25D366] hover:bg-[#20BD5A] text-white font-semibold rounded-xl transition-all btn-press"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                      </svg>
+                      Pesan via WhatsApp
+                    </a>
+                    <Badge className="mt-3 bg-emerald-200/80 text-emerald-800 border-0 text-[10px] flex justify-center w-fit mx-auto">
+                      *Estimasi, harga dapat berubah sewaktu-waktu
+                    </Badge>
+                  </div>
                 </div>
               )}
             </CardContent>
@@ -939,7 +992,7 @@ export function BerandaView() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Feature 1: Harga Terjangkau */}
-            <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated hover-lift transition-all group">
+            <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated hover-lift transition-all group featureCardFadeIn">
               <CardContent className="p-5 text-center">
                 <div className="bg-emerald-100 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
                   <DollarSign className="w-7 h-7 text-emerald-600" />
@@ -954,7 +1007,7 @@ export function BerandaView() {
             </Card>
 
             {/* Feature 2: Alat Berkualitas */}
-            <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated hover-lift transition-all group">
+            <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated hover-lift transition-all group featureCardFadeIn">
               <CardContent className="p-5 text-center">
                 <div className="bg-blue-100 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
                   <ShieldCheck className="w-7 h-7 text-blue-600" />
@@ -969,7 +1022,7 @@ export function BerandaView() {
             </Card>
 
             {/* Feature 3: Proses Cepat */}
-            <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated hover-lift transition-all group">
+            <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated hover-lift transition-all group featureCardFadeIn">
               <CardContent className="p-5 text-center">
                 <div className="bg-amber-100 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
                   <Truck className="w-7 h-7 text-amber-600" />
@@ -984,7 +1037,7 @@ export function BerandaView() {
             </Card>
 
             {/* Feature 4: Layanan Responsif */}
-            <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated hover-lift transition-all group">
+            <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated hover-lift transition-all group featureCardFadeIn">
               <CardContent className="p-5 text-center">
                 <div className="bg-violet-100 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
                   <Wrench className="w-7 h-7 text-violet-600" />
@@ -998,6 +1051,48 @@ export function BerandaView() {
               </CardContent>
             </Card>
           </div>
+        </section>
+
+        {/* ===== NEW SECTION: Lokasi Kami ===== */}
+        <section className="reveal border-b border-gray-100 pb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1 h-6 bg-emerald-500 rounded-full" />
+            <h3 className="text-lg font-bold text-gray-900">Lokasi Kami</h3>
+          </div>
+          <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated">
+            <CardContent className="p-0">
+              {/* Google Maps embed */}
+              <div className="w-full h-56 sm:h-64 overflow-hidden">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.8!2d111.876!3d-7.1529!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e78422c0e1b18d%3A0x2e7841a1b1b18d1c!2s7.1529%3A111.8787!5e0!3m2!1sid!2s0x2e78422c0e1b18d%3A0x2e7841a1b1b18d1c!4v1722000000000!5m2!1sid!2s0x2e78422c0e1b18d%3A0x2e7841a1b1b18d1c"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Lokasi MITRA SEWA"
+                />
+              </div>
+              {/* Address card */}
+              <div className="p-5 flex items-start gap-3 sm:items-center bg-gradient-to-r from-emerald-50/50 to-white">
+                <div className="bg-emerald-100 w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm sm:text-base">
+                    MITRA SEWA — Kantor Pusat
+                  </p>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-0.5 leading-relaxed">
+                    Gedung Pusat Penggerak Ekonomi BMT NU Ngasem Group, Bojonegoro
+                  </p>
+                  <p className="text-[10px] sm:text-xs text-gray-400 mt-1">
+                    Area layanan: Bojonegoro dan sekitarnya
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </section>
 
         {/* ===== NEW SECTION: Testimoni Pelanggan ===== */}
@@ -1287,13 +1382,15 @@ export function BerandaView() {
 
                 {/* CTA Button */}
                 <a
-                  href={`https://wa.me/6285185924243?text=Halo, saya ingin menyewa ${eq.label}. Mohon info ketersediaan.`}
+                  href={`https://wa.me/6285185924243?text=${encodeURIComponent(`Halo, saya tertarik untuk menyewa ${eq.label}. Apakah tersedia?`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full h-11 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-all btn-press animate-fade-in-up"
+                  className="flex items-center justify-center gap-2 w-full h-11 bg-[#25D366] hover:bg-[#20BD5A] text-white font-semibold rounded-xl transition-all btn-press animate-fade-in-up"
                 >
-                  <MessageCircle className="w-4 h-4" />
-                  Sewa Sekarang via WhatsApp
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                  </svg>
+                  Hubungi via WhatsApp
                 </a>
               </div>
             </DialogContent>
