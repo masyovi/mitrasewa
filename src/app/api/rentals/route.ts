@@ -58,6 +58,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       namaPenyewa,
+      nik,
       noHp,
       alamat,
       tanggalSewa,
@@ -65,6 +66,7 @@ export async function POST(request: NextRequest) {
       items,
     } = body as {
       namaPenyewa: string;
+      nik?: string;
       noHp: string;
       alamat: string;
       tanggalSewa: string;
@@ -150,6 +152,7 @@ export async function POST(request: NextRequest) {
     const rental = await db.rental.create({
       data: {
         namaPenyewa,
+        nik: nik || "",
         noHp,
         alamat,
         tanggalSewa: sewaDate,

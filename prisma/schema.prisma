@@ -30,6 +30,7 @@ model StockSetting {
 model Rental {
   id             String       @id @default(cuid())
   namaPenyewa    String
+  nik            String       @default("")
   noHp           String
   alamat         String
   tanggalSewa    DateTime

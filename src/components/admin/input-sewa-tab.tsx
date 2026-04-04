@@ -37,6 +37,7 @@ export function InputSewaTab({
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [namaPenyewa, setNamaPenyewa] = useState("");
+  const [nik, setNik] = useState("");
   const [noHp, setNoHp] = useState("");
   const [alamat, setAlamat] = useState("");
   const [tanggalSewa, setTanggalSewa] = useState("");
@@ -47,12 +48,12 @@ export function InputSewaTab({
   // Build unique customer list from previous rentals (most recent first)
   const customerList = useMemo(() => {
     const seen = new Set<string>();
-    const list: { nama: string; noHp: string; alamat: string }[] = [];
+    const list: { nama: string; nik: string; noHp: string; alamat: string }[] = [];
     for (const r of rentals) {
       const key = r.namaPenyewa.toLowerCase();
       if (!seen.has(key)) {
         seen.add(key);
-        list.push({ nama: r.namaPenyewa, noHp: r.noHp, alamat: r.alamat });
+        list.push({ nama: r.namaPenyewa, nik: r.nik || "", noHp: r.noHp, alamat: r.alamat });
       }
     }
     return list;
@@ -64,8 +65,9 @@ export function InputSewaTab({
     return customerList.filter((c) => c.nama.toLowerCase().includes(f)).slice(0, 8);
   }, [customerList, dropdownFilter]);
 
-  const handleSelectCustomer = (customer: { nama: string; noHp: string; alamat: string }) => {
+  const handleSelectCustomer = (customer: { nama: string; nik: string; noHp: string; alamat: string }) => {
     setNamaPenyewa(customer.nama);
+    setNik(customer.nik);
     setNoHp(customer.noHp);
     setAlamat(customer.alamat);
     setShowDropdown(false);
@@ -172,6 +174,7 @@ export function InputSewaTab({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           namaPenyewa,
+          nik,
           noHp,
           alamat,
           tanggalSewa,
@@ -187,6 +190,7 @@ export function InputSewaTab({
           description: `Penyewaan ${namaPenyewa} berhasil disimpan`,
         });
         setNamaPenyewa("");
+        setNik("");
         setNoHp("");
         setAlamat("");
         setTanggalSewa("");
@@ -304,6 +308,18 @@ export function InputSewaTab({
                     ))}
                   </div>
                 )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="nik" className="text-sm">
+                  NIK
+                </Label>
+                <Input
+                  id="nik"
+                  placeholder="Nomor Induk Kependudukan"
+                  value={nik}
+                  onChange={(e) => setNik(e.target.value)}
+                  maxLength={16}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="nohp" className="text-sm">

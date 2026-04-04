@@ -34,6 +34,7 @@ export interface RentalItem {
 export interface RentalWithItems {
   id: string;
   namaPenyewa: string;
+  nik: string;
   noHp: string;
   alamat: string;
   tanggalSewa: string;
