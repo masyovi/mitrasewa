@@ -360,7 +360,7 @@ export function BerandaView() {
         </section>
 
         {/* ===== Cara Pemesanan Step-by-Step Section ===== */}
-        <section className="reveal border-b border-gray-100 pb-4">
+        <section className="reveal">
           <div className="text-center mb-6">
             <div className="flex items-center gap-2 mb-4 justify-center">
               <div className="w-1 h-6 bg-emerald-500 rounded-full" />
@@ -669,7 +669,7 @@ export function BerandaView() {
         {/* ===== Kalkulator Biaya Sewa ===== */}
         <section
           ref={(el) => { sectionRefs.current[4] = el; }}
-          className="reveal border-b border-gray-100 pb-4"
+          className="reveal"
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
