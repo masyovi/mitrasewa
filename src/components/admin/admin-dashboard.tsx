@@ -26,7 +26,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { NotificationPanel } from "./notification-panel";
-import { MinionWorkers } from "@/components/minion-workers";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
@@ -134,7 +133,6 @@ export function AdminDashboard() {
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* ========== Header ========== */}
       <header className="bg-mitra-gradient text-white sticky top-0 z-50 shadow-lg relative">
-        <MinionWorkers position="header" />
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Building2 className="w-6 h-6" />
@@ -287,7 +285,6 @@ export function AdminDashboard() {
 
       {/* ========== Footer ========== */}
       <footer className="bg-mitra-gradient text-white mt-auto relative">
-        <MinionWorkers position="footer" />
         <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-white/60">
             &copy; {new Date().getFullYear()} MITRA SEWA - Panel Admin

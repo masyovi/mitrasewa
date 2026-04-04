@@ -1034,3 +1034,25 @@ Stage Summary:
 - Dev server: Compiled successfully
 - Files created: src/components/minion-workers.tsx
 - Files modified: globals.css, beranda-view.tsx, admin-dashboard.tsx
+
+---
+Task ID: 27
+Agent: Main Agent
+Task: Remove minion animation from header and footer
+
+Work Log:
+- Removed `MinionWorkers` import from admin-dashboard.tsx
+- Removed `<MinionWorkers position="header" />` from admin-dashboard header
+- Removed `<MinionWorkers position="footer" />` from admin-dashboard footer
+- Removed `MinionWorkers` import from beranda-view.tsx
+- Removed `<MinionWorkers position="header" />` from beranda header
+- Removed `<MinionWorkers position="footer" />` from beranda footer
+- Removed entire Minion Construction Workers Animation CSS block (~780 lines) from globals.css (lines 1831-2609)
+- Deleted minion-workers.tsx component file
+
+Stage Summary:
+- Minion animation completely removed from all headers and footers
+- ~780 lines of minion CSS cleaned from globals.css
+- Component file deleted
+- ESLint: 0 errors
+- Dev server: Compiled successfully

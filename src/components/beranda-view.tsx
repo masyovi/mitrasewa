@@ -34,7 +34,6 @@ import {
 } from "@/components/ui/select";
 import { useEffect, useState, useRef } from "react";
 import { AboutModal } from "@/components/about-modal";
-import { MinionWorkers } from "@/components/minion-workers";
 import { formatCurrency } from "@/components/admin/helpers";
 import {
   Dialog,
@@ -217,7 +216,6 @@ export function BerandaView() {
     <div className="min-h-screen flex flex-col relative overflow-hidden">
       {/* Header */}
       <header className="bg-mitra-gradient text-white sticky top-0 z-50 shadow-lg animate-fade-in relative">
-        <MinionWorkers position="header" />
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="bg-white/20 backdrop-blur-sm rounded-xl p-2.5">
@@ -836,7 +834,6 @@ export function BerandaView() {
 
       {/* Footer */}
       <footer className="bg-mitra-gradient text-white mt-auto no-print pb-safe relative z-10">
-        <MinionWorkers position="footer" />
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {/* Brand Column */}
