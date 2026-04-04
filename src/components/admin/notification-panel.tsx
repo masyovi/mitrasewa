@@ -13,10 +13,9 @@ import {
   BellRing,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useNotificationStore, type AppNotification, type NotificationType } from "@/store/use-notifications";
-import { useAppStore, type AdminTab } from "@/store/use-store";
+import { useAppStore } from "@/store/use-store";
 import type { RentalWithItems, StockData } from "@/lib/types";
 
 // ---------------------------------------------------------------------------
@@ -268,7 +267,7 @@ export function NotificationPanel({
           )}
 
           {/* Notification list */}
-          <ScrollArea className="max-h-[420px]">
+          <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
             {notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 px-4">
                 <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-3">
@@ -287,7 +286,7 @@ export function NotificationPanel({
                   <button
                     key={notification.id}
                     onClick={() => handleNotificationClick(notification)}
-                    className={`w-full text-left px-4 py-3 flex gap-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50 group ${
+                    className={`w-full text-left px-4 py-3 flex gap-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50 ${
                       notification.read ? "opacity-70" : ""
                     }`}
                   >
@@ -299,16 +298,16 @@ export function NotificationPanel({
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start gap-2">
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100 leading-tight truncate">
+                    <div className="flex-1 min-w-0 overflow-hidden">
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100 leading-tight truncate min-w-0">
                           {notification.title}
                         </p>
                         {!notification.read && (
-                          <span className="mt-1.5 w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 mt-0.5" />
                         )}
                       </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2 leading-relaxed">
                         {notification.message}
                       </p>
                       <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
@@ -319,7 +318,7 @@ export function NotificationPanel({
                 ))}
               </div>
             )}
-          </ScrollArea>
+          </div>
 
           {/* Footer */}
           {notifications.length > 0 && (

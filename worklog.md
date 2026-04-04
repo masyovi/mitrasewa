@@ -821,3 +821,23 @@ Stage Summary:
 - Dev server: Compiled successfully
 - Notification panel scroll area increased to 420px max height
 - Logout now requires confirmation via popup dialog
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Fix notification panel scrolling + text overlap issue
+
+Work Log:
+- Diagnosed: Radix UI ScrollArea component with max-h was not enabling proper scrolling in the dropdown notification panel
+- Replaced ScrollArea component with plain div using `max-h-[400px] overflow-y-auto custom-scrollbar` for reliable native scrolling
+- Fixed text overlap: added `overflow-hidden` to notification content container, changed title row from `items-start` to `items-center` with `min-w-0` on title element
+- Fixed unread dot alignment: changed from `mt-1.5` to `mt-0.5` for better vertical centering
+- Removed unused ScrollArea import
+- Removed unused AdminTab type import
+
+Stage Summary:
+- File modified: src/components/admin/notification-panel.tsx
+- ESLint: 0 errors, 0 warnings
+- Dev server: Compiled successfully
+- Notification panel now scrolls properly with native scrollbar
+- Text no longer overlaps in notification items
