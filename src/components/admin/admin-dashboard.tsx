@@ -12,11 +12,7 @@ import {
   History,
   BarChart3,
   Users,
-  Menu,
-  X,
   Info,
-  CalendarDays,
-  Tag,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -60,7 +56,7 @@ const PelangganTab = dynamic(() => import("./pelanggan-tab").then((mod) => ({ de
 });
 
 export function AdminDashboard() {
-  const { adminTab, setAdminTab, logout, sidebarOpen, setSidebarOpen } =
+  const { adminTab, setAdminTab, logout } =
     useAppStore();
   const { toast } = useToast();
 
@@ -135,29 +131,14 @@ export function AdminDashboard() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* ========== Header ========== */}
       <header className="bg-mitra-gradient text-white sticky top-0 z-50 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-lg hover:bg-white/20 transition-colors lg:hidden"
-            >
-              {sidebarOpen ? (
-                <X className="w-5 h-5" />
-              ) : (
-                <Menu className="w-5 h-5" />
-              )}
-            </button>
-            <div className="flex items-center gap-2">
-              <Building2 className="w-6 h-6" />
-              <div>
-                <h1 className="text-lg font-bold leading-tight">
-                  MITRA SEWA
-                </h1>
-                <p className="text-[10px] sm:text-xs text-white/70">
-                  Panel Admin
-                </p>
-              </div>
+          <div className="flex items-center gap-2">
+            <Building2 className="w-6 h-6" />
+            <div>
+              <h1 className="text-lg font-bold leading-tight">MITRA SEWA</h1>
+              <p className="text-[10px] sm:text-xs text-white/70">Panel Admin</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -208,116 +189,101 @@ export function AdminDashboard() {
             </AlertDialog>
           </div>
         </div>
-      </header>
 
-      <div className="flex-1 flex max-w-7xl mx-auto w-full">
-        <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-100 p-4 min-h-0">
-          <nav className="space-y-1 flex-1">
+        {/* Desktop: Horizontal top navigation */}
+        <nav className="hidden lg:block border-t border-white/15">
+          <div className="max-w-7xl mx-auto px-4 flex items-center gap-1 overflow-x-auto">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setAdminTab(tab.id)}
-                className={`sidebar-item ${adminTab === tab.id ? "sidebar-item-active" : ""}`}
+                className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-lg transition-all whitespace-nowrap shrink-0 ${
+                  adminTab === tab.id
+                    ? "bg-white/20 text-white"
+                    : "text-white/70 hover:text-white hover:bg-white/10"
+                }`}
               >
                 {tab.icon}
                 {tab.label}
               </button>
             ))}
-          </nav>
-          {/* Dashboard Info */}
-          <div className="mt-auto pt-4 border-t border-gray-100">
-            <div className="flex items-center gap-2 mb-2">
-              <CalendarDays className="w-3.5 h-3.5 text-gray-400" />
-              <p className="text-xs text-gray-400">
-                {new Date().toLocaleDateString("id-ID", {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Tag className="w-3.5 h-3.5 text-gray-400" />
-              <span className="text-[11px] font-medium text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
-                Versi 2.0
-              </span>
-            </div>
           </div>
-        </aside>
+        </nav>
+      </header>
 
-        {sidebarOpen && (
-          <div className="fixed inset-0 z-40 lg:hidden">
-            <div
-              className="fixed inset-0 bg-black/40"
-              onClick={() => setSidebarOpen(false)}
-            />
-            <aside className="fixed left-0 top-[52px] bottom-0 w-64 bg-white shadow-xl p-4 z-50 animate-slide-in-left">
-              <nav className="space-y-1">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => {
-                      setAdminTab(tab.id);
-                      setSidebarOpen(false);
-                    }}
-                    className={`sidebar-item ${adminTab === tab.id ? "sidebar-item-active" : ""}`}
-                  >
-                    {tab.icon}
-                    {tab.label}
-                  </button>
-                ))}
-              </nav>
-            </aside>
+      {/* ========== Main Content ========== */}
+      <main className="flex-1 p-4 sm:p-6 lg:pb-6 pb-24 max-w-7xl mx-auto w-full overflow-y-auto">
+        {loading ? (
+          <div className="space-y-6">
+            <Skeleton className="h-8 w-48" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-32 rounded-xl" />
+              ))}
+            </div>
           </div>
+        ) : (
+          <>
+            {adminTab === "dashboard" && (
+              <DashboardTab stockData={stockData} rentals={rentals} />
+            )}
+            {adminTab === "input" && (
+              <InputSewaTab
+                priceData={priceData}
+                stockData={stockData}
+                rentals={rentals}
+                onSuccess={fetchAll}
+              />
+            )}
+            {adminTab === "harga" && (
+              <HargaTab
+                priceData={priceData}
+                stockData={stockData}
+                onSuccess={fetchAll}
+              />
+            )}
+            {adminTab === "history" && (
+              <HistoryTab
+                rentals={rentals}
+                onRefresh={fetchAll}
+                onExport={handleExportCSV}
+              />
+            )}
+            {adminTab === "pelanggan" && <PelangganTab rentals={rentals} />}
+            {adminTab === "laporan" && <LaporanTab />}
+          </>
         )}
+      </main>
 
-        <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
-          {/* Top tab buttons hidden on mobile (replaced by bottom nav) and on desktop (replaced by sidebar) */}
-
-          {loading ? (
-            <div className="space-y-6">
-              <Skeleton className="h-8 w-48" />
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[1, 2, 3].map((i) => (
-                  <Skeleton key={i} className="h-32 rounded-xl" />
-                ))}
+      {/* ========== Mobile: Bottom Navigation ========== */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgb(0_0_0/0.06)]">
+        <div className="flex items-center justify-around px-1 py-1 pb-[max(0.25rem,env(safe-area-inset-bottom))]">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setAdminTab(tab.id)}
+              className={`flex flex-col items-center justify-center gap-0.5 py-2 px-2 rounded-lg transition-all min-w-0 ${
+                adminTab === tab.id
+                  ? "text-emerald-600"
+                  : "text-gray-400 active:text-gray-600"
+              }`}
+            >
+              <div className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all ${
+                adminTab === tab.id
+                  ? "bg-emerald-50"
+                  : ""
+              }`}>
+                {tab.icon}
               </div>
-            </div>
-          ) : (
-            <>
-              {adminTab === "dashboard" && (
-                <DashboardTab stockData={stockData} rentals={rentals} />
-              )}
-              {adminTab === "input" && (
-                <InputSewaTab
-                  priceData={priceData}
-                  stockData={stockData}
-                  rentals={rentals}
-                  onSuccess={fetchAll}
-                />
-              )}
-              {adminTab === "harga" && (
-                <HargaTab
-                  priceData={priceData}
-                  stockData={stockData}
-                  onSuccess={fetchAll}
-                />
-              )}
-              {adminTab === "history" && (
-                <HistoryTab
-                  rentals={rentals}
-                  onRefresh={fetchAll}
-                  onExport={handleExportCSV}
-                />
-              )}
-              {adminTab === "pelanggan" && <PelangganTab rentals={rentals} />}
-              {adminTab === "laporan" && <LaporanTab />}
-            </>
-          )}
-        </main>
-      </div>
+              <span className="text-[10px] font-medium leading-tight truncate max-w-[64px]">
+                {tab.label}
+              </span>
+            </button>
+          ))}
+        </div>
+      </nav>
 
+      {/* ========== Footer ========== */}
       <footer className="bg-mitra-gradient text-white mt-auto">
         <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-white/60">

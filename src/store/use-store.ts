@@ -15,15 +15,12 @@ interface AppState {
   view: AppView;
   adminTab: AdminTab;
   isLoggedIn: boolean;
-  sidebarOpen: boolean;
   _hasHydrated: boolean;
 
   setView: (view: AppView) => void;
   setAdminTab: (tab: AdminTab) => void;
   login: () => void;
   logout: () => void;
-  toggleSidebar: () => void;
-  setSidebarOpen: (open: boolean) => void;
   setHasHydrated: (state: boolean) => void;
 }
 
@@ -33,7 +30,6 @@ export const useAppStore = create<AppState>()(
       view: "beranda" as AppView,
       adminTab: "dashboard" as AdminTab,
       isLoggedIn: false,
-      sidebarOpen: false,
       _hasHydrated: false,
 
       setView: (view) => set({ view }),
@@ -46,8 +42,6 @@ export const useAppStore = create<AppState>()(
           view: "beranda",
           adminTab: "dashboard",
         }),
-      toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
-      setSidebarOpen: (open) => set({ sidebarOpen: open }),
       setHasHydrated: (state) => set({ _hasHydrated: state }),
     }),
     {

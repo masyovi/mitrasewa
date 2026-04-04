@@ -841,3 +841,37 @@ Stage Summary:
 - Dev server: Compiled successfully
 - Notification panel now scrolls properly with native scrollbar
 - Text no longer overlaps in notification items
+
+---
+Task ID: 4
+Agent: Main Agent
+Task: Restructure admin navigation - desktop top nav + mobile bottom nav
+
+Work Log:
+- Removed left sidebar navigation on desktop (was `w-64` sidebar with `lg:flex`)
+- Removed hamburger menu button and mobile sidebar overlay (was `fixed inset-0 z-40`)
+- Added horizontal navigation tabs below the header for desktop (`hidden lg:block`, inside header)
+  - Emerald gradient background with white/15 border separator
+  - Active tab: bg-white/20 with white text
+  - Inactive: text-white/70 with hover:bg-white/10
+  - Rounded top corners, whitespace-nowrap, shrink-0 for overflow-x-auto
+- Added fixed bottom navigation bar for mobile (`lg:hidden fixed bottom-0`)
+  - White background with top border and subtle upward shadow
+  - 6 tab buttons with icon + label (flex-column layout)
+  - Active tab: emerald-600 text + emerald-50 icon background
+  - Inactive: gray-400 text with active press state
+  - iOS safe-area-inset-bottom padding
+  - max-w-[64px] label truncation
+- Added pb-24 on mobile for bottom nav clearance, lg:pb-6 on desktop
+- Removed sidebarOpen/setSidebarOpen/toggleSidebar from Zustand store
+- Removed unused imports: Menu, X, CalendarDays, Tag
+- Removed stale backup file admin-dashboard.tsxE
+- Main content now uses full width (no sidebar layout)
+
+Stage Summary:
+- Files modified: src/components/admin/admin-dashboard.tsx, src/store/use-store.ts
+- Files deleted: src/components/admin/admin-dashboard.tsxE (stale backup)
+- ESLint: 0 errors, 0 warnings
+- Dev server: Compiled successfully
+- Desktop: horizontal tab nav below header, full-width content area
+- Mobile: fixed bottom navigation bar with 6 tabs
