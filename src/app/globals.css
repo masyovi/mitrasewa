@@ -1827,3 +1827,748 @@ input:focus, textarea:focus, select:focus {
   width: 5px;
   height: 5px;
 }
+
+/* ==========================================================================
+   Minion Construction Workers Animation
+   ========================================================================== */
+
+/* ----- Container ----- */
+.minion-workers-container {
+  display: none;
+  position: absolute;
+  gap: 2px;
+  align-items: flex-end;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 10;
+}
+@media (min-width: 1024px) {
+  .minion-workers-container {
+    display: flex;
+  }
+}
+.minion-workers-header {
+  bottom: 0;
+  left: 8px;
+  transform: translateY(-10px);
+}
+.minion-workers-footer {
+  top: 0;
+  right: 8px;
+  transform: translateY(-10px);
+}
+
+/* ----- Minion Figure (container ~40x50px) ----- */
+.minion-figure {
+  position: relative;
+  width: 40px;
+  height: 50px;
+  flex-shrink: 0;
+}
+
+/* ----- Body ----- */
+.minion-body {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 32px;
+  background: #F5D033;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* ----- Hard Hat ----- */
+.minion-hard-hat {
+  position: absolute;
+  left: 50%;
+  bottom: 39px;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 8px;
+  background: #FF8C00;
+  border-radius: 4px 4px 1px 1px;
+}
+.minion-hard-hat::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: -2px;
+  right: -2px;
+  height: 3px;
+  background: #E07800;
+  border-radius: 0 0 2px 2px;
+}
+
+/* ----- Goggles ----- */
+.minion-goggles {
+  position: absolute;
+  left: 50%;
+  top: 5px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  z-index: 2;
+}
+.minion-goggle-eye {
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border: 1.5px solid #8B7355;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.minion-pupil {
+  width: 3px;
+  height: 3px;
+  background: #1a1a1a;
+  border-radius: 50%;
+}
+.minion-goggle-bridge {
+  width: 3px;
+  height: 1.5px;
+  background: #8B7355;
+}
+.minion-goggle-strap {
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 2px;
+  background: #4169E1;
+  border-radius: 1px;
+  z-index: 1;
+}
+
+/* ----- Overalls ----- */
+.minion-overalls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: #4169E1;
+}
+.minion-strap {
+  position: absolute;
+  width: 2px;
+  height: 8px;
+  background: #4169E1;
+  top: -8px;
+}
+.minion-strap:first-child {
+  left: 3px;
+}
+.minion-strap:last-child {
+  right: 3px;
+}
+.minion-pocket {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 5px;
+  border: 1px solid #3355B8;
+  border-radius: 0 0 2px 2px;
+  background: #3B5FC7;
+}
+
+/* ----- Arms ----- */
+.minion-arm {
+  position: absolute;
+  width: 3px;
+  height: 14px;
+  background: #F5D033;
+  border-radius: 2px;
+  top: 14px;
+  transform-origin: 2px 2px;
+}
+.minion-arm-left {
+  left: -2px;
+}
+.minion-arm-right {
+  right: -2px;
+}
+
+/* ----- Legs ----- */
+.minion-leg {
+  position: absolute;
+  width: 3px;
+  height: 10px;
+  background: #4169E1;
+  border-radius: 0 0 1px 1px;
+  bottom: -10px;
+}
+.minion-leg:first-child {
+  left: 5px;
+}
+.minion-leg:last-child {
+  right: 5px;
+}
+
+/* ----- Feet (part of legs) ----- */
+.minion-leg::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -1px;
+  width: 5px;
+  height: 3px;
+  background: #1a1a1a;
+  border-radius: 1px;
+}
+
+/* ----- Mouth ----- */
+.minion-mouth {
+  position: absolute;
+  left: 50%;
+  top: 17px;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 2px;
+  z-index: 3;
+}
+
+/* Mouth variants */
+.minion-mouth-smile-wide {
+  width: 8px;
+  height: 4px;
+  border: none;
+  border-bottom: 1.5px solid #1a1a1a;
+  border-radius: 0 0 8px 8px;
+  background: transparent;
+}
+.minion-mouth-determined {
+  width: 6px;
+  height: 1.5px;
+  background: #1a1a1a;
+  border-radius: 0;
+}
+.minion-mouth-o {
+  width: 4px;
+  height: 4px;
+  background: #1a1a1a;
+  border-radius: 50%;
+}
+.minion-mouth-smile {
+  width: 6px;
+  height: 3px;
+  border: none;
+  border-bottom: 1.5px solid #1a1a1a;
+  border-radius: 0 0 6px 6px;
+  background: transparent;
+}
+.minion-mouth-frown {
+  width: 6px;
+  height: 3px;
+  border: none;
+  border-top: 1.5px solid #1a1a1a;
+  border-radius: 6px 6px 0 0;
+  background: transparent;
+}
+.minion-mouth-neutral {
+  width: 5px;
+  height: 1.5px;
+  background: #1a1a1a;
+  border-radius: 0;
+}
+.minion-mouth-squint {
+  width: 5px;
+  height: 2px;
+  border: none;
+  border-bottom: 1.5px solid #1a1a1a;
+  border-radius: 0 0 3px 3px;
+  background: transparent;
+}
+
+/* ----- Tool Container (positioned at end of left arm) ----- */
+.minion-tool {
+  position: absolute;
+  bottom: -2px;
+  left: -4px;
+}
+
+/* ----- Tool Shapes ----- */
+.minion-hammer {
+  width: 6px;
+  height: 4px;
+  background: #8B4513;
+  border-radius: 1px;
+  position: relative;
+}
+.minion-hammer::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 3px;
+  background: #A0A0A0;
+  border-radius: 1px;
+}
+.minion-shovel {
+  width: 5px;
+  height: 4px;
+  background: #808080;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+.minion-shovel::before {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 6px;
+  background: #8B4513;
+}
+.minion-paint-roller {
+  width: 7px;
+  height: 4px;
+  background: #FF6347;
+  border-radius: 2px;
+  position: relative;
+}
+.minion-paint-roller::before {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 5px;
+  background: #8B4513;
+}
+.minion-saw {
+  width: 8px;
+  height: 3px;
+  background: transparent;
+  position: relative;
+}
+.minion-saw::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #A0A0A0;
+  clip-path: polygon(0% 100%, 10% 0%, 20% 100%, 30% 0%, 40% 100%, 50% 0%, 60% 100%, 70% 0%, 80% 100%, 90% 0%, 100% 100%);
+}
+.minion-tape {
+  width: 7px;
+  height: 5px;
+  background: #FFD700;
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+}
+.minion-tape::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 30%;
+  width: 1px;
+  background: #B8960F;
+  box-shadow: 2px 0 0 #B8960F, -2px 0 0 #B8960F;
+}
+.minion-welder {
+  width: 5px;
+  height: 5px;
+  background: #FF8C00;
+  border-radius: 2px;
+  box-shadow: 0 0 3px #FF6600;
+  position: relative;
+}
+.minion-welder::before {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 4px;
+  background: #8B4513;
+}
+.minion-box {
+  width: 7px;
+  height: 6px;
+  background: #8B4513;
+  border-radius: 1px;
+  border: 0.5px solid #6B3410;
+}
+.minion-wheelbarrow {
+  position: relative;
+  width: 10px;
+  height: 6px;
+}
+.minion-wheelbarrow::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 7px;
+  height: 4px;
+  background: #808080;
+  border-radius: 0 2px 0 0;
+}
+.minion-wheelbarrow::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: 0;
+  width: 4px;
+  height: 4px;
+  border: 1.5px solid #606060;
+  border-radius: 50%;
+  background: transparent;
+}
+
+/* ==========================================================================
+   Minion Body Action Animations (applied to .minion-figure)
+   ========================================================================== */
+
+/* 1. Hammer - body bobs slightly */
+@keyframes minionBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+.minion-action-hammer .minion-body {
+  animation: minionBob 1.5s ease-in-out infinite;
+}
+
+/* 2. Carry - body rocks side to side */
+@keyframes minionRock {
+  0%, 100% { transform: translateX(-50%) rotate(0deg); }
+  25% { transform: translateX(-50%) rotate(2deg); }
+  75% { transform: translateX(-50%) rotate(-2deg); }
+}
+.minion-action-carry .minion-body {
+  animation: minionRock 1.2s ease-in-out infinite;
+}
+
+/* 3. Dig - body tilts forward and back */
+@keyframes minionTilt {
+  0%, 100% { transform: translateX(-50%) rotate(0deg); }
+  40% { transform: translateX(-50%) rotate(6deg); }
+  60% { transform: translateX(-50%) rotate(6deg); }
+}
+.minion-action-dig .minion-body {
+  animation: minionTilt 1.3s ease-in-out infinite;
+}
+
+/* 4. Push - body leans forward */
+@keyframes minionLean {
+  0%, 100% { transform: translateX(-50%) rotate(0deg) translateX(0); }
+  50% { transform: translateX(-50%) rotate(8deg) translateX(2px); }
+}
+.minion-action-push .minion-body {
+  animation: minionLean 1s ease-in-out infinite;
+}
+
+/* 5. Paint - body sways side to side */
+@keyframes minionSway {
+  0%, 100% { transform: translateX(-50%) translateX(0); }
+  25% { transform: translateX(-50%) translateX(2px); }
+  75% { transform: translateX(-50%) translateX(-2px); }
+}
+.minion-action-paint .minion-body {
+  animation: minionSway 1.8s ease-in-out infinite;
+}
+
+/* 6. Saw - body vibrates slightly */
+@keyframes minionVibrate {
+  0%, 100% { transform: translateX(-50%) translateX(0); }
+  25% { transform: translateX(-50%) translateX(0.5px); }
+  50% { transform: translateX(-50%) translateX(-0.5px); }
+  75% { transform: translateX(-50%) translateX(0.5px); }
+}
+.minion-action-saw .minion-body {
+  animation: minionVibrate 0.3s ease-in-out infinite;
+}
+
+/* 7. Measure - body pulls back and forth */
+@keyframes minionPull {
+  0%, 100% { transform: translateX(-50%) translateX(0); }
+  50% { transform: translateX(-50%) translateX(-3px); }
+}
+.minion-action-measure .minion-body {
+  animation: minionPull 2s ease-in-out infinite;
+}
+
+/* 8. Weld - body crouches slightly */
+@keyframes minionCrouch {
+  0%, 100% { transform: translateX(-50%) translateY(0) scaleY(1); }
+  50% { transform: translateX(-50%) translateY(1px) scaleY(0.97); }
+}
+.minion-action-weld .minion-body {
+  animation: minionCrouch 1.4s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Left Arm Animations (applied to .minion-arm-left)
+   ========================================================================== */
+
+/* Hammer arm - swings up/down */
+@keyframes armSwingHammer {
+  0%, 100% { transform: rotate(0deg); }
+  40% { transform: rotate(-50deg); }
+  50% { transform: rotate(-60deg); }
+  60% { transform: rotate(-50deg); }
+}
+.minion-arm-left-hammer {
+  animation: armSwingHammer 0.75s ease-in-out infinite;
+}
+
+/* Carry arm - holds steady but bounces */
+@keyframes armBounceCarry {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  50% { transform: rotate(0deg) translateY(-2px); }
+}
+.minion-arm-left-carry {
+  animation: armBounceCarry 1.2s ease-in-out infinite;
+}
+
+/* Dig arm - scoops forward/back */
+@keyframes armScoopDig {
+  0%, 100% { transform: rotate(0deg); }
+  30% { transform: rotate(-30deg); }
+  50% { transform: rotate(10deg); }
+  70% { transform: rotate(0deg); }
+}
+.minion-arm-left-dig {
+  animation: armScoopDig 1.3s ease-in-out infinite;
+}
+
+/* Push arm - extends forward */
+@keyframes armExtendPush {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(20deg); }
+}
+.minion-arm-left-push {
+  animation: armExtendPush 1s ease-in-out infinite;
+}
+
+/* Paint arm - moves up/down */
+@keyframes armPaintStroke {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  25% { transform: rotate(5deg) translateY(-3px); }
+  75% { transform: rotate(-5deg) translateY(3px); }
+}
+.minion-arm-left-paint {
+  animation: armPaintStroke 1.8s ease-in-out infinite;
+}
+
+/* Saw arm - moves back/forth rapidly */
+@keyframes armSawStroke {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(2px); }
+  75% { transform: translateX(-2px); }
+}
+.minion-arm-left-saw {
+  animation: armSawStroke 0.3s ease-in-out infinite;
+}
+
+/* Measure arm - extends out and retracts */
+@keyframes armMeasureExtend {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-25deg); }
+}
+.minion-arm-left-measure {
+  animation: armMeasureExtend 2s ease-in-out infinite;
+}
+
+/* Weld arm - holds in place with spark-like bounce */
+@keyframes armWeldHold {
+  0%, 100% { transform: rotate(-15deg) translateY(0); }
+  30% { transform: rotate(-15deg) translateY(-1px); }
+  60% { transform: rotate(-15deg) translateY(1px); }
+}
+.minion-arm-left-weld {
+  animation: armWeldHold 1.4s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Tool Animations
+   ========================================================================== */
+
+/* Hammer head rotation on impact */
+@keyframes hammerImpact {
+  0%, 40%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(15deg); }
+  60% { transform: rotate(-5deg); }
+  70% { transform: rotate(0deg); }
+}
+.minion-tool-hammer {
+  animation: hammerImpact 0.75s ease-in-out infinite;
+}
+
+/* Box bounce */
+@keyframes boxBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+.minion-tool-carry {
+  animation: boxBounce 1.2s ease-in-out infinite;
+}
+
+/* Shovel tilt */
+@keyframes shovelTilt {
+  0%, 100% { transform: rotate(0deg); }
+  30% { transform: rotate(-20deg); }
+  50% { transform: rotate(15deg); }
+}
+.minion-tool-dig {
+  animation: shovelTilt 1.3s ease-in-out infinite;
+}
+
+/* Wheelbarrow bounce */
+@keyframes wheelbarrowBounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-1px) rotate(-3deg); }
+}
+.minion-tool-push {
+  animation: wheelbarrowBounce 1s ease-in-out infinite;
+}
+
+/* Paint roller spin */
+@keyframes rollerSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.minion-tool-paint {
+  animation: rollerSpin 1s linear infinite;
+}
+
+/* Saw vibration */
+@keyframes sawVibrate {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(1px); }
+  50% { transform: translateX(-1px); }
+  75% { transform: translateX(1px); }
+}
+.minion-tool-saw {
+  animation: sawVibrate 0.15s linear infinite;
+}
+
+/* Tape extend */
+@keyframes tapeExtend {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(1.4); }
+}
+.minion-tool-measure {
+  animation: tapeExtend 2s ease-in-out infinite;
+  transform-origin: left center;
+}
+
+/* Welder spark opacity pulse */
+@keyframes welderSpark {
+  0%, 100% { opacity: 1; box-shadow: 0 0 3px #FF6600, 0 0 1px #FFAA00; }
+  30% { opacity: 0.7; box-shadow: 0 0 6px #FF4400, 0 0 2px #FFCC00; }
+  60% { opacity: 1; box-shadow: 0 0 8px #FF6600, 0 0 3px #FFAA00; }
+}
+.minion-tool-weld {
+  animation: welderSpark 0.5s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Leg Walking Animation
+   ========================================================================== */
+@keyframes legWalkLeft {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(15deg); }
+}
+@keyframes legWalkRight {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-15deg); }
+}
+.minion-leg-walk {
+  animation: legWalkLeft 0.6s ease-in-out infinite;
+  transform-origin: top center;
+}
+.minion-leg-walk + .minion-leg {
+  animation: legWalkRight 0.6s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+/* ==========================================================================
+   Goggle Eye Micro-animation (pupils look in action direction)
+   ========================================================================== */
+.minion-action-push .minion-pupil,
+.minion-action-dig .minion-pupil {
+  transform: translateX(1px);
+}
+.minion-action-carry .minion-pupil {
+  transform: translateY(0.5px);
+}
+.minion-action-weld .minion-pupil {
+  transform: scale(0.8);
+}
+
+/* ==========================================================================
+   Hard Hat Accent Stripes
+   ========================================================================== */
+.minion-hard-hat::before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  right: 2px;
+  height: 1px;
+  background: #FFB84D;
+}
+
+/* ==========================================================================
+   Right Arm Idle Sway (subtle movement when not holding tool)
+   ========================================================================== */
+@keyframes armIdleSway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(3deg); }
+}
+.minion-arm-right {
+  animation: armIdleSway 2s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Performance: GPU-accelerated properties for all animated elements
+   ========================================================================== */
+.minion-figure,
+.minion-figure *,
+.minion-action-hammer .minion-body,
+.minion-action-carry .minion-body,
+.minion-action-dig .minion-body,
+.minion-action-push .minion-body,
+.minion-action-paint .minion-body,
+.minion-action-saw .minion-body,
+.minion-action-measure .minion-body,
+.minion-action-weld .minion-body,
+.minion-arm-left-hammer,
+.minion-arm-left-carry,
+.minion-arm-left-dig,
+.minion-arm-left-push,
+.minion-arm-left-paint,
+.minion-arm-left-saw,
+.minion-arm-left-measure,
+.minion-arm-left-weld,
+.minion-arm-right,
+.minion-tool-hammer,
+.minion-tool-carry,
+.minion-tool-dig,
+.minion-tool-push,
+.minion-tool-paint,
+.minion-tool-saw,
+.minion-tool-measure,
+.minion-tool-weld,
+.minion-leg-walk {
+  will-change: transform;
+  backface-visibility: hidden;
+}

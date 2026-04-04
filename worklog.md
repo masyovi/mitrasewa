@@ -1009,3 +1009,28 @@ Stage Summary:
 - The gradient now uses 5 color stops ranging from deep emerald (oklch 0.40) through teal (oklch 0.56) creating a much more visible gradient effect
 - All headers (beranda, admin, login) and footers automatically get the enhanced gradient since they use `bg-mitra-gradient` CSS class
 - Buttons with `btn-emerald-gradient` class also updated for consistency
+
+---
+Task ID: minion-animation
+Agent: main
+Task: Add animated Minion construction workers to header and footer
+
+Work Log:
+- Created `src/components/minion-workers.tsx` - React component rendering 4 animated Minions per container
+- Each Minion has unique construction action: hammer, carry, paint, dig (header) / saw, measure, push, weld (footer)
+- Minions built entirely with CSS (yellow body, blue overalls, goggles, hard hat, tools)
+- 8 different body action animations (bob, rock, tilt, lean, sway, vibrate, pull, crouch)
+- 8 different arm animations for tool actions
+- 8 different tool CSS-only designs (hammer, shovel, paint roller, saw, tape measure, welder, box, wheelbarrow)
+- Leg walking animation for carry/push actions
+- Pupil micro-animations per action type
+- Container: absolute positioned, hidden on mobile, visible at lg breakpoint, pointer-events-none, 0.85 opacity
+- Added MinionWorkers to beranda-view.tsx header + footer
+- Added MinionWorkers to admin-dashboard.tsx header + footer
+- ~745 lines of Minion CSS added to globals.css
+
+Stage Summary:
+- ESLint: 0 errors, 0 warnings
+- Dev server: Compiled successfully
+- Files created: src/components/minion-workers.tsx
+- Files modified: globals.css, beranda-view.tsx, admin-dashboard.tsx
