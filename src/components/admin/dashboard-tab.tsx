@@ -263,7 +263,7 @@ export function DashboardTab({
       )}
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-3 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 min-[480px]:grid-cols-3 gap-3 sm:gap-4">
         <Card className="border-0 shadow-md card-elevated hover-lift animate-fade-in-up">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
@@ -271,7 +271,7 @@ export function DashboardTab({
                 <Package className="w-4 h-4 text-emerald-600" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900 animate-count-up stat-number">
+            <p className="text-xl sm:text-2xl font-bold text-gray-900 animate-count-up stat-number">
               {totalTersedia}
             </p>
             <p className="text-xs text-gray-500">Total Unit Tersedia</p>
@@ -284,7 +284,7 @@ export function DashboardTab({
                 <Truck className="w-4 h-4 text-amber-600" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900 animate-count-up stat-number">
+            <p className="text-xl sm:text-2xl font-bold text-gray-900 animate-count-up stat-number">
               {totalDisewa}
             </p>
             <p className="text-xs text-gray-500">Total Disewa</p>
@@ -298,7 +298,7 @@ export function DashboardTab({
                 <Users className="w-4 h-4 text-violet-600" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900 animate-count-up stat-number">
+            <p className="text-xl sm:text-2xl font-bold text-gray-900 animate-count-up stat-number">
               {uniqueCustomers}
             </p>
             <p className="text-xs text-gray-500">Total Pelanggan</p>
@@ -307,7 +307,7 @@ export function DashboardTab({
       </div>
 
       {/* Ringkasan Bulanan */}
-      <div className="grid grid-cols-3 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 min-[480px]:grid-cols-3 gap-3 sm:gap-4">
         <div className="bg-gradient-to-br from-emerald-50 to-white rounded-xl p-3 sm:p-4 flex items-center gap-3 animate-fade-in-up">
           <div className="bg-gradient-to-br from-emerald-100 to-emerald-50 p-2 rounded-lg flex-shrink-0">
             <PlusCircle className="w-4 h-4 text-emerald-600" />
@@ -344,27 +344,27 @@ export function DashboardTab({
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-3 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 xs:grid-cols-3 gap-3 sm:gap-4">
         <Card className="border-0 shadow-md bg-gradient-to-br from-emerald-50 to-white card-elevated hover-lift animate-fade-in-up">
           <CardContent className="p-4 text-center">
-            <p className="text-3xl font-bold text-emerald-700 animate-count-up stat-number">{totalAktif}</p>
-            <p className="text-sm text-emerald-600">Sewa Aktif</p>
+            <p className="text-2xl sm:text-3xl font-bold text-emerald-700 animate-count-up stat-number">{totalAktif}</p>
+            <p className="text-xs sm:text-sm text-emerald-600">Sewa Aktif</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-md bg-gray-50 card-elevated hover-lift animate-fade-in-up animate-fade-in-up-delay-1">
           <CardContent className="p-4 text-center">
-            <p className="text-3xl font-bold text-gray-700 animate-count-up stat-number">
+            <p className="text-2xl sm:text-3xl font-bold text-gray-700 animate-count-up stat-number">
               {totalKembali}
             </p>
-            <p className="text-sm text-gray-600">Sudah Kembali</p>
+            <p className="text-xs sm:text-sm text-gray-600">Sudah Kembali</p>
           </CardContent>
         </Card>
         <Card className={`border-0 shadow-md card-elevated hover-lift animate-fade-in-up animate-fade-in-up-delay-2 ${totalPerbaikan > 0 ? "bg-orange-50" : "bg-gray-50"}`}>
           <CardContent className="p-4 text-center">
-            <p className={`text-3xl font-bold animate-count-up stat-number ${totalPerbaikan > 0 ? "text-orange-700" : "text-gray-700"}`}>
+            <p className={`text-2xl sm:text-3xl font-bold animate-count-up stat-number ${totalPerbaikan > 0 ? "text-orange-700" : "text-gray-700"}`}>
               {totalPerbaikan}
             </p>
-            <p className={`text-sm ${totalPerbaikan > 0 ? "text-orange-600" : "text-gray-600"}`}>
+            <p className={`text-xs sm:text-sm ${totalPerbaikan > 0 ? "text-orange-600" : "text-gray-600"}`}>
               {totalPerbaikan > 0 && <AlertTriangle className="w-3.5 h-3.5 inline mr-0.5" />}
               Perbaikan
             </p>
