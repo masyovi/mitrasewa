@@ -9,15 +9,9 @@ import {
   Phone,
   MapPin,
   Calculator,
-  DollarSign,
   Clock,
-  Star,
-  ChevronDown,
-  ChevronUp,
-  Quote,
   ArrowUp,
   Truck,
-  Wrench,
   Hammer,
   Boxes,
   Instagram,
@@ -66,51 +60,6 @@ interface PriceItem {
   price: number;
   billingType: string;
 }
-
-const testimonials = [
-  {
-    name: "Budi Santoso",
-    role: "Mandor Proyek",
-    text: "Alat scaffolding dari MITRA SEWA sangat berkualitas dan kondisinya selalu prima. Proses penyewaan cepat dan mudah.",
-    rating: 5,
-    initials: "BS",
-  },
-  {
-    name: "Ahmad Fauzi",
-    role: "Kontraktor Bangunan",
-    text: "Sudah 3 tahun bekerja sama dengan MITRA SEWA. Harga kompetitif dan pengiriman selalu tepat waktu.",
-    rating: 5,
-    initials: "AF",
-  },
-  {
-    name: "Dewi Rahmawati",
-    role: "Pemilik Rumah",
-    text: "Sewa mesin molen untuk renovasi rumah. Alat bersih dan berfungsi baik. Pelayanan ramah dan profesional.",
-    rating: 4,
-    initials: "DR",
-  },
-  {
-    name: "Hendra Wijaya",
-    role: "Mandor",
-    text: "Stok scaffolding selalu tersedia meskipun proyek kami butuh dalam jumlah besar. Sangat recommended!",
-    rating: 5,
-    initials: "HW",
-  },
-  {
-    name: "Siti Aminah",
-    role: "Developer Perumahan",
-    text: "MITRA SEWA adalah partner terbaik untuk kebutuhan alat konstruksi. Respon cepat dan harga bersahabat.",
-    rating: 5,
-    initials: "SA",
-  },
-  {
-    name: "Rudi Hermawan",
-    role: "Tukang Bangunan",
-    text: "Mesin stamper dari sini performanya bagus, tidak mudah rusak. Cocok untuk proyek pengecoran.",
-    rating: 4,
-    initials: "RH",
-  },
-];
 
 function useAnimatedNumber(target: number, shouldAnimate: boolean, duration = 1000) {
   const [current, setCurrent] = useState(0);
@@ -161,8 +110,6 @@ export function BerandaView() {
   const [duration, setDuration] = useState<number>(1);
   const [estimatedCost, setEstimatedCost] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
-  const [kenapaOpen, setKenapaOpen] = useState(true);
-  const [testimoniOpen, setTestimoniOpen] = useState(true);
 
 
   // Equipment detail modal state
@@ -267,9 +214,9 @@ export function BerandaView() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative overflow-hidden">
       {/* Header */}
-      <header className="bg-mitra-gradient text-white sticky top-0 z-50 shadow-lg animate-fade-in">
+      <header className="bg-mitra-gradient text-white sticky top-0 z-50 shadow-lg animate-fade-in relative">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="bg-white/20 backdrop-blur-sm rounded-xl p-2.5">
@@ -316,23 +263,21 @@ export function BerandaView() {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-mesh-gradient px-4 py-10 sm:py-16 animate-fade-in relative overflow-hidden">
+      <section className="bg-mesh-gradient px-4 py-10 sm:py-16 animate-fade-in relative overflow-hidden z-10">
         {/* Decorative gear pattern */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
              style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'20\' height=\'20\' viewBox=\'0 0 20 20\'%3E%3Ccircle cx=\'10\' cy=\'10\' r=\'4\' fill=\'none\' stroke=\'%2310b981\' stroke-width=\'1\'/%3E%3Ccircle cx=\'10\' cy=\'10\' r=\'1.5\' fill=\'%2310b981\'/%3E%3Cline x1=\'10\' y1=\'1\' x2=\'10\' y2=\'5\' stroke=\'%2310b981\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3Cline x1=\'10\' y1=\'15\' x2=\'10\' y2=\'19\' stroke=\'%2310b981\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3Cline x1=\'1\' y1=\'10\' x2=\'5\' y2=\'10\' stroke=\'%2310b981\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3Cline x1=\'15\' y1=\'10\' x2=\'19\' y2=\'10\' stroke=\'%2310b981\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3C/svg%3E")'}} />
 
-        {/* Floating Bubbles */}
+        {/* Floating Bubbles (Hero region) */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="bubble" style={{ left: '10%', bottom: '-20px', width: '24px', height: '24px', animationDelay: '0s', animationDuration: '7s' }} />
-          <div className="bubble" style={{ left: '25%', bottom: '-30px', width: '16px', height: '16px', animationDelay: '1.5s', animationDuration: '8s' }} />
-          <div className="bubble" style={{ left: '40%', bottom: '-25px', width: '32px', height: '32px', animationDelay: '0.5s', animationDuration: '6s' }} />
-          <div className="bubble" style={{ left: '55%', bottom: '-15px', width: '12px', height: '12px', animationDelay: '2s', animationDuration: '9s' }} />
-          <div className="bubble" style={{ left: '70%', bottom: '-35px', width: '20px', height: '20px', animationDelay: '3s', animationDuration: '7.5s' }} />
-          <div className="bubble" style={{ left: '85%', bottom: '-20px', width: '28px', height: '28px', animationDelay: '1s', animationDuration: '8.5s' }} />
-          <div className="bubble" style={{ left: '15%', bottom: '-40px', width: '40px', height: '40px', animationDelay: '4s', animationDuration: '10s' }} />
-          <div className="bubble" style={{ left: '60%', bottom: '-10px', width: '8px', height: '8px', animationDelay: '2.5s', animationDuration: '6.5s' }} />
-          <div className="bubble" style={{ left: '90%', bottom: '-30px', width: '18px', height: '18px', animationDelay: '3.5s', animationDuration: '7s' }} />
-          <div className="bubble" style={{ left: '35%', bottom: '-15px', width: '36px', height: '36px', animationDelay: '5s', animationDuration: '11s' }} />
+          <div className="bubble bubble-emerald" style={{ left: '8%', top: '60%', width: '28px', height: '28px', animationDelay: '0s', animationDuration: '7s' }} />
+          <div className="bubble bubble-teal" style={{ left: '22%', top: '70%', width: '18px', height: '18px', animationDelay: '1.5s', animationDuration: '9s' }} />
+          <div className="bubble bubble-green" style={{ left: '38%', top: '55%', width: '36px', height: '36px', animationDelay: '0.5s', animationDuration: '6s' }} />
+          <div className="bubble bubble-lime" style={{ left: '52%', top: '75%', width: '14px', height: '14px', animationDelay: '2s', animationDuration: '10s' }} />
+          <div className="bubble bubble-cyan" style={{ left: '68%', top: '65%', width: '22px', height: '22px', animationDelay: '3s', animationDuration: '8s' }} />
+          <div className="bubble bubble-emerald" style={{ left: '82%', top: '58%', width: '32px', height: '32px', animationDelay: '1s', animationDuration: '7.5s' }} />
+          <div className="bubble bubble-teal" style={{ left: '92%', top: '72%', width: '16px', height: '16px', animationDelay: '4s', animationDuration: '11s' }} />
+          <div className="bubble bubble-green" style={{ left: '45%', top: '80%', width: '10px', height: '10px', animationDelay: '2.5s', animationDuration: '6.5s' }} />
         </div>
 
         <div className="relative overflow-hidden rounded-2xl">
@@ -384,7 +329,7 @@ export function BerandaView() {
       </section>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-6 space-y-3">
+      <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-6 space-y-3 relative z-10">
         {/* ===== Tentang Kami Summary Section ===== */}
         <section className="reveal border-b border-gray-100 pb-4">
           <div className="text-center max-w-2xl mx-auto">
@@ -913,94 +858,6 @@ export function BerandaView() {
           </Card>
         </section>
 
-        {/* ===== Kenapa Memilih Kami (Collapsible) ===== */}
-        <section
-          ref={(el) => { sectionRefs.current[5] = el; }}
-          className="reveal border-b border-gray-100 pb-6"
-        >
-          <button
-            onClick={() => setKenapaOpen(!kenapaOpen)}
-            className="w-full flex items-center justify-between mb-3 group cursor-pointer"
-          >
-            <div className="flex items-center gap-2">
-              <div className="w-1 h-6 bg-emerald-500 rounded-full" />
-              <h3 className="text-lg font-bold text-gray-900">
-                Kenapa Memilih Kami?
-              </h3>
-            </div>
-            <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
-              <span>{kenapaOpen ? "Tutup" : "Buka"}</span>
-              {kenapaOpen
-                ? <ChevronUp className="w-3.5 h-3.5" />
-                : <ChevronDown className="w-3.5 h-3.5" />
-              }
-            </div>
-          </button>
-          <div className={`transition-all duration-400 ease-in-out overflow-hidden ${kenapaOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Feature 1: Harga Terjangkau */}
-            <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated hover-lift transition-all group featureCardFadeIn">
-              <CardContent className="p-5 text-center">
-                <div className="bg-emerald-100 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                  <DollarSign className="w-7 h-7 text-emerald-600" />
-                </div>
-                <h4 className="font-bold text-gray-900 text-sm sm:text-base mb-1">
-                  Harga Terjangkau
-                </h4>
-                <p className="text-xs sm:text-sm text-gray-500">
-                  Tarif sewa kompetitif dengan kualitas alat terjamin
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Feature 2: Alat Berkualitas */}
-            <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated hover-lift transition-all group featureCardFadeIn">
-              <CardContent className="p-5 text-center">
-                <div className="bg-blue-100 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                  <ShieldCheck className="w-7 h-7 text-blue-600" />
-                </div>
-                <h4 className="font-bold text-gray-900 text-sm sm:text-base mb-1">
-                  Alat Berkualitas
-                </h4>
-                <p className="text-xs sm:text-sm text-gray-500">
-                  Semua peralatan dirawat dan diperiksa secara berkala
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Feature 3: Proses Cepat */}
-            <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated hover-lift transition-all group featureCardFadeIn">
-              <CardContent className="p-5 text-center">
-                <div className="bg-amber-100 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                  <Truck className="w-7 h-7 text-amber-600" />
-                </div>
-                <h4 className="font-bold text-gray-900 text-sm sm:text-base mb-1">
-                  Pengiriman Cepat
-                </h4>
-                <p className="text-xs sm:text-sm text-gray-500">
-                  Pengiriman alat ke lokasi proyek yang efisien dan tepat waktu
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Feature 4: Layanan Responsif */}
-            <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated hover-lift transition-all group featureCardFadeIn">
-              <CardContent className="p-5 text-center">
-                <div className="bg-violet-100 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                  <Wrench className="w-7 h-7 text-violet-600" />
-                </div>
-                <h4 className="font-bold text-gray-900 text-sm sm:text-base mb-1">
-                  Layanan Profesional
-                </h4>
-                <p className="text-xs sm:text-sm text-gray-500">
-                  Tim berpengalaman siap membantu setiap kebutuhan proyek Anda
-                </p>
-              </CardContent>
-            </Card>
-            </div>
-          </div>
-        </section>
-
         {/* ===== Lokasi Kami ===== */}
         <section className="reveal border-b border-gray-100 pb-4">
           <div className="flex items-center gap-2 mb-4">
@@ -1042,66 +899,6 @@ export function BerandaView() {
             </CardContent>
           </Card>
         </section>
-
-        {/* ===== Testimoni Pelanggan (Collapsible) ===== */}
-        <section
-          ref={(el) => { sectionRefs.current[6] = el; }}
-          className="reveal"
-        >
-          <button
-            onClick={() => setTestimoniOpen(!testimoniOpen)}
-            className="w-full flex items-center justify-between mb-3 group cursor-pointer"
-          >
-            <div className="flex items-center gap-2">
-              <div className="w-1 h-6 bg-emerald-500 rounded-full" />
-              <h3 className="text-lg font-bold text-gray-900">
-                Testimoni Pelanggan
-              </h3>
-            </div>
-            <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
-              <span>{testimoniOpen ? "Tutup" : "Buka"}</span>
-              {testimoniOpen
-                ? <ChevronUp className="w-3.5 h-3.5" />
-                : <ChevronDown className="w-3.5 h-3.5" />
-              }
-            </div>
-          </button>
-          <div className={`transition-all duration-400 ease-in-out overflow-hidden ${testimoniOpen ? "max-h-[1200px] opacity-100" : "max-h-0 opacity-0"}`}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {testimonials.map((t, idx) => (
-              <div
-                key={idx}
-                className="bg-white border-0 shadow-md card-elevated testimonial-card rounded-xl p-5 relative overflow-hidden"
-              >
-                {/* Emerald left border accent */}
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-emerald-400 to-emerald-600" />
-
-                <div className="flex items-start gap-3 pl-2">
-                  <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm font-bold text-emerald-700">{t.initials}</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <div>
-                        <p className="font-bold text-sm text-gray-900">{t.name}</p>
-                        <p className="text-xs text-gray-500">{t.role}</p>
-                      </div>
-                      <Quote className="w-4 h-4 text-emerald-200 flex-shrink-0" />
-                    </div>
-                    {/* Stars */}
-                    <div className="flex gap-0.5 mb-2">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star key={star} className={`w-3.5 h-3.5 ${star <= t.rating ? "text-amber-400 fill-amber-400" : "text-gray-200"}`} />
-                      ))}
-                    </div>
-                    <p className="text-sm text-gray-600 leading-relaxed">{t.text}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          </div>
-        </section>
       </main>
 
       {/* Scroll to Top Button */}
@@ -1113,8 +910,32 @@ export function BerandaView() {
         <ArrowUp className="w-4 h-4" />
       </button>
 
+      {/* Full-Page Floating Bubbles Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        {/* Left column bubbles */}
+        <div className="bubble bubble-emerald" style={{ left: '3%', bottom: '-30px', width: '24px', height: '24px', animationDelay: '0s', animationDuration: '12s' }} />
+        <div className="bubble bubble-teal" style={{ left: '7%', bottom: '-20px', width: '40px', height: '40px', animationDelay: '3s', animationDuration: '14s' }} />
+        <div className="bubble bubble-lime" style={{ left: '12%', bottom: '-40px', width: '16px', height: '16px', animationDelay: '6s', animationDuration: '11s' }} />
+        <div className="bubble bubble-cyan" style={{ left: '5%', bottom: '-15px', width: '30px', height: '30px', animationDelay: '8s', animationDuration: '13s' }} />
+        {/* Center-left bubbles */}
+        <div className="bubble bubble-green" style={{ left: '20%', bottom: '-25px', width: '20px', height: '20px', animationDelay: '1s', animationDuration: '10s' }} />
+        <div className="bubble bubble-emerald" style={{ left: '28%', bottom: '-50px', width: '36px', height: '36px', animationDelay: '5s', animationDuration: '15s' }} />
+        {/* Center bubbles */}
+        <div className="bubble bubble-teal" style={{ left: '42%', bottom: '-35px', width: '28px', height: '28px', animationDelay: '2s', animationDuration: '13s' }} />
+        <div className="bubble bubble-lime" style={{ left: '50%', bottom: '-20px', width: '12px', height: '12px', animationDelay: '7s', animationDuration: '11s' }} />
+        <div className="bubble bubble-cyan" style={{ left: '55%', bottom: '-45px', width: '34px', height: '34px', animationDelay: '4s', animationDuration: '14s' }} />
+        {/* Center-right bubbles */}
+        <div className="bubble bubble-green" style={{ left: '65%', bottom: '-30px', width: '22px', height: '22px', animationDelay: '9s', animationDuration: '12s' }} />
+        <div className="bubble bubble-emerald" style={{ left: '72%', bottom: '-15px', width: '38px', height: '38px', animationDelay: '1.5s', animationDuration: '16s' }} />
+        {/* Right column bubbles */}
+        <div className="bubble bubble-teal" style={{ left: '80%', bottom: '-40px', width: '18px', height: '18px', animationDelay: '6.5s', animationDuration: '11s' }} />
+        <div className="bubble bubble-lime" style={{ left: '88%', bottom: '-25px', width: '26px', height: '26px', animationDelay: '3.5s', animationDuration: '13s' }} />
+        <div className="bubble bubble-cyan" style={{ left: '93%', bottom: '-35px', width: '14px', height: '14px', animationDelay: '10s', animationDuration: '12s' }} />
+        <div className="bubble bubble-green" style={{ left: '97%', bottom: '-20px', width: '32px', height: '32px', animationDelay: '0.5s', animationDuration: '15s' }} />
+      </div>
+
       {/* Footer */}
-      <footer className="bg-mitra-gradient text-white mt-auto no-print pb-safe">
+      <footer className="bg-mitra-gradient text-white mt-auto no-print pb-safe relative z-10">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {/* Brand Column */}

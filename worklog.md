@@ -756,3 +756,30 @@ Task: Reduce spacing, remove WhatsApp button, remove FAQ, make sections collapsi
 - Spacing significantly reduced between all sections
 - Removed: Floating WhatsApp button + FAQ/Pertanyaan Umum section
 - Collapsible: Kenapa Memilih Kami + Testimoni Pelanggan (start expanded, toggle with Buka/Tutup)
+
+---
+Task ID: 26
+Agent: Main Agent
+Task: Remove Kenapa Memilih Kami + Testimoni, fix spacing, full-page colored bubbles
+
+### Work Log
+- Removed "Kenapa Memilih Kami" section entirely (4 feature cards: Harga Terjangkau, Alat Berkualitas, Pengiriman Cepat, Layanan Profesional)
+- Removed "Testimoni Pelanggan" section entirely (6 testimonials with star ratings)
+- Removed testimonials data array (6 objects), removed unused state (kenapaOpen, testimoniOpen)
+- Cleaned up unused imports: DollarSign, Star, ChevronDown, ChevronUp, Quote, Wrench, ShieldCheck (from main list)
+- Added `relative overflow-hidden` to page wrapper div
+- Added `relative z-10` to hero section, main content, and footer so they stay above bubbles
+- Added `fixed inset-0 z-0` full-page bubble background with 16 bubbles spread across left/center/right columns
+- Hero region now has 8 colored bubbles with color variant classes
+- Full-page background has 16 bubbles at slower speeds (10-16s duration) with staggered delays (0-10s)
+- Enhanced bubble CSS: animation now uses `-100vh` (full viewport height), adds horizontal sway (translateX ±5-12px), and `ease-in-out` timing
+- Created 5 bubble color variants: emerald, teal, green, lime, cyan — each with unique radial gradient, border glow, and box-shadow
+- Main content spacing: `space-y-3` with `pb-4` section dividers maintained from previous round
+
+### Stage Summary
+- Files modified: src/components/beranda-view.tsx, src/app/globals.css
+- ESLint: 0 errors, 0 warnings
+- Dev server: Compiled successfully
+- Removed: Kenapa Memilih Kami, Testimoni Pelanggan, floating WhatsApp button, FAQ (previous round)
+- New: Full-page colored bubble animation with 5 color variants and sway motion
+- Current homepage sections (9): Header, Hero, Tentang Kami, Cara Pemesanan, Scaffolding Stats, Status Alat, Komponen Scaffolding, Kalkulator Biaya Sewa, Lokasi Kami, Footer
