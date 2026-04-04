@@ -190,8 +190,8 @@ export function AdminDashboard() {
           </div>
         </div>
 
-        {/* Desktop: Horizontal top navigation */}
-        <nav className="hidden lg:block border-t border-white/15">
+        {/* Desktop: Horizontal top navigation (visible from md / 768px+) */}
+        <nav className="hidden md:block border-t border-white/15">
           <div className="max-w-7xl mx-auto px-4 flex items-center gap-1 overflow-x-auto">
             {tabs.map((tab) => (
               <button
@@ -212,7 +212,7 @@ export function AdminDashboard() {
       </header>
 
       {/* ========== Main Content ========== */}
-      <main className="flex-1 p-4 sm:p-6 lg:pb-6 pb-24 max-w-7xl mx-auto w-full overflow-y-auto">
+      <main className="flex-1 p-4 sm:p-6 md:pb-6 pb-24 max-w-7xl mx-auto w-full overflow-y-auto">
         {loading ? (
           <div className="space-y-6">
             <Skeleton className="h-8 w-48" />
@@ -255,8 +255,8 @@ export function AdminDashboard() {
         )}
       </main>
 
-      {/* ========== Mobile: Bottom Navigation ========== */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgb(0_0_0/0.06)]">
+      {/* ========== Mobile: Bottom Navigation (visible below md / <768px) ========== */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgb(0_0_0/0.06)]">
         <div className="flex items-center justify-around px-1 py-1 pb-[max(0.25rem,env(safe-area-inset-bottom))]">
           {tabs.map((tab) => (
             <button
