@@ -783,3 +783,21 @@ Task: Remove Kenapa Memilih Kami + Testimoni, fix spacing, full-page colored bub
 - Removed: Kenapa Memilih Kami, Testimoni Pelanggan, floating WhatsApp button, FAQ (previous round)
 - New: Full-page colored bubble animation with 5 color variants and sway motion
 - Current homepage sections (9): Header, Hero, Tentang Kami, Cara Pemesanan, Scaffolding Stats, Status Alat, Komponen Scaffolding, Kalkulator Biaya Sewa, Lokasi Kami, Footer
+---
+Task ID: 1
+Agent: Main Agent
+Task: Fix auth session persistence - login lost on page refresh + remove leftover bottom nav padding
+
+Work Log:
+- Diagnosed the issue: Zustand store uses in-memory state only; `isLoggedIn` resets to `false` on page refresh
+- Added `persist` middleware from `zustand/middleware` to persist `isLoggedIn` and `view` to localStorage (key: `mitra-sewa-auth`)
+- Added `_hasHydrated` flag with `onRehydrateStorage` callback to handle SSR/client hydration mismatch
+- Updated `page.tsx` to show a loading spinner while Zustand rehydrates from localStorage
+- Removed leftover `pb-20 lg:pb-6` padding from admin dashboard `<main>` tag (was for a bottom nav that was already removed)
+- Verified: ESLint passes with no errors, dev server compiles successfully
+
+Stage Summary:
+- Fixed: Auth session now persists across page refreshes using localStorage via Zustand persist middleware
+- Fixed: Loading spinner shown during rehydration to avoid flash of wrong view
+- Fixed: Removed dead bottom nav padding from admin dashboard
+- Files modified: `src/store/use-store.ts`, `src/app/page.tsx`, `src/components/admin/admin-dashboard.tsx`

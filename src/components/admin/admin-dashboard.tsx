@@ -250,7 +250,7 @@ export function AdminDashboard() {
           </div>
         )}
 
-        <main className="flex-1 p-4 sm:p-6 overflow-y-auto pb-20 lg:pb-6">
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
           {/* Top tab buttons hidden on mobile (replaced by bottom nav) and on desktop (replaced by sidebar) */}
 
           {loading ? (
