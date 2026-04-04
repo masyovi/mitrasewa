@@ -296,38 +296,6 @@ export function AdminDashboard() {
         </main>
       </div>
 
-      {/* Mobile Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white/80 backdrop-blur-lg border-t border-gray-200/60 shadow-[0_-4px_20px_rgb(0_0_0/0.05)]">
-        <div className="flex items-center justify-around px-2 py-1">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setAdminTab(tab.id)}
-              className={`flex flex-col items-center gap-0.5 py-2 px-3 rounded-xl transition-all duration-200 min-w-0 ${
-                adminTab === tab.id
-                  ? "text-emerald-600"
-                  : "text-gray-400 hover:text-gray-600"
-              }`}
-            >
-              <div className={`p-1.5 rounded-xl transition-all duration-200 ${
-                adminTab === tab.id
-                  ? "bg-emerald-100"
-                  : "hover:bg-gray-100"
-              }`}>
-                {tab.icon}
-              </div>
-              <span className={`text-[10px] font-medium leading-tight truncate max-w-[64px] ${
-                adminTab === tab.id
-                  ? "text-emerald-700 font-semibold"
-                  : "text-gray-400"
-              }`}>
-                {tab.label}
-              </span>
-            </button>
-          ))}
-        </div>
-      </nav>
-
       <footer className="bg-mitra-gradient text-white mt-auto">
         <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-white/60">
