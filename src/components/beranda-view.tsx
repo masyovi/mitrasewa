@@ -392,7 +392,7 @@ export function BerandaView() {
         {/* Scaffolding Stats */}
         <section
           ref={(el) => { sectionRefs.current[0] = el; }}
-          className="reveal border-b border-gray-100 pb-4"
+          className="reveal border-b border-gray-100 pb-4 pt-4"
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
