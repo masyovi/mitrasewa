@@ -619,7 +619,7 @@ export function BerandaView() {
           </div>
           <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated">
             {/* Emerald gradient header */}
-            <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 px-5 sm:px-6 py-4 flex items-center gap-3">
+            <div className="bg-mitra-gradient px-5 sm:px-6 py-4 flex items-center gap-3">
               <div className="bg-white/20 backdrop-blur-sm p-2 rounded-xl">
                 <Calculator className="w-5 h-5 text-white" />
               </div>
@@ -746,7 +746,7 @@ export function BerandaView() {
               {showResult && estimatedCost !== null && selectedPriceItem && (
                 <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-xl overflow-hidden animate-fade-in-up">
                   {/* Success header */}
-                  <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 px-5 py-3 flex items-center gap-2">
+                  <div className="bg-mitra-gradient px-5 py-3 flex items-center gap-2">
                     <CheckCircle2 className="w-5 h-5 text-white" />
                     <p className="text-white font-semibold text-sm">Estimasi Biaya Sewa</p>
                   </div>

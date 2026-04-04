@@ -989,3 +989,23 @@ Stage Summary:
 - ESLint: 0 errors, 0 warnings
 - Dev server: Compiled successfully
 - All solid green backgrounds now use gradient variants
+
+---
+Task ID: gradient-enhance
+Agent: main
+Task: Change header/footer green to enhanced gradient green ("warna hijau bagian atas dan bawah ubah menjadi gradien")
+
+Work Log:
+- Analyzed all `bg-mitra-gradient` usages across the project (headers, footers, calculator headers, modal headers)
+- Enhanced `.bg-mitra-gradient` CSS from simple 2-stop to rich 5-stop gradient with deeper emerald tones
+- Enhanced `.bg-mitra-gradient-light` CSS from 2-stop to 4-stop gradient
+- Updated `.btn-emerald-gradient` to match the richer multi-stop gradient pattern
+- Changed beranda-view.tsx inline calculator header from `bg-gradient-to-r from-emerald-600 to-emerald-500` to `bg-mitra-gradient`
+- Changed beranda-view.tsx result card header from `bg-gradient-to-r from-emerald-500 to-emerald-600` to `bg-mitra-gradient`
+- Ran ESLint: 0 errors, 0 warnings
+- Dev server: Compiled successfully, no errors
+
+Stage Summary:
+- The gradient now uses 5 color stops ranging from deep emerald (oklch 0.40) through teal (oklch 0.56) creating a much more visible gradient effect
+- All headers (beranda, admin, login) and footers automatically get the enhanced gradient since they use `bg-mitra-gradient` CSS class
+- Buttons with `btn-emerald-gradient` class also updated for consistency

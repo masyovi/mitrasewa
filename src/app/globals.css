@@ -134,11 +134,22 @@
 
 /* Gradient backgrounds */
 .bg-mitra-gradient {
-  background: linear-gradient(135deg, oklch(0.55 0.17 155) 0%, oklch(0.65 0.17 165) 100%);
+  background: linear-gradient(135deg,
+    oklch(0.40 0.19 155) 0%,
+    oklch(0.48 0.18 160) 25%,
+    oklch(0.56 0.16 168) 50%,
+    oklch(0.50 0.17 162) 75%,
+    oklch(0.42 0.20 155) 100%
+  );
 }
 
 .bg-mitra-gradient-light {
-  background: linear-gradient(135deg, oklch(0.92 0.05 155) 0%, oklch(0.96 0.03 165) 100%);
+  background: linear-gradient(135deg,
+    oklch(0.90 0.06 155) 0%,
+    oklch(0.93 0.05 160) 30%,
+    oklch(0.96 0.04 168) 60%,
+    oklch(0.92 0.05 162) 100%
+  );
 }
 
 /* Status badge styles */
@@ -1094,19 +1105,27 @@ html {
 /* ----- 4. Enhanced Button Styles ----- */
 
 .btn-emerald-gradient {
-  background: linear-gradient(135deg, oklch(0.55 0.17 163), oklch(0.50 0.19 160));
+  background: linear-gradient(135deg,
+    oklch(0.45 0.19 158) 0%,
+    oklch(0.52 0.17 165) 50%,
+    oklch(0.42 0.20 155) 100%
+  );
   color: white;
-  box-shadow: 0 2px 8px oklch(0.55 0.17 163 / 0.3);
+  box-shadow: 0 2px 8px oklch(0.45 0.19 158 / 0.35);
   transition: all 0.2s ease;
 }
 .btn-emerald-gradient:hover {
-  background: linear-gradient(135deg, oklch(0.50 0.19 160), oklch(0.45 0.20 158));
-  box-shadow: 0 4px 12px oklch(0.55 0.17 163 / 0.4);
+  background: linear-gradient(135deg,
+    oklch(0.42 0.20 155) 0%,
+    oklch(0.48 0.18 163) 50%,
+    oklch(0.38 0.22 153) 100%
+  );
+  box-shadow: 0 4px 12px oklch(0.45 0.19 158 / 0.45);
   transform: translateY(-1px);
 }
 .btn-emerald-gradient:active {
   transform: translateY(0);
-  box-shadow: 0 1px 4px oklch(0.55 0.17 163 / 0.2);
+  box-shadow: 0 1px 4px oklch(0.45 0.19 158 / 0.25);
 }
 
 /* Button with shine sweep */
