@@ -10,10 +10,15 @@ import {
   AlertTriangle,
   Search,
   ClipboardList,
+  CalendarClock,
+  ChevronDown,
+  ChevronUp,
+  Repeat2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -27,6 +32,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import {
   type RentalWithItems,
+  type RentalExtension,
 } from "@/lib/types";
 import { formatCurrency, formatDateShort } from "./helpers";
 
@@ -44,6 +50,15 @@ export function HistoryTab({
   const [filterStatus, setFilterStatus] = useState<
     "semua" | "aktif" | "kembali"
   >("semua");
+
+  // Extend dialog state
+  const [extendDialogOpen, setExtendDialogOpen] = useState(false);
+  const [extendRental, setExtendRental] = useState<RentalWithItems | null>(null);
+  const [extendDays, setExtendDays] = useState<number>(7);
+  const [extendLoading, setExtendLoading] = useState(false);
+
+  // Expanded extension history per card
+  const [expandedExtensions, setExpandedExtensions] = useState<Set<string>>(new Set());
 
   const filteredRentals = rentals.filter((r) => {
     const matchSearch =
@@ -85,6 +100,96 @@ export function HistoryTab({
     }
   };
 
+  const openExtendDialog = (rental: RentalWithItems) => {
+    setExtendRental(rental);
+    setExtendDays(7);
+    setExtendDialogOpen(true);
+  };
+
+  const handleExtend = async () => {
+    if (!extendRental || !extendDays || extendDays < 1) return;
+
+    setExtendLoading(true);
+    try {
+      const res = await fetch("/api/rentals/extend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: extendRental.id, additionalDays: extendDays }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast({
+          title: "Sewa Berhasil Diperpanjang",
+          description: `Tagihan perpanjangan: ${formatCurrency(data.data.extensionTotal)}`,
+        });
+        setExtendDialogOpen(false);
+        setExtendRental(null);
+        onRefresh();
+      } else {
+        toast({
+          title: "Gagal",
+          description: data.message,
+          variant: "destructive",
+        });
+      }
+    } catch {
+      toast({
+        title: "Error",
+        description: "Gagal memperpanjang sewa",
+        variant: "destructive",
+      });
+    } finally {
+      setExtendLoading(false);
+    }
+  };
+
+  // Calculate extension total ONLY for the additional days (not from original sewa)
+  const getEstimatedExtensionTotal = () => {
+    if (!extendRental || !extendDays || extendDays < 1) return null;
+
+    let total = 0;
+    for (const item of extendRental.items) {
+      let multiplier = extendDays;
+      if (item.billingType === "bulanan") {
+        multiplier = Math.max(1, Math.ceil(extendDays / 30));
+      }
+      total += item.jumlah * item.harga * multiplier;
+    }
+    return total;
+  };
+
+  const getNewReturnDate = () => {
+    if (!extendDays || extendDays < 1) return "";
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const d = new Date(today);
+    d.setDate(d.getDate() + extendDays);
+    return d.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  // Helper: compute total extension cost and grand total for a rental
+  const getExtensionSummary = (rental: RentalWithItems) => {
+    const extTotal = (rental.extensions || []).reduce((sum, ext) => sum + ext.extensionTotal, 0);
+    const grandTotal = rental.totalHarga + extTotal;
+    return { extTotal, grandTotal, count: rental.extensions?.length || 0 };
+  };
+
+  const toggleExtensionHistory = (rentalId: string) => {
+    setExpandedExtensions((prev) => {
+      const next = new Set(prev);
+      if (next.has(rentalId)) {
+        next.delete(rentalId);
+      } else {
+        next.add(rentalId);
+      }
+      return next;
+    });
+  };
+
   const handlePrint = async (rental: RentalWithItems) => {
     try {
       const res = await fetch(`/api/receipt?id=${rental.id}`);
@@ -94,6 +199,8 @@ export function HistoryTab({
         return;
       }
       const r = data.data;
+      const summary = getExtensionSummary(rental);
+
       const itemsHtml = r.items.map((item: { label: string; jumlah: number; harga: number; billingType: string; multiplier: number; subtotal: number }) => `
         <tr>
           <td style="padding:6px 0;border-bottom:1px dashed #e5e7eb">${item.label}</td>
@@ -103,6 +210,44 @@ export function HistoryTab({
           <td style="padding:6px 8px;border-bottom:1px dashed #e5e7eb;text-align:right;font-weight:600">${formatCurrency(item.subtotal)}</td>
         </tr>
       `).join("");
+
+      // Build extension history for receipt
+      let extensionHtml = "";
+      if (summary.count > 0) {
+        const extRows = rental.extensions.map((ext: RentalExtension) => `
+          <tr>
+            <td style="padding:4px 0;border-bottom:1px dashed #f3f4f6;font-size:11px">${formatDateShort(ext.createdAt)}</td>
+            <td style="padding:4px 8px;border-bottom:1px dashed #f3f4f6;text-align:center;font-size:11px">${ext.extensionDays} hari</td>
+            <td style="padding:4px 8px;border-bottom:1px dashed #f3f4f6;text-align:right;font-size:11px;font-weight:600;color:#059669">${formatCurrency(ext.extensionTotal)}</td>
+          </tr>
+        `).join("");
+
+        extensionHtml = `
+          <div style="margin-top:12px;padding-top:10px;border-top:2px solid #f59e0b">
+            <p style="font-size:12px;font-weight:700;color:#92400e;margin:0 0 6px">📋 Riwayat Perpanjangan</p>
+            <table style="width:100%;border-collapse:collapse">
+              <thead><tr>
+                <th style="text-align:left;padding:4px 0;font-size:10px;color:#92400e;text-transform:uppercase">Tanggal</th>
+                <th style="text-align:center;padding:4px 8px;font-size:10px;color:#92400e;text-transform:uppercase">Durasi</th>
+                <th style="text-align:right;padding:4px 8px;font-size:10px;color:#92400e;text-transform:uppercase">Tagihan</th>
+              </tr></thead>
+              <tbody>${extRows}</tbody>
+            </table>
+            <div style="text-align:right;margin-top:6px;font-size:12px;font-weight:700;color:#92400e">
+              Total Perpanjangan: ${formatCurrency(summary.extTotal)}
+            </div>
+          </div>
+        `;
+      }
+
+      const grandTotalHtml = summary.count > 0
+        ? `<div style="text-align:right;font-size:18px;font-weight:700;padding:10px 8px 0;color:#059669;border-top:2px solid #e5e7eb;margin-top:8px">
+            Total Keseluruhan: ${formatCurrency(summary.grandTotal)}
+            <div style="font-size:10px;font-weight:400;color:#6b7280;margin-top:2px">
+              (Awal ${formatCurrency(r.totalHarga)} + Perpanjangan ${formatCurrency(summary.extTotal)})
+            </div>
+          </div>`
+        : `<div class="total">Total: ${formatCurrency(r.totalHarga)}</div>`;
 
       const printHtml = `<!DOCTYPE html>
 <html><head><title>Nota Sewa - ${r.namaPenyewa}</title>
@@ -117,7 +262,6 @@ export function HistoryTab({
   .info strong{color:#111}
   table{width:100%;border-collapse:collapse;font-size:12px}
   th{text-align:left;padding:6px 8px;border-bottom:2px solid #059669;color:#059669;font-size:11px;text-transform:uppercase}
-  .total{text-align:right;font-size:16px;font-weight:700;padding:12px 8px 0;color:#059669;border-top:2px solid #e5e7eb;margin-top:8px}
   .footer{text-align:center;margin-top:16px;padding-top:12px;border-top:1px dashed #e5e7eb;font-size:10px;color:#9ca3af}
   @media print{body{padding:0}}
 </style></head><body>
@@ -130,14 +274,14 @@ export function HistoryTab({
     <p><strong>Nama:</strong> ${r.namaPenyewa}</p>
     <p><strong>No HP:</strong> ${r.noHp}</p>
     <p><strong>Alamat:</strong> ${r.alamat}</p>
-    <p><strong>Tanggal:</strong> ${formatDateShort(r.tanggalSewa)} → ${formatDateShort(r.tanggalKembali)}</p>
-    <p><strong>Durasi:</strong> ${r.lamaSewa} hari</p>
+    <p><strong>Tanggal:</strong> ${formatDateShort(r.tanggalSewa)} → ${formatDateShort(r.tanggalKembali)} (${r.lamaSewa} hari)</p>
   </div>
   <table>
     <thead><tr><th>Barang</th><th>Qty</th><th>Harga</th><th>Durasi</th><th>Subtotal</th></tr></thead>
     <tbody>${itemsHtml}</tbody>
   </table>
-  <div class="total">Total: ${formatCurrency(r.totalHarga)}</div>
+  ${extensionHtml}
+  ${grandTotalHtml}
   <div class="footer">
     <p>Dibuat: ${formatDateShort(r.createdAt)}</p>
     <p>&copy; ${new Date().getFullYear()} MITRA SEWA</p>
@@ -180,6 +324,9 @@ export function HistoryTab({
       });
     }
   };
+
+  // Quick-select extension presets
+  const extendPresets = [7, 14, 30, 60, 90];
 
   return (
     <div className="space-y-6">
@@ -267,138 +414,302 @@ export function HistoryTab({
         </Card>
       ) : (
         <div className="space-y-4">
-          {filteredRentals.map((rental) => (
-            <Card key={rental.id} className={`border-0 shadow-md overflow-hidden card-elevated animate-bounce-in ${rental.isOverdue ? "border-l-4 border-l-red-500" : ""}`}>
-              <CardContent className="p-0">
-                <div className="flex items-center justify-between p-4 pb-3 border-b border-gray-50">
-                  <div>
-                    <h4 className="font-bold text-gray-900">
-                      {rental.namaPenyewa}
-                    </h4>
-                    <div className="flex flex-wrap items-center gap-2 mt-1">
-                      <span className="text-xs text-gray-500">
-                        {rental.noHp}
-                      </span>
-                      <span className="text-xs text-gray-400">•</span>
-                      <span className="text-xs text-gray-500">
-                        {rental.alamat}
-                      </span>
+          {filteredRentals.map((rental) => {
+            const summary = getExtensionSummary(rental);
+            const hasExtensions = summary.count > 0;
+            const isExpanded = expandedExtensions.has(rental.id);
+
+            return (
+              <Card key={rental.id} className={`border-0 shadow-md overflow-hidden card-elevated animate-bounce-in ${rental.isOverdue ? "border-l-4 border-l-red-500" : ""}`}>
+                <CardContent className="p-0">
+                  {/* Header row */}
+                  <div className="flex items-center justify-between p-4 pb-3 border-b border-gray-50">
+                    <div>
+                      <h4 className="font-bold text-gray-900">
+                        {rental.namaPenyewa}
+                      </h4>
+                      <div className="flex flex-wrap items-center gap-2 mt-1">
+                        <span className="text-xs text-gray-500">
+                          {rental.noHp}
+                        </span>
+                        <span className="text-xs text-gray-400">•</span>
+                        <span className="text-xs text-gray-500">
+                          {rental.alamat}
+                        </span>
+                        {rental.isOverdue && (
+                          <>
+                            <span className="text-xs text-gray-400">•</span>
+                            <Badge className="bg-red-100 text-red-700 border-0 text-[11px] px-1.5 py-0 gap-1 badge-glow-red">
+                              <AlertTriangle className="w-3 h-3" />
+                              Terlambat {rental.daysOverdue} hari
+                            </Badge>
+                          </>
+                        )}
+                        {hasExtensions && (
+                          <>
+                            <span className="text-xs text-gray-400">•</span>
+                            <Badge className="bg-amber-100 text-amber-700 border-0 text-[11px] px-1.5 py-0 gap-1">
+                              <Repeat2 className="w-3 h-3" />
+                              {summary.count}x perpanjangan
+                            </Badge>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
                       {rental.isOverdue && (
-                        <>
-                          <span className="text-xs text-gray-400">•</span>
-                          <Badge className="bg-red-100 text-red-700 border-0 text-[11px] px-1.5 py-0 gap-1 badge-glow-red">
-                            <AlertTriangle className="w-3 h-3" />
-                            Terlambat {rental.daysOverdue} hari
-                          </Badge>
-                        </>
+                        <Badge className="bg-red-500 text-white border-0 animate-pulse badge-glow-red">
+                          Terlambat
+                        </Badge>
+                      )}
+                      <Badge
+                        className={
+                          rental.status === "aktif"
+                            ? "status-disewa"
+                            : "bg-emerald-100 text-emerald-700"
+                        }
+                      >
+                        {rental.status === "aktif" ? "Disewa" : "Kembali"}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  {/* Items table */}
+                  <div className="p-4 pb-2">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-xs text-gray-500 border-b border-gray-100">
+                            <th className="text-left py-1.5 font-medium">Barang</th>
+                            <th className="text-center py-1.5 font-medium">Qty</th>
+                            <th className="text-right py-1.5 font-medium hidden sm:table-cell">
+                              Harga
+                            </th>
+                            <th className="text-center py-1.5 font-medium hidden sm:table-cell">
+                              Durasi
+                            </th>
+                            <th className="text-right py-1.5 font-medium">
+                              Subtotal
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {rental.items.map((item) => (
+                            <tr
+                              key={item.id}
+                              className="border-b border-gray-50 last:border-0"
+                            >
+                              <td className="py-2">{item.label}</td>
+                              <td className="text-center py-2">
+                                {item.jumlah}
+                              </td>
+                              <td className="text-right py-2 hidden sm:table-cell text-gray-500">
+                                <div>{formatCurrency(item.harga)}</div>
+                                <div className="text-[10px] text-gray-400">
+                                  /{item.billingType === "bulanan" ? "bulan" : "hari"}
+                                </div>
+                              </td>
+                              <td className="text-center py-2 hidden sm:table-cell text-xs text-gray-500">
+                                {item.billingType === "bulanan"
+                                  ? `${item.multiplier} bln`
+                                  : `${item.multiplier} hr`}
+                              </td>
+                              <td className="text-right py-2 font-medium">
+                                {formatCurrency(item.subtotal)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* Extension history (collapsible) */}
+                  {hasExtensions && (
+                    <div className="px-4 pb-1">
+                      <button
+                        onClick={() => toggleExtensionHistory(rental.id)}
+                        className="flex items-center gap-1.5 text-xs text-amber-700 hover:text-amber-800 font-medium transition-colors"
+                      >
+                        {isExpanded ? (
+                          <ChevronUp className="w-3.5 h-3.5" />
+                        ) : (
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        )}
+                        Riwayat Perpanjangan ({summary.count})
+                      </button>
+                      {isExpanded && (
+                        <div className="mt-2 mb-2 bg-amber-50 border border-amber-200 rounded-lg overflow-hidden animate-fade-in-up">
+                          <table className="w-full text-xs">
+                            <thead>
+                              <tr className="text-amber-700 border-b border-amber-200 bg-amber-100/50">
+                                <th className="text-left px-3 py-2 font-medium">Tanggal</th>
+                                <th className="text-center px-3 py-2 font-medium">Durasi</th>
+                                <th className="text-right px-3 py-2 font-medium">Jatuh Tempo Baru</th>
+                                <th className="text-right px-3 py-2 font-medium">Tagihan</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {rental.extensions.map((ext) => (
+                                <tr key={ext.id} className="border-b border-amber-100 last:border-0">
+                                  <td className="px-3 py-2 text-gray-600">{formatDateShort(ext.createdAt)}</td>
+                                  <td className="px-3 py-2 text-center text-gray-600">{ext.extensionDays} hari</td>
+                                  <td className="px-3 py-2 text-right text-gray-600">{formatDateShort(ext.newTanggalKembali)}</td>
+                                  <td className="px-3 py-2 text-right font-semibold text-amber-700">{formatCurrency(ext.extensionTotal)}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       )}
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {rental.isOverdue && (
-                      <Badge className="bg-red-500 text-white border-0 animate-pulse badge-glow-red">
-                        Terlambat
-                      </Badge>
-                    )}
-                    <Badge
-                      className={
-                        rental.status === "aktif"
-                          ? "status-disewa"
-                          : "bg-emerald-100 text-emerald-700"
-                      }
-                    >
-                      {rental.status === "aktif" ? "Disewa" : "Kembali"}
-                    </Badge>
-                  </div>
-                </div>
+                  )}
 
-                <div className="p-4 pb-2">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="text-xs text-gray-500 border-b border-gray-100">
-                          <th className="text-left py-1.5 font-medium">Barang</th>
-                          <th className="text-center py-1.5 font-medium">Qty</th>
-                          <th className="text-right py-1.5 font-medium hidden sm:table-cell">
-                            Harga
-                          </th>
-                          <th className="text-center py-1.5 font-medium hidden sm:table-cell">
-                            Durasi
-                          </th>
-                          <th className="text-right py-1.5 font-medium">
-                            Subtotal
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {rental.items.map((item) => (
-                          <tr
-                            key={item.id}
-                            className="border-b border-gray-50 last:border-0"
-                          >
-                            <td className="py-2">{item.label}</td>
-                            <td className="text-center py-2">
-                              {item.jumlah}
-                            </td>
-                            <td className="text-right py-2 hidden sm:table-cell text-gray-500">
-                              <div>{formatCurrency(item.harga)}</div>
-                              <div className="text-[10px] text-gray-400">
-                                /{item.billingType === "bulanan" ? "bulan" : "hari"}
-                              </div>
-                            </td>
-                            <td className="text-center py-2 hidden sm:table-cell text-xs text-gray-500">
-                              {item.billingType === "bulanan"
-                                ? `${item.multiplier} bln`
-                                : `${item.multiplier} hr`}
-                            </td>
-                            <td className="text-right py-2 font-medium">
-                              {formatCurrency(item.subtotal)}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 pt-2 gap-3 bg-gray-50/50">
-                  <div className="text-xs text-gray-500 space-y-0.5">
-                    <p>
-                      Sewa:{" "}
-                      {formatDateShort(rental.tanggalSewa)} →{" "}
-                      {formatDateShort(rental.tanggalKembali)} ({rental.lamaSewa}{" "}
-                      hari)
-                    </p>
-                    <p className="text-[10px] text-gray-400">
-                      Dibuat: {formatDateShort(rental.createdAt)}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="text-right">
-                      <p className="text-[10px] text-gray-400">Total</p>
-                      <p className="font-bold text-emerald-700 text-sm">
-                        {formatCurrency(rental.totalHarga)}
+                  {/* Footer: dates + totals + actions */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 pt-2 gap-3 bg-gray-50/50">
+                    <div className="text-xs text-gray-500 space-y-0.5">
+                      <p>
+                        Sewa:{" "}
+                        {formatDateShort(rental.tanggalSewa)} →{" "}
+                        {formatDateShort(rental.tanggalKembali)} ({rental.lamaSewa}{" "}
+                        hari)
+                      </p>
+                      <p className="text-[10px] text-gray-400">
+                        Dibuat: {formatDateShort(rental.createdAt)}
                       </p>
                     </div>
-                    {rental.status === "aktif" && (
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {/* Perpanjang Sewa button — only for active rentals (overdue or not) */}
+                      {rental.status === "aktif" && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className={`gap-1 text-xs h-8 font-medium ${rental.isOverdue ? "border-amber-300 text-amber-700 hover:bg-amber-50" : "border-emerald-200 text-emerald-700 hover:bg-emerald-50"}`}
+                          onClick={() => openExtendDialog(rental)}
+                        >
+                          <CalendarClock className="w-3 h-3" />
+                          Perpanjang
+                        </Button>
+                      )}
+
+                      {/* Separate billing display */}
+                      <div className="text-right">
+                        {!hasExtensions ? (
+                          <>
+                            <p className="text-[10px] text-gray-400">Total</p>
+                            <p className="font-bold text-emerald-700 text-sm">
+                              {formatCurrency(rental.totalHarga)}
+                            </p>
+                          </>
+                        ) : (
+                          <div className="space-y-0.5">
+                            <div>
+                              <p className="text-[10px] text-gray-400">Tagihan Awal</p>
+                              <p className="font-semibold text-gray-700 text-xs">
+                                {formatCurrency(rental.totalHarga)}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] text-amber-600">Perpanjangan ({summary.count}x)</p>
+                              <p className="font-semibold text-amber-700 text-xs">
+                                +{formatCurrency(summary.extTotal)}
+                              </p>
+                            </div>
+                            <div className="pt-0.5 border-t border-gray-200">
+                              <p className="text-[10px] text-emerald-600">Total Keseluruhan</p>
+                              <p className="font-bold text-emerald-700 text-sm">
+                                {formatCurrency(summary.grandTotal)}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {rental.status === "aktif" && (
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="gap-1 text-xs h-8 border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                            >
+                              <RotateCcw className="w-3 h-3" />
+                              Kembali
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent aria-describedby={undefined}>
+                            <DialogHeader>
+                              <DialogTitle>Konfirmasi Pengembalian</DialogTitle>
+                            </DialogHeader>
+                            <p className="text-sm text-gray-600">
+                              Apakah barang dari <strong>{rental.namaPenyewa}</strong>{" "}
+                              sudah dikembalikan?
+                            </p>
+                            {hasExtensions && (
+                              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs space-y-1">
+                                <p className="font-semibold text-amber-800">Ringkasan Tagihan:</p>
+                                <div className="flex justify-between text-amber-700">
+                                  <span>Tagihan Awal</span>
+                                  <span className="font-medium">{formatCurrency(rental.totalHarga)}</span>
+                                </div>
+                                <div className="flex justify-between text-amber-700">
+                                  <span>Total Perpanjangan ({summary.count}x)</span>
+                                  <span className="font-medium">+{formatCurrency(summary.extTotal)}</span>
+                                </div>
+                                <div className="flex justify-between text-amber-900 font-bold border-t border-amber-300 pt-1">
+                                  <span>Total Keseluruhan</span>
+                                  <span>{formatCurrency(summary.grandTotal)}</span>
+                                </div>
+                              </div>
+                            )}
+                            <DialogFooter className="gap-2">
+                              <DialogClose asChild>
+                                <Button variant="outline" size="sm">
+                                  Batal
+                                </Button>
+                              </DialogClose>
+                              <DialogClose asChild>
+                                <Button
+                                  size="sm"
+                                  className="bg-emerald-600 hover:bg-emerald-700 btn-emerald-gradient"
+                                  onClick={() =>
+                                    handleReturn(rental.id, rental.namaPenyewa)
+                                  }
+                                >
+                                  Ya, Kembalikan
+                                </Button>
+                              </DialogClose>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="gap-1 text-xs h-8 border-gray-200 text-gray-600 hover:bg-gray-50"
+                        onClick={() => handlePrint(rental)}
+                      >
+                        <Printer className="w-3 h-3" />
+                        <span className="hidden sm:inline">Cetak</span>
+                      </Button>
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button
                             size="sm"
-                            variant="outline"
-                            className="gap-1 text-xs h-8 border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                            variant="ghost"
+                            className="gap-1 text-xs h-8 text-red-500 hover:text-red-700 hover:bg-red-50"
                           >
-                            <RotateCcw className="w-3 h-3" />
-                            Kembali
+                            <Trash2 className="w-3 h-3" />
                           </Button>
                         </DialogTrigger>
                         <DialogContent aria-describedby={undefined}>
                           <DialogHeader>
-                            <DialogTitle>Konfirmasi Pengembalian</DialogTitle>
+                            <DialogTitle>Hapus Data</DialogTitle>
                           </DialogHeader>
                           <p className="text-sm text-gray-600">
-                            Apakah barang dari <strong>{rental.namaPenyewa}</strong>{" "}
-                            sudah dikembalikan?
+                            Yakin ingin menghapus data penyewaan{" "}
+                            <strong>{rental.namaPenyewa}</strong>? Tindakan ini
+                            tidak dapat dibatalkan.
                           </p>
                           <DialogFooter className="gap-2">
                             <DialogClose asChild>
@@ -409,71 +720,190 @@ export function HistoryTab({
                             <DialogClose asChild>
                               <Button
                                 size="sm"
-                                className="bg-emerald-600 hover:bg-emerald-700 btn-emerald-gradient"
-                                onClick={() =>
-                                  handleReturn(rental.id, rental.namaPenyewa)
-                                }
+                                variant="destructive"
+                                onClick={() => handleDelete(rental.id)}
                               >
-                                Ya, Kembalikan
+                                Hapus
                               </Button>
                             </DialogClose>
                           </DialogFooter>
                         </DialogContent>
                       </Dialog>
-                    )}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="gap-1 text-xs h-8 border-gray-200 text-gray-600 hover:bg-gray-50"
-                      onClick={() => handlePrint(rental)}
-                    >
-                      <Printer className="w-3 h-3" />
-                      <span className="hidden sm:inline">Cetak</span>
-                    </Button>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="gap-1 text-xs h-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent aria-describedby={undefined}>
-                        <DialogHeader>
-                          <DialogTitle>Hapus Data</DialogTitle>
-                        </DialogHeader>
-                        <p className="text-sm text-gray-600">
-                          Yakin ingin menghapus data penyewaan{" "}
-                          <strong>{rental.namaPenyewa}</strong>? Tindakan ini
-                          tidak dapat dibatalkan.
-                        </p>
-                        <DialogFooter className="gap-2">
-                          <DialogClose asChild>
-                            <Button variant="outline" size="sm">
-                              Batal
-                            </Button>
-                          </DialogClose>
-                          <DialogClose asChild>
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              onClick={() => handleDelete(rental.id)}
-                            >
-                              Hapus
-                            </Button>
-                          </DialogClose>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
+
+      {/* ===== Perpanjang Sewa Dialog ===== */}
+      <Dialog open={extendDialogOpen} onOpenChange={setExtendDialogOpen}>
+        <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <div className="bg-amber-100 p-2 rounded-lg">
+                <CalendarClock className="w-5 h-5 text-amber-700" />
+              </div>
+              Perpanjang Sewa
+            </DialogTitle>
+          </DialogHeader>
+
+          {extendRental && (
+            <div className="space-y-4">
+              {/* Warning info (only if overdue) */}
+              {extendRental.isOverdue && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-start gap-2.5">
+                  <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+                  <div className="text-xs text-red-700">
+                    <p className="font-semibold">Penyewaan Terlambat</p>
+                    <p className="mt-0.5 text-red-600">
+                      <strong>{extendRental.namaPenyewa}</strong> — Terlambat{" "}
+                      {extendRental.daysOverdue} hari dari batas pengembalian (
+                      {formatDateShort(extendRental.tanggalKembali)})
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Current info */}
+              <div className="bg-gray-50 rounded-lg p-3 space-y-1.5">
+                <p className="text-xs text-gray-500">Informasi Sewa Saat Ini</p>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Tanggal Sewa</span>
+                  <span className="font-medium text-gray-900">{formatDateShort(extendRental.tanggalSewa)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Jatuh Tempo</span>
+                  <span className="font-medium text-red-600">{formatDateShort(extendRental.tanggalKembali)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Tagihan Awal</span>
+                  <span className="font-bold text-emerald-700">{formatCurrency(extendRental.totalHarga)}</span>
+                </div>
+                {extendRental.extensions && extendRental.extensions.length > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Perpanjangan Sebelumnya</span>
+                    <span className="font-medium text-amber-700">
+                      {extendRental.extensions.length}x ({formatCurrency(
+                        extendRental.extensions.reduce((sum, ext) => sum + ext.extensionTotal, 0)
+                      )})
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Extension days input */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">
+                  Perpanjang Berapa Hari?
+                </Label>
+                <Input
+                  type="number"
+                  min={1}
+                  max={365}
+                  value={extendDays}
+                  onChange={(e) => {
+                    const val = Math.min(365, Math.max(1, Number(e.target.value) || 1));
+                    setExtendDays(val);
+                  }}
+                  className="h-10"
+                />
+                {/* Quick presets */}
+                <div className="flex gap-1.5 flex-wrap">
+                  {extendPresets.map((days) => (
+                    <button
+                      key={days}
+                      onClick={() => setExtendDays(days)}
+                      className={`px-3 py-1 text-xs rounded-lg border transition-all ${
+                        extendDays === days
+                          ? "bg-emerald-600 text-white border-emerald-600"
+                          : "border-gray-200 text-gray-600 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700"
+                      }`}
+                    >
+                      {days} hari
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Preview: SEPARATE billing */}
+              {extendDays >= 1 && (
+                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 space-y-2 animate-fade-in-up">
+                  <p className="text-xs text-emerald-700 font-semibold">Preview Perpanjangan</p>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-emerald-600">Tanggal Kembali Baru</span>
+                    <span className="font-medium text-emerald-900">{getNewReturnDate()}</span>
+                  </div>
+                  {(() => {
+                    const extTotal = getEstimatedExtensionTotal();
+                    if (extTotal !== null) {
+                      const existingExtTotal = (extendRental.extensions || []).reduce((s, e) => s + e.extensionTotal, 0);
+                      const newGrandTotal = extendRental.totalHarga + existingExtTotal + extTotal;
+                      return (
+                        <>
+                          <div className="border-t border-emerald-200 pt-2 mt-1">
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-500">Tagihan Awal</span>
+                              <span className="font-medium text-gray-700">{formatCurrency(extendRental.totalHarga)}</span>
+                            </div>
+                            {existingExtTotal > 0 && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-gray-500">Perpanjangan Sebelumnya</span>
+                                <span className="font-medium text-amber-600">+{formatCurrency(existingExtTotal)}</span>
+                              </div>
+                            )}
+                            <div className="flex justify-between text-sm">
+                              <span className="text-amber-700 font-semibold">Tagihan Perpanjangan Baru</span>
+                              <span className="font-bold text-amber-700">+{formatCurrency(extTotal)}</span>
+                            </div>
+                          </div>
+                          <div className="flex justify-between text-sm bg-emerald-100/50 rounded-md px-2 py-1.5">
+                            <span className="text-emerald-800 font-bold">Total Keseluruhan</span>
+                            <span className="font-bold text-emerald-800">{formatCurrency(newGrandTotal)}</span>
+                          </div>
+                        </>
+                      );
+                    }
+                    return null;
+                  })()}
+                </div>
+              )}
+            </div>
+          )}
+
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setExtendDialogOpen(false)}
+            >
+              Batal
+            </Button>
+            <Button
+              size="sm"
+              className="bg-amber-600 hover:bg-amber-700 text-white font-medium"
+              disabled={extendLoading || !extendDays || extendDays < 1}
+              onClick={handleExtend}
+            >
+              {extendLoading ? (
+                <>
+                  <RefreshCw className="w-3.5 h-3.5 mr-1 animate-spin" />
+                  Memproses...
+                </>
+              ) : (
+                <>
+                  <CalendarClock className="w-3.5 h-3.5 mr-1" />
+                  Perpanjang {extendDays} Hari
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
+
+

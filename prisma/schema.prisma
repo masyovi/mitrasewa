@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -28,19 +29,32 @@ model StockSetting {
 }
 
 model Rental {
-  id             String       @id @default(cuid())
+  id             String            @id @default(cuid())
   namaPenyewa    String
-  nik            String       @default("")
+  nik            String            @default("")
   noHp           String
   alamat         String
   tanggalSewa    DateTime
   tanggalKembali DateTime
   lamaSewa       Int
-  status         String       @default("aktif")
+  status         String            @default("aktif")
   totalHarga     Float
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
   items          RentalItem[]
+  extensions     RentalExtension[]
+}
+
+model RentalExtension {
+  id                      String   @id @default(cuid())
+  rentalId                String
+  rental                  Rental   @relation(fields: [rentalId], references: [id], onDelete: Cascade)
+  previousTanggalKembali DateTime
+  newTanggalKembali      DateTime
+  extensionDays           Int
+  extensionTotal          Float
+  notes                   String   @default("")
+  createdAt               DateTime @default(now())
 }
 
 model RentalItem {

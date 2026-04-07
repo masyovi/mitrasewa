@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     const overdueOnly = searchParams.get("overdue") === "true";
 
     const rentals = await db.rental.findMany({
-      include: { items: true },
+      include: { items: true, extensions: { orderBy: { createdAt: "asc" } } },
       orderBy: { createdAt: "desc" },
     });
 

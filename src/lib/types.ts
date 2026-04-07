@@ -31,6 +31,17 @@ export interface RentalItem {
   subtotal: number;
 }
 
+export interface RentalExtension {
+  id: string;
+  rentalId: string;
+  previousTanggalKembali: string;
+  newTanggalKembali: string;
+  extensionDays: number;
+  extensionTotal: number;
+  notes: string;
+  createdAt: string;
+}
+
 export interface RentalWithItems {
   id: string;
   namaPenyewa: string;
@@ -45,6 +56,7 @@ export interface RentalWithItems {
   createdAt: string;
   updatedAt: string;
   items: RentalItem[];
+  extensions: RentalExtension[];
   isOverdue?: boolean;
   daysOverdue?: number;
 }

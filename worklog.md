@@ -1056,3 +1056,91 @@ Stage Summary:
 - Component file deleted
 - ESLint: 0 errors
 - Dev server: Compiled successfully
+
+---
+Task ID: 28
+Agent: Main Agent
+Task: Add "Perpanjang Sewa" feature for overdue rentals in History tab
+
+Work Log:
+- Created `/api/rentals/extend/route.ts` — new API endpoint for extending rental duration
+  - POST with { id, additionalDays }
+  - Validates: rental exists, status is "aktif", days 1-365
+  - Calculates new tanggalKembali = today + additionalDays
+  - Recalculates lamaSewa from original tanggalSewa to new tanggalKembali
+  - Recalculates each item's multiplier (bulanan: ceil(lamaSewa/30), else: lamaSewa)
+  - Recalculates each item's subtotal = jumlah × harga × multiplier
+  - Updates rental (tanggalKembali, lamaSewa, totalHarga) and all items (multiplier, subtotal) in a Prisma transaction
+  - Returns updated rental with previousTotal and extensionDays for reference
+
+- Updated `history-tab.tsx` — added "Perpanjang Sewa" button and dialog
+  - Amber "Perpanjang" button with CalendarClock icon appears only for overdue + active rentals
+  - Dialog shows: red warning box with overdue info, current rental info, day input with quick presets (7/14/30/60/90), live preview of new return date + new total + cost difference
+  - Confirm button shows "Perpanjang X Hari" with loading state
+  - On success: toast notification with new return date, auto-refresh data
+
+Stage Summary:
+- New file: src/app/api/rentals/extend/route.ts
+- Modified file: src/components/admin/history-tab.tsx
+- ESLint: 0 errors, 0 warnings
+- Dev server: Compiled successfully
+- Feature: Overdue rentals in History tab now have "Perpanjang" button that extends duration and auto-recalculates billing
+---
+Task ID: 4
+Agent: Main Agent
+Task: Implement separate billing for rental extensions (perpanjang sewa) — tagihan lama vs tagihan baru
+
+Work Log:
+- Added RentalExtension model to Prisma schema with fields: id, rentalId, previousTanggalKembali, newTanggalKembali, extensionDays, extensionTotal, notes, createdAt
+- Added extensions relation to Rental model
+- Pushed schema to database with `bun run db:push`
+- Added RentalExtension TypeScript interface to types.ts
+- Added extensions field to RentalWithItems TypeScript interface
+- Updated rentals GET API to include extensions (ordered by createdAt asc)
+- Rewrote extend API (POST /api/rentals/extend):
+  - Creates a separate RentalExtension record instead of updating totalHarga
+  - Extension total calculated ONLY for additional days (not from original sewa date)
+  - Original totalHarga is preserved unchanged
+  - Updates tanggalKembali and lamaSewa on the rental
+  - Returns extensionTotal, grandTotal, and extension metadata
+- Rewrote history-tab UI for separate billing:
+  - Card footer shows "Tagihan Awal" (original) + "Perpanjangan" (extensions) + "Total Keseluruhan" when extensions exist
+  - When no extensions: shows simple "Total" as before (backward compatible)
+  - Collapsible "Riwayat Perpanjangan" section shows extension history table (date, duration, new due date, extension bill)
+  - Amber badge "Nx perpanjangan" shown on cards with extensions
+  - Perpanjang button now available for ALL active rentals (not just overdue ones)
+  - Extend dialog preview shows SEPARATE billing: Tagihan Awal, Perpanjangan Sebelumnya, Tagihan Perpanjangan Baru, Total Keseluruhan
+  - Extension cost calculated only for the additional days
+  - Return confirmation dialog shows billing summary when extensions exist
+  - Print receipt includes extension history table and separate billing breakdown
+- Removed unused imports: Plus, Receipt (replaced with Repeat2 from lucide-react, ChevronDown, ChevronUp)
+- ESLint: 0 errors, 0 warnings
+- Dev server: Compiled successfully
+
+Stage Summary:
+- Tagihan Awal (original bill) and Tagihan Perpanjangan (extension bill) are now completely separate
+- Each extension creates its own RentalExtension record with independent cost calculation
+- Multiple extensions are supported and accumulated separately
+- UI shows clear separation with different colors (gray for original, amber for extensions, emerald for total)
+- Backward compatible: rentals without extensions show simple total as before
+- Files modified: prisma/schema.prisma, src/lib/types.ts, src/app/api/rentals/route.ts, src/app/api/rentals/extend/route.ts, src/components/admin/history-tab.tsx
+---
+Task ID: 5
+Agent: Main Agent
+Task: Migrate database from local SQLite to Turso (libsql)
+
+Work Log:
+- Fixed @prisma/adapter-libsql version mismatch: installed matching v6.19.2 (was 7.6.0)
+- Fixed export name: PrismaLibSQL (not PrismaLibSql) for @prisma/adapter-libsql@6.19.2
+- Rewrote db.ts to pass URL+authToken directly to PrismaLibSQL adapter constructor (bypasses system DATABASE_URL env override)
+- Created all tables on Turso via direct libsql SQL (Prisma CLI push doesn't work with Turso URL + sqlite provider)
+- Seeded default price settings (6 items) and stock settings (6 items) to Turso
+- Updated package.json dev script to include DATABASE_URL with Turso auth token as prefix
+- Verified: all API endpoints (stock, prices, rentals) return HTTP 200 with data from Turso
+
+Stage Summary:
+- Database successfully migrated from local SQLite to Turso (libsql://mitrasewaapp-gedung.aws-ap-northeast-1.turso.io)
+- db.ts uses PrismaLibSQL adapter with hardcoded URL+authToken (avoids system env override issue)
+- package.json dev script sets DATABASE_URL for Prisma schema compatibility
+- Data seeded: 6 price settings, 6 stock settings
+- All APIs working: GET /api/stock, GET /api/prices, GET /api/rentals
