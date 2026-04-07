@@ -1186,3 +1186,95 @@ Stage Summary:
 - Kalkulator Biaya Sewa now supports multiple equipment items
 - ESLint: 0 errors, 0 warnings
 - Dev server: Compiled successfully, all routes HTTP 200
+
+---
+Task ID: 36
+Agent: Main Agent
+Task: Make header sticky/static when scrolling (bagian atas statis saat scroll)
+
+Work Log:
+- Diagnosed issue: Header had `sticky top-0 z-50` classes but parent `<div>` had `overflow-hidden` which breaks CSS sticky positioning
+- Removed `overflow-hidden` from the main page wrapper div in beranda-view.tsx (line 244)
+- The full-page bubble background already has its own `overflow-hidden` in a separate `fixed` container, so removing it from the wrapper doesn't affect bubble containment
+- Header now properly stays fixed at top during scroll
+- ESLint: 0 errors
+- Dev server: Compiled successfully, HTTP 200
+
+Stage Summary:
+- Fixed: Header is now sticky/static at top when scrolling
+- File modified: src/components/beranda-view.tsx (removed overflow-hidden from page wrapper)
+- Bubble animation still works correctly (has its own fixed container with overflow-hidden)
+
+---
+Task ID: 37
+Agent: Main Agent
+Task: Restore mobile bottom navigation (navigasi bawah mobile hilang)
+
+Work Log:
+- Diagnosed: The CSS classes for `.mobile-bottom-nav` and `.mobile-bottom-nav-item` existed in globals.css but the HTML `<nav>` element was completely missing from beranda-view.tsx
+- Added mobile bottom navigation bar with 4 buttons: Beranda, Tentang, Alat, Hitung
+- Each button scrolls smoothly to its corresponding section using sectionRefs
+- Added `activeMobileNav` state to track and highlight the currently active tab
+- Added `Home` icon import from lucide-react
+- Added `pb-20 sm:pb-6` padding to `<main>` content area for mobile bottom nav clearance
+- Added `pb-20` to footer for mobile bottom nav clearance
+- Mobile nav is hidden on `sm:` breakpoint and above (desktop has quick nav links in header)
+- Styling uses existing `.mobile-bottom-nav` and `.mobile-bottom-nav-item` CSS classes from globals.css
+
+Stage Summary:
+- Mobile bottom navigation restored with 4 tabs: Beranda (Home), Tentang (Info), Alat (Boxes), Hitung (Calculator)
+- Active tab tracking with emerald highlight color
+- Content padding adjusted to prevent overlap with fixed bottom nav
+- ESLint: 0 errors, dev server: HTTP 200
+- File modified: src/components/beranda-view.tsx
+
+---
+Task ID: 38
+Agent: Main Agent
+Task: Split single-page layout into view-based page navigation + remove scroll-to-top button
+
+Work Log:
+- Refactored beranda-view.tsx from single-page scroll layout to 4 separate view-based "pages":
+  - **Beranda**: Hero section + Tentang Kami Summary + Layanan Kami
+  - **Tentang**: Tentang Kami Summary + Layanan Kami
+  - **Alat**: Scaffolding Stats + Status Alat (cards + comparison table) + Komponen Scaffolding
+  - **Hitung**: Kalkulator Biaya Sewa (full calculator with multi-equipment support)
+- Added `currentPage` state: `useState<"beranda" | "tentang" | "alat" | "hitung">("beranda")`
+- Removed unused states: `showScrollTop`, `activeMobileNav`
+- Removed unused refs: `sectionRefs` (no longer needed for scroll-to-section)
+- Removed scroll reveal IntersectionObserver (no longer needed)
+- Removed `scrollToTop()` and `scrollToScaffolding()` functions
+- Removed all `ref` and `className="reveal"` attributes from sections
+- Removed scroll-to-top floating arrow button completely
+- Added `useEffect` to scroll to top on page change
+- Updated Hero CTA button: from "Cek Ketersediaan" → "Lihat Alat", onClick now navigates to "alat" page
+- Updated Mobile Bottom Navigation: each button uses `setCurrentPage()` instead of scrollIntoView
+- Added Desktop Navigation Tabs: horizontal tab bar below header (hidden on mobile, visible sm+) with 4 tabs matching mobile nav
+- Active tab highlighted with emerald color on both mobile and desktop
+
+Stage Summary:
+- Single-page scroll layout converted to 4 separate view-based pages
+- Scroll-to-top button removed
+- Desktop nav tabs added for page switching
+- ESLint: 0 errors, dev server: HTTP 200
+- File modified: src/components/beranda-view.tsx
+
+---
+Task ID: 39
+Agent: Main Agent
+Task: Hapus footer hijau + header tetap hijau saat scroll
+
+Work Log:
+- Removed entire footer section (green gradient area from MITRA SEWA brand column to copyright line)
+- Fixed header: removed scroll-based color change (was switching from green gradient to white on scroll)
+- Header now always stays with green gradient (bg-mitra-gradient) and white text regardless of scroll position
+- Removed isScrolled state and its scroll event listener (no longer needed)
+- Removed all conditional isScrolled class toggles from header elements
+- Cleaned up unused imports: Instagram, Facebook, MapPin (only used in footer)
+- Updated main content bottom padding: pb-20 sm:pb-4 (mobile still needs room for bottom nav)
+
+Stage Summary:
+- Footer completely removed — no more green section at bottom
+- Header stays green/white always — no more white on scroll
+- ESLint: 0 errors, dev server: HTTP 200
+- File modified: src/components/beranda-view.tsx

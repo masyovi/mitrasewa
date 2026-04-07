@@ -14,12 +14,14 @@ import {
   Truck,
   Hammer,
   Boxes,
-  Instagram,
-  Facebook,
+
   CheckCircle2,
   TrendingUp,
   Plus,
   Trash2,
+  Layers,
+  Link,
+  Home,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -97,8 +99,8 @@ export function BerandaView() {
   const [priceData, setPriceData] = useState<PriceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [aboutOpen, setAboutOpen] = useState(false);
-  const [showScrollTop, setShowScrollTop] = useState(false);
   const [animatedStats, setAnimatedStats] = useState(false);
+  const [currentPage, setCurrentPage] = useState<"beranda" | "lokasi" | "alat" | "hitung">("beranda");
 
   // Animated counting values
   const animatedJenisAlat = useAnimatedNumber(stockData.length, animatedStats, 1000);
@@ -114,41 +116,10 @@ export function BerandaView() {
   // Equipment detail modal state
   const [selectedEquipDetail, setSelectedEquipDetail] = useState<StockItem | null>(null);
 
-  // Scroll reveal refs
-  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
-
-  // Scroll reveal observer
+  // Scroll to top on page change
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("revealed");
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
-    );
-
-    sectionRefs.current.forEach((el) => {
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  // Scroll to top visibility
-  useEffect(() => {
-    function handleScroll() {
-      setShowScrollTop(window.scrollY > 600);
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  }, [currentPage]);
 
   // Animate hero stats when visible
   useEffect(() => {
@@ -176,9 +147,7 @@ export function BerandaView() {
         }
         if (priceJson.success) {
           setPriceData(priceJson.data);
-          if (priceJson.data.length > 0) {
-            setSelectedEquipment(priceJson.data[0].item);
-          }
+
         }
       } catch (err) {
         console.error("Failed to fetch data:", err);
@@ -241,20 +210,20 @@ export function BerandaView() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden">
+    <div className="min-h-screen flex flex-col relative">
       {/* Header */}
-      <header className="bg-mitra-gradient text-white sticky top-0 z-50 shadow-lg animate-fade-in relative">
+      <header className="sticky top-0 z-50 animate-fade-in relative transition-all duration-300 bg-mitra-gradient text-white shadow-lg">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-white/20 backdrop-blur-sm rounded-xl p-2.5">
+            <div className="rounded-xl p-2.5 bg-white/20 backdrop-blur-sm">
               <Building2 className="w-7 h-7 text-white" />
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
                 MITRA SEWA
               </h1>
-              <p className="text-[10px] sm:text-xs text-white/80 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+              <p className="text-[10px] sm:text-xs flex items-center gap-1.5 text-white/80">
+                <span className="w-1.5 h-1.5 rounded-full animate-pulse bg-emerald-400" />
                 Penyewaan Alat Konstruksi Terpercaya
               </p>
             </div>
@@ -264,7 +233,7 @@ export function BerandaView() {
               variant="ghost"
               size="icon"
               onClick={() => setAboutOpen(true)}
-              className="text-white/80 hover:text-white hover:bg-white/20 transition-all"
+              className="transition-all text-white/80 hover:text-white hover:bg-white/20"
             >
               <Info className="w-5 h-5" />
             </Button>
@@ -272,7 +241,7 @@ export function BerandaView() {
               variant="secondary"
               size="sm"
               onClick={() => setView("login")}
-              className="hidden sm:flex items-center gap-2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white border-0 transition-all"
+              className="hidden sm:flex items-center gap-2 transition-all bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white border-0"
             >
               <ShieldCheck className="w-4 h-4" />
               Admin
@@ -281,7 +250,7 @@ export function BerandaView() {
               variant="ghost"
               size="icon"
               onClick={() => setView("login")}
-              className="sm:hidden text-white hover:bg-white/20 transition-all"
+              className="sm:hidden transition-all text-white hover:bg-white/20"
             >
               <ShieldCheck className="w-5 h-5" />
             </Button>
@@ -289,8 +258,36 @@ export function BerandaView() {
         </div>
       </header>
 
+      {/* Desktop Navigation Tabs */}
+      <nav className="hidden sm:flex items-center justify-center gap-1 bg-white border-b border-gray-100 sticky top-[68px] z-40 no-print">
+        <div className="max-w-6xl mx-auto px-4 flex gap-1 w-full">
+          {[
+            { key: "beranda", label: "Beranda", icon: Home },
+            { key: "lokasi", label: "Lokasi", icon: MapPin },
+            { key: "alat", label: "Alat", icon: Boxes },
+            { key: "hitung", label: "Hitung", icon: Calculator },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setCurrentPage(tab.key as typeof currentPage)}
+              className={`flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-t-lg transition-all ${
+                currentPage === tab.key
+                  ? 'text-emerald-700 bg-emerald-50 border-b-2 border-emerald-500'
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <tab.icon className="w-4 h-4" />
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </nav>
+
       {/* Hero Section */}
+      {currentPage === "beranda" && (
       <section className="bg-mesh-gradient px-4 py-10 sm:py-16 animate-fade-in relative overflow-hidden z-10">
+        {/* Gradient mesh overlay */}
+        <div className="hero-mesh-overlay absolute inset-0 z-0" />
         {/* Decorative gear pattern */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
              style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'20\' height=\'20\' viewBox=\'0 0 20 20\'%3E%3Ccircle cx=\'10\' cy=\'10\' r=\'4\' fill=\'none\' stroke=\'%2310b981\' stroke-width=\'1\'/%3E%3Ccircle cx=\'10\' cy=\'10\' r=\'1.5\' fill=\'%2310b981\'/%3E%3Cline x1=\'10\' y1=\'1\' x2=\'10\' y2=\'5\' stroke=\'%2310b981\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3Cline x1=\'10\' y1=\'15\' x2=\'10\' y2=\'19\' stroke=\'%2310b981\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3Cline x1=\'1\' y1=\'10\' x2=\'5\' y2=\'10\' stroke=\'%2310b981\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3Cline x1=\'15\' y1=\'10\' x2=\'19\' y2=\'10\' stroke=\'%2310b981\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3C/svg%3E")'}} />
@@ -351,16 +348,116 @@ export function BerandaView() {
             </div>
           )}
 
+
+
         </div>
         </div>
       </section>
+      )}
 
       {/* Main Content */}
-      <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-6 space-y-3 relative z-10">
+      <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-6 pb-20 sm:pb-4 space-y-3 relative z-10">
+        {/* Tentang Kami Summary */}
+        {currentPage === "beranda" && (
+        <section>
+          <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-5 sm:p-6 text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-xl mb-3">
+              <Building2 className="w-6 h-6 text-emerald-600" />
+            </div>
+            <h3 className="text-base font-bold text-gray-900 mb-1">Mitra Terpercaya untuk Kebutuhan Konstruksi Anda</h3>
+            <p className="text-sm text-gray-500 max-w-md mx-auto mb-4">
+              MITRA SEWA menyediakan berbagai peralatan konstruksi berkualitas dengan harga terjangkau. Melayani area Bojonegoro dan sekitarnya.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <span className="inline-flex items-center gap-1 text-xs bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full font-medium">
+                <Clock className="w-3 h-3" /> 5+ Tahun Pengalaman
+              </span>
+              <span className="inline-flex items-center gap-1 text-xs bg-amber-50 text-amber-700 px-3 py-1.5 rounded-full font-medium">
+                <Hammer className="w-3 h-3" /> 500+ Proyek
+              </span>
+              <span className="inline-flex items-center gap-1 text-xs bg-teal-50 text-teal-700 px-3 py-1.5 rounded-full font-medium">
+                <ShieldCheck className="w-3 h-3" /> 100+ Pelanggan
+              </span>
+            </div>
+          </div>
+        </section>
+        )}
+
+        {/* Lokasi Page - Google Maps */}
+        {currentPage === "lokasi" && (
+        <section className="animate-fade-in">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1 h-6 bg-emerald-500 rounded-full" />
+            <h3 className="text-lg font-bold text-gray-900">Lokasi Kami</h3>
+          </div>
+          <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated">
+            <CardContent className="p-0">
+              <div className="bg-mitra-gradient px-5 py-4 flex items-center gap-3">
+                <div className="bg-white/20 backdrop-blur-sm p-2 rounded-xl">
+                  <MapPin className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-white font-bold text-sm sm:text-base">MITRA SEWA</p>
+                  <p className="text-white/70 text-xs">Gedung Pusat Penggerak Ekonomi BMT NU Ngasem Group</p>
+                </div>
+              </div>
+              <div className="p-4 sm:p-5 space-y-4">
+                <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.123456789!2d111.883333!3d-7.175!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwMTAnMzAuMCJTIDExMcKwNTMnMDAuMCJF!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid"
+                    width="100%"
+                    height="300"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="w-full"
+                    title="Lokasi MITRA SEWA"
+                  />
+                </div>
+                <div className="space-y-3">
+                  <a
+                    href="https://maps.app.goo.gl/Tb1t8nXyeQxy957R9"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-all btn-press btn-emerald-gradient"
+                  >
+                    <MapPin className="w-4 h-4" />
+                    Buka di Google Maps
+                  </a>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="flex items-center gap-3 bg-gray-50 rounded-xl p-3">
+                      <div className="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                        <Phone className="w-4 h-4 text-emerald-600" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-gray-400">Telepon / WhatsApp</p>
+                        <a href="https://wa.me/6285185924243" target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-gray-900 hover:text-emerald-600 transition-colors">
+                          0851-8592-4243
+                        </a>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 bg-gray-50 rounded-xl p-3">
+                      <div className="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                        <Clock className="w-4 h-4 text-emerald-600" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-gray-400">Jam Operasional</p>
+                        <p className="text-sm font-semibold text-gray-900">07.00 – 17.00 WIB</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+        )}
+
         {/* Scaffolding Stats */}
+        {currentPage === "alat" && (
         <section
-          ref={(el) => { sectionRefs.current[0] = el; }}
-          className="reveal border-b border-gray-100 pb-4 pt-4"
+          className="border-b border-gray-100 pb-4 pt-4"
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
@@ -414,11 +511,12 @@ export function BerandaView() {
             </div>
           )}
         </section>
+        )}
 
         {/* Equipment Status */}
+        {currentPage === "alat" && (
         <section
-          ref={(el) => { sectionRefs.current[1] = el; }}
-          className="reveal border-b border-gray-100 pb-4"
+          className="border-b border-gray-100 pb-4"
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
@@ -502,26 +600,20 @@ export function BerandaView() {
                       <div className="mt-4 h-2.5 bg-gray-100 rounded-full overflow-hidden flex">
                         {machine.disewa > 0 && (
                           <div
-                            className="h-full bg-amber-400 progress-animate"
-                            style={{
-                              '--progress-width': `${machine.total > 0 ? (machine.disewa / machine.total) * 100 : 0}%`,
-                            } as React.CSSProperties}
+                            className="h-full bg-amber-400"
+                            style={{ width: `${machine.total > 0 ? (machine.disewa / machine.total) * 100 : 0}%` }}
                           />
                         )}
                         {isPerbaikan && (
                           <div
-                            className="h-full bg-orange-400 progress-animate"
-                            style={{
-                              '--progress-width': `${machine.total > 0 ? (machine.perbaikan / machine.total) * 100 : 0}%`,
-                            } as React.CSSProperties}
+                            className="h-full bg-red-400"
+                            style={{ width: `${machine.total > 0 ? (machine.perbaikan / machine.total) * 100 : 0}%` }}
                           />
                         )}
                         {machine.tersedia > 0 && (
                           <div
-                            className="h-full bg-emerald-500 progress-animate"
-                            style={{
-                              '--progress-width': `${machine.total > 0 ? (machine.tersedia / machine.total) * 100 : 0}%`,
-                            } as React.CSSProperties}
+                            className="h-full bg-emerald-500"
+                            style={{ width: `${machine.total > 0 ? (machine.tersedia / machine.total) * 100 : 0}%` }}
                           />
                         )}
                       </div>
@@ -537,7 +629,7 @@ export function BerandaView() {
                           </span>
                         )}
                         {isPerbaikan && (
-                          <span className="text-[10px] text-orange-500">
+                          <span className="text-[10px] text-red-500">
                             ■ Perbaikan
                           </span>
                         )}
@@ -548,12 +640,161 @@ export function BerandaView() {
               })}
             </div>
           )}
+
+          {/* Equipment Quick Compare Table */}
+          {!loading && (
+            <div className="mt-4 overflow-hidden rounded-xl border border-gray-200">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-gray-50">
+                      <th className="text-left px-4 py-2.5 font-medium text-gray-600">Alat</th>
+                      <th className="text-center px-3 py-2.5 font-medium text-gray-600">Total</th>
+                      <th className="text-center px-3 py-2.5 font-medium text-gray-600">Tersedia</th>
+                      <th className="text-center px-3 py-2.5 font-medium text-gray-600">Disewa</th>
+                      <th className="text-center px-3 py-2.5 font-medium text-gray-600">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* Scaffolding row */}
+                    {scaffolding && (
+                      <tr className="border-t border-gray-100 hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-2.5 font-medium text-gray-900">{scaffolding.label}</td>
+                        <td className="text-center px-3 py-2.5 text-gray-700">{scaffolding.total}</td>
+                        <td className="text-center px-3 py-2.5 text-emerald-600 font-semibold">{scaffolding.tersedia}</td>
+                        <td className="text-center px-3 py-2.5 text-amber-600">{scaffolding.disewa}</td>
+                        <td className="text-center px-3 py-2.5">
+                          <span className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium ${
+                            scaffolding.tersedia > 0
+                              ? 'bg-emerald-100 text-emerald-700'
+                              : scaffolding.perbaikan > 0
+                                ? 'bg-orange-100 text-orange-700'
+                                : 'bg-red-100 text-red-700'
+                          }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${
+                              scaffolding.tersedia > 0
+                                ? 'bg-emerald-500'
+                                : scaffolding.perbaikan > 0
+                                  ? 'bg-orange-500'
+                                  : 'bg-red-500'
+                            }`} />
+                            {scaffolding.tersedia > 0 ? 'Tersedia' : scaffolding.perbaikan > 0 ? 'Perbaikan' : 'Habis'}
+                          </span>
+                        </td>
+                      </tr>
+                    )}
+                    {/* Machine rows */}
+                    {machines.map((m) => (
+                      <tr key={m.item} className="border-t border-gray-100 hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-2.5 font-medium text-gray-900">{m.label}</td>
+                        <td className="text-center px-3 py-2.5 text-gray-700">{m.total}</td>
+                        <td className="text-center px-3 py-2.5 text-emerald-600 font-semibold">{m.tersedia}</td>
+                        <td className="text-center px-3 py-2.5 text-amber-600">{m.disewa}</td>
+                        <td className="text-center px-3 py-2.5">
+                          <span className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium ${
+                            m.tersedia > 0
+                              ? 'bg-emerald-100 text-emerald-700'
+                              : m.perbaikan > 0
+                                ? 'bg-orange-100 text-orange-700'
+                                : 'bg-red-100 text-red-700'
+                          }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${
+                              m.tersedia > 0
+                                ? 'bg-emerald-500'
+                                : m.perbaikan > 0
+                                  ? 'bg-orange-500'
+                                  : 'bg-red-500'
+                            }`} />
+                            {m.tersedia > 0 ? 'Tersedia' : m.perbaikan > 0 ? 'Perbaikan' : 'Habis'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                    {/* Komponen rows */}
+                    {komponen.map((k) => (
+                      <tr key={k.item} className="border-t border-gray-100 hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-2.5 font-medium text-gray-900">{k.label}</td>
+                        <td className="text-center px-3 py-2.5 text-gray-700">{k.total}</td>
+                        <td className="text-center px-3 py-2.5 text-emerald-600 font-semibold">{k.tersedia}</td>
+                        <td className="text-center px-3 py-2.5 text-amber-600">{k.disewa}</td>
+                        <td className="text-center px-3 py-2.5">
+                          <span className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium ${
+                            k.tersedia > 0
+                              ? 'bg-emerald-100 text-emerald-700'
+                              : k.perbaikan > 0
+                                ? 'bg-orange-100 text-orange-700'
+                                : 'bg-red-100 text-red-700'
+                          }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${
+                              k.tersedia > 0
+                                ? 'bg-emerald-500'
+                                : k.perbaikan > 0
+                                  ? 'bg-orange-500'
+                                  : 'bg-red-500'
+                            }`} />
+                            {k.tersedia > 0 ? 'Tersedia' : k.perbaikan > 0 ? 'Perbaikan' : 'Habis'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </section>
+        )}
+
+        {/* Layanan Kami */}
+        {currentPage === "beranda" && (
+        <section
+          className="border-b border-gray-100 pb-4"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1 h-6 bg-emerald-500 rounded-full" />
+            <h3 className="text-lg font-bold text-gray-900">Layanan Kami</h3>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {/* Sewa Scaffolding */}
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 text-center card-shine hover-lift">
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl mb-3" style={{ background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)' }}>
+                <Boxes className="w-5 h-5 text-emerald-600" />
+              </div>
+              <h4 className="text-sm font-bold text-gray-900 mb-1">Sewa Scaffolding</h4>
+              <p className="text-[11px] text-gray-500 leading-relaxed">Set lengkap scaffolding berkualitas tinggi untuk proyek konstruksi bertingkat</p>
+            </div>
+            {/* Sewa Mesin */}
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 text-center card-shine hover-lift">
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl mb-3" style={{ background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)' }}>
+                <Hammer className="w-5 h-5 text-amber-600" />
+              </div>
+              <h4 className="text-sm font-bold text-gray-900 mb-1">Sewa Mesin</h4>
+              <p className="text-[11px] text-gray-500 leading-relaxed">Mesin molen & mesin stamper untuk kebutuhan pengecoran</p>
+            </div>
+            {/* Pengiriman & Pemasangan */}
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 text-center card-shine hover-lift">
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl mb-3" style={{ background: 'linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%)' }}>
+                <Truck className="w-5 h-5 text-teal-600" />
+              </div>
+              <h4 className="text-sm font-bold text-gray-900 mb-1">Pengiriman Alat</h4>
+              <p className="text-[11px] text-gray-500 leading-relaxed">Pengiriman alat ke lokasi proyek area Bojonegoro dan sekitarnya</p>
+            </div>
+            {/* Konsultasi Gratis */}
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 text-center card-shine hover-lift">
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl mb-3" style={{ background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)' }}>
+                <Phone className="w-5 h-5 text-violet-600" />
+              </div>
+              <h4 className="text-sm font-bold text-gray-900 mb-1">Konsultasi Gratis</h4>
+              <p className="text-[11px] text-gray-500 leading-relaxed">Konsultasi kebutuhan alat konstruksi via WhatsApp</p>
+            </div>
+          </div>
+        </section>
+        )}
 
         {/* Komponen Scaffolding */}
+        {currentPage === "alat" && (
         <section
-          ref={(el) => { sectionRefs.current[2] = el; }}
-          className="reveal border-b border-gray-100 pb-4"
+          className="border-b border-gray-100 pb-4"
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
@@ -572,18 +813,21 @@ export function BerandaView() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {komponen.map((item) => {
                 const isPerbaikan = item.perbaikan > 0;
+                const accentColor = item.item === "catwalk" ? "border-l-emerald-500" : item.item === "shock" ? "border-l-teal-500" : "border-l-cyan-500";
+                const accentIcon = item.item === "catwalk" ? <Layers className="w-4 h-4 text-emerald-500" /> : item.item === "shock" ? <Link className="w-4 h-4 text-teal-500" /> : <ArrowUp className="w-4 h-4 text-cyan-500" />;
 
                 return (
                   <Card
                     key={item.item}
-                    className={`border-0 shadow-md bg-white overflow-hidden card-elevated cursor-pointer ${
+                    className={`border-0 border-l-4 ${accentColor} shadow-md bg-white overflow-hidden card-elevated cursor-pointer ${
                       isPerbaikan ? "ring-1 ring-orange-200" : ""
                     }`}
                     onClick={() => handleEquipmentClick(item)}
                   >
                     <CardContent className="p-5 sm:p-6">
                       <div className="flex items-center justify-between mb-3">
-                        <h4 className="font-bold text-gray-900 text-sm sm:text-base">
+                        <h4 className="font-bold text-gray-900 text-sm sm:text-base flex items-center gap-2">
+                          {accentIcon}
                           {item.label}
                         </h4>
                         <div className="flex items-center gap-1.5">
@@ -633,12 +877,11 @@ export function BerandaView() {
             </div>
           )}
         </section>
+        )}
 
         {/* ===== Kalkulator Biaya Sewa ===== */}
-        <section
-          ref={(el) => { sectionRefs.current[4] = el; }}
-          className="reveal"
-        >
+        {currentPage === "hitung" && (
+        <section>
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-emerald-500 rounded-full" />
             <h3 className="text-lg font-bold text-gray-900">
@@ -647,7 +890,7 @@ export function BerandaView() {
           </div>
           <Card className="border-0 shadow-md bg-white overflow-hidden card-elevated">
             {/* Emerald gradient header */}
-            <div className="bg-mitra-gradient px-5 sm:px-6 py-4 flex items-center gap-3">
+            <div className="bg-mitra-gradient calc-header-pattern px-5 sm:px-6 py-4 flex items-center gap-3">
               <div className="bg-white/20 backdrop-blur-sm p-2 rounded-xl">
                 <Calculator className="w-5 h-5 text-white" />
               </div>
@@ -671,9 +914,9 @@ export function BerandaView() {
                     {calcItems.map((ci, idx) => {
                       const p = priceData.find((pr) => pr.item === ci.item);
                       return (
-                        <div key={idx} className="flex items-end gap-2">
+                        <div key={idx} className="flex items-start gap-2">
                           <div className="flex-1 space-y-1">
-                            {idx === 0 && <span className="text-[10px] text-gray-400">Jenis Alat</span>}
+                            {idx === 0 && <span className="text-[10px] text-gray-400 block">Jenis Alat</span>}
                             <Select
                               value={ci.item}
                               onValueChange={(val) => updateCalcItem(idx, "item", val)}
@@ -699,7 +942,7 @@ export function BerandaView() {
                             )}
                           </div>
                           <div className="w-24 space-y-1">
-                            {idx === 0 && <span className="text-[10px] text-gray-400">Jumlah</span>}
+                            {idx === 0 && <span className="text-[10px] text-gray-400 block">Jumlah</span>}
                             <Input
                               type="number"
                               min={1}
@@ -712,7 +955,7 @@ export function BerandaView() {
                           {calcItems.length > 1 && (
                             <button
                               onClick={() => removeCalcItem(idx)}
-                              className="mb-0.5 p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              className="mt-6 p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                               title="Hapus alat"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -725,7 +968,7 @@ export function BerandaView() {
                     {calcItems.length < priceData.length && (
                       <button
                         onClick={addCalcItem}
-                        className="flex items-center gap-1.5 text-sm text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 px-3 py-2 rounded-lg transition-colors w-full justify-center border border-dashed border-emerald-200"
+                        className="flex items-center gap-1.5 text-sm text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 px-3 py-2 rounded-lg transition-colors w-full justify-center border border-dashed border-emerald-300 btn-dashed-pulse"
                       >
                         <Plus className="w-4 h-4" />
                         Tambah Alat Lainnya
@@ -759,6 +1002,9 @@ export function BerandaView() {
                   className="h-10"
                 />
               </div>
+
+              {/* Divider between inputs and results */}
+              <div className="border-t border-gray-100" />
 
               {/* Calculate button */}
               <Button
@@ -835,16 +1081,8 @@ export function BerandaView() {
             </CardContent>
           </Card>
         </section>
+        )}
       </main>
-
-      {/* Scroll to Top Button */}
-      <button
-        onClick={scrollToTop}
-        className={`fixed bottom-5 right-5 z-50 bg-white border border-gray-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 text-gray-500 rounded-full w-10 h-10 flex items-center justify-center shadow-md hover:shadow-lg transition-all no-print ${showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
-        aria-label="Kembali ke atas"
-      >
-        <ArrowUp className="w-4 h-4" />
-      </button>
 
       {/* Full-Page Floating Bubbles Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -870,95 +1108,7 @@ export function BerandaView() {
         <div className="bubble bubble-green" style={{ left: '97%', bottom: '-20px', width: '32px', height: '32px', animationDelay: '0.5s', animationDuration: '15s' }} />
       </div>
 
-      {/* Footer */}
-      <footer className="bg-mitra-gradient text-white mt-auto no-print pb-safe relative z-10">
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {/* Brand Column */}
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-2">
-                  <Building2 className="w-5 h-5 text-white" />
-                </div>
-                <span className="font-bold text-lg">MITRA SEWA</span>
-              </div>
-              <p className="text-sm text-white/70 leading-relaxed">
-                Penyewaan alat konstruksi terpercaya. Menyediakan scaffolding, mesin molen, mesin stamper, dan berbagai komponen konstruksi berkualitas.
-              </p>
-              {/* Social Media Links */}
-              <div className="flex items-center gap-2 mt-4">
-                <a href="https://wa.me/6285185924243" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-white/15 hover:bg-white/30 flex items-center justify-center transition-all hover:scale-110" aria-label="WhatsApp">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                </a>
-                <a href="#" className="w-8 h-8 rounded-full bg-white/15 hover:bg-white/30 flex items-center justify-center transition-all hover:scale-110" aria-label="Instagram">
-                  <Instagram className="w-3.5 h-3.5 text-white" />
-                </a>
-                <a href="#" className="w-8 h-8 rounded-full bg-white/15 hover:bg-white/30 flex items-center justify-center transition-all hover:scale-110" aria-label="Facebook">
-                  <Facebook className="w-3.5 h-3.5 text-white" />
-                </a>
-              </div>
-            </div>
 
-            {/* Quick Links */}
-            <div>
-              <h4 className="font-semibold text-sm mb-3 text-white/90">Layanan Kami</h4>
-              <ul className="space-y-2">
-                <li><span className="text-xs text-white/60 hover:text-white/90 transition-colors cursor-pointer flex items-center gap-1.5"><Boxes className="w-3.5 h-3.5" />Sewa Scaffolding</span></li>
-                <li><span className="text-xs text-white/60 hover:text-white/90 transition-colors cursor-pointer flex items-center gap-1.5"><Hammer className="w-3.5 h-3.5" />Sewa Mesin Konstruksi</span></li>
-                <li><span className="text-xs text-white/60 hover:text-white/90 transition-colors cursor-pointer flex items-center gap-1.5"><Truck className="w-3.5 h-3.5" />Pengiriman Alat</span></li>
-              </ul>
-            </div>
-
-            {/* Contact Info */}
-            <div>
-              <h4 className="font-semibold text-sm mb-3 text-white/90">Hubungi Kami</h4>
-              <ul className="space-y-2.5">
-                <li className="flex items-start gap-2">
-                  <Phone className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-emerald-300" />
-                  <a href="https://wa.me/6285185924243" target="_blank" rel="noopener noreferrer" className="text-xs text-white/60 hover:text-white transition-colors">0851-8592-4243</a>
-                </li>
-                <li className="flex items-start gap-2">
-                  <MapPin className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-emerald-300" />
-                  <span className="text-xs text-white/60">Gedung Pusat Penggerak Ekonomi BMT NU Ngasem Group</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Clock className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-emerald-300" />
-                  <span className="text-xs text-white/60">Buka Setiap Hari 07.00 – 17.00 WIB</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* CTA */}
-            <div>
-              <h4 className="font-semibold text-sm mb-3 text-white/90">Butuh Alat Sekarang?</h4>
-              <p className="text-xs text-white/60 mb-3 leading-relaxed">
-                Hubungi kami via WhatsApp untuk konsultasi gratis dan penawaran terbaik.
-              </p>
-              <a
-                href="https://wa.me/6285185924243?text=Halo, saya ingin bertanya tentang penyewaan alat."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-white text-emerald-700 hover:bg-emerald-50 font-semibold text-xs px-5 py-2.5 rounded-xl transition-all footer-cta-glow"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#25D366">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                </svg>
-                Chat WhatsApp
-              </a>
-            </div>
-          </div>
-
-          {/* Bottom bar */}
-          <div className="border-t border-white/15 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-xs text-white/50">
-              &copy; {new Date().getFullYear()} MITRA SEWA. All rights reserved.
-            </p>
-            <p className="text-xs text-white/40">
-              Didukung oleh <span className="text-white/60">BMT NU Ngasem Group</span>
-            </p>
-          </div>
-        </div>
-      </footer>
 
       {/* Equipment Detail Modal */}
       {selectedEquipDetail && (() => {
@@ -1034,7 +1184,7 @@ export function BerandaView() {
                     )}
                     {isPerbaikan && (
                       <div
-                        className="h-full bg-orange-400 progress-bar-animate"
+                        className="h-full bg-red-400 progress-bar-animate"
                         style={{ width: `${eq.total > 0 ? (eq.perbaikan / eq.total) * 100 : 0}%` }}
                       />
                     )}
@@ -1105,6 +1255,40 @@ export function BerandaView() {
       })()}
 
       <AboutModal open={aboutOpen} onOpenChange={setAboutOpen} />
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 sm:hidden mobile-bottom-nav no-print">
+        <div className="flex items-center justify-around py-1.5 px-2 max-w-lg mx-auto">
+          <button
+            onClick={() => setCurrentPage("beranda")}
+            className={`mobile-bottom-nav-item ${currentPage === "beranda" ? 'active' : ''}`}
+          >
+            <Home className="w-5 h-5" />
+            <span className="text-[10px] font-medium" style={{ minWidth: '64px', textAlign: 'center' }}>Beranda</span>
+          </button>
+          <button
+            onClick={() => setCurrentPage("lokasi")}
+            className={`mobile-bottom-nav-item ${currentPage === "lokasi" ? 'active' : ''}`}
+          >
+            <MapPin className="w-5 h-5" />
+            <span className="text-[10px] font-medium" style={{ minWidth: '64px', textAlign: 'center' }}>Lokasi</span>
+          </button>
+          <button
+            onClick={() => setCurrentPage("alat")}
+            className={`mobile-bottom-nav-item ${currentPage === "alat" ? 'active' : ''}`}
+          >
+            <Boxes className="w-5 h-5" />
+            <span className="text-[10px] font-medium" style={{ minWidth: '64px', textAlign: 'center' }}>Alat</span>
+          </button>
+          <button
+            onClick={() => setCurrentPage("hitung")}
+            className={`mobile-bottom-nav-item ${currentPage === "hitung" ? 'active' : ''}`}
+          >
+            <Calculator className="w-5 h-5" />
+            <span className="text-[10px] font-medium" style={{ minWidth: '64px', textAlign: 'center' }}>Hitung</span>
+          </button>
+        </div>
+      </nav>
     </div>
   );
 }

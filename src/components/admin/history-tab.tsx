@@ -14,6 +14,9 @@ import {
   ChevronDown,
   ChevronUp,
   Repeat2,
+  Pencil,
+  Save,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -36,6 +39,31 @@ import {
 } from "@/lib/types";
 import { formatCurrency, formatDateShort } from "./helpers";
 
+// Helper: format Date to YYYY-MM-DD for input[type="date"]
+function toDateString(date: string | Date): string {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+// Helper: format Date to readable indonesian date
+function toReadableDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+// Helper: calculate days between two dates
+function daysBetween(from: Date, to: Date): number {
+  const diffTime = to.getTime() - from.getTime();
+  return Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+}
+
 export function HistoryTab({
   rentals,
   onRefresh,
@@ -54,8 +82,15 @@ export function HistoryTab({
   // Extend dialog state
   const [extendDialogOpen, setExtendDialogOpen] = useState(false);
   const [extendRental, setExtendRental] = useState<RentalWithItems | null>(null);
-  const [extendDays, setExtendDays] = useState<number>(7);
+  const [extendDate, setExtendDate] = useState("");
   const [extendLoading, setExtendLoading] = useState(false);
+
+  // Edit extension dialog state
+  const [editExtDialogOpen, setEditExtDialogOpen] = useState(false);
+  const [editExtRental, setEditExtRental] = useState<RentalWithItems | null>(null);
+  const [editExtId, setEditExtId] = useState<string>("");
+  const [editExtDate, setEditExtDate] = useState("");
+  const [editExtLoading, setEditExtLoading] = useState(false);
 
   // Expanded extension history per card
   const [expandedExtensions, setExpandedExtensions] = useState<Set<string>>(new Set());
@@ -102,19 +137,25 @@ export function HistoryTab({
 
   const openExtendDialog = (rental: RentalWithItems) => {
     setExtendRental(rental);
-    setExtendDays(7);
+    // Default: 7 days from today
+    const defaultDate = new Date();
+    defaultDate.setDate(defaultDate.getDate() + 7);
+    setExtendDate(toDateString(defaultDate));
     setExtendDialogOpen(true);
   };
 
   const handleExtend = async () => {
-    if (!extendRental || !extendDays || extendDays < 1) return;
+    if (!extendRental || !extendDate) return;
 
     setExtendLoading(true);
     try {
       const res = await fetch("/api/rentals/extend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: extendRental.id, additionalDays: extendDays }),
+        body: JSON.stringify({
+          id: extendRental.id,
+          newTanggalKembali: extendDate,
+        }),
       });
       const data = await res.json();
       if (data.success) {
@@ -143,32 +184,76 @@ export function HistoryTab({
     }
   };
 
-  // Calculate extension total ONLY for the additional days (not from original sewa)
+  // Open edit extension dialog
+  const openEditExtDialog = (rental: RentalWithItems, ext: RentalExtension) => {
+    setEditExtRental(rental);
+    setEditExtId(ext.id);
+    setEditExtDate(toDateString(ext.newTanggalKembali));
+    setEditExtDialogOpen(true);
+  };
+
+  // Save edited extension
+  const handleEditExtension = async () => {
+    if (!editExtId || !editExtDate) return;
+
+    setEditExtLoading(true);
+    try {
+      const res = await fetch("/api/rentals/extend", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          extensionId: editExtId,
+          newTanggalKembali: editExtDate,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast({
+          title: "Tanggal Berhasil Diubah",
+          description: `Jatuh tempo baru: ${toReadableDate(editExtDate)}`,
+        });
+        setEditExtDialogOpen(false);
+        setEditExtRental(null);
+        onRefresh();
+      } else {
+        toast({
+          title: "Gagal",
+          description: data.message,
+          variant: "destructive",
+        });
+      }
+    } catch {
+      toast({
+        title: "Error",
+        description: "Gagal mengubah tanggal perpanjangan",
+        variant: "destructive",
+      });
+    } finally {
+      setEditExtLoading(false);
+    }
+  };
+
+  // Calculate extension total: days from day AFTER current tanggalKembali to new date
   const getEstimatedExtensionTotal = () => {
-    if (!extendRental || !extendDays || extendDays < 1) return null;
+    if (!extendRental || !extendDate) return null;
+
+    const selectedDate = new Date(extendDate);
+    const currentKembali = new Date(extendRental.tanggalKembali);
+    currentKembali.setHours(0, 0, 0, 0);
+
+    const startDate = new Date(currentKembali);
+    startDate.setDate(startDate.getDate() + 1);
+    const additionalDays = Math.max(1, daysBetween(startDate, selectedDate));
 
     let total = 0;
     for (const item of extendRental.items) {
-      let multiplier = extendDays;
+      let multiplier = additionalDays;
       if (item.billingType === "bulanan") {
-        multiplier = Math.max(1, Math.ceil(extendDays / 30));
+        multiplier = Math.max(1, Math.ceil(additionalDays / 30));
       }
       total += item.jumlah * item.harga * multiplier;
     }
-    return total;
-  };
-
-  const getNewReturnDate = () => {
-    if (!extendDays || extendDays < 1) return "";
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const d = new Date(today);
-    d.setDate(d.getDate() + extendDays);
-    return d.toLocaleDateString("id-ID", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+    return { total, days: additionalDays };
   };
 
   // Helper: compute total extension cost and grand total for a rental
@@ -218,6 +303,7 @@ export function HistoryTab({
           <tr>
             <td style="padding:4px 0;border-bottom:1px dashed #f3f4f6;font-size:11px">${formatDateShort(ext.createdAt)}</td>
             <td style="padding:4px 8px;border-bottom:1px dashed #f3f4f6;text-align:center;font-size:11px">${ext.extensionDays} hari</td>
+            <td style="padding:4px 8px;border-bottom:1px dashed #f3f4f6;text-align:right;font-size:11px">${formatDateShort(ext.newTanggalKembali)}</td>
             <td style="padding:4px 8px;border-bottom:1px dashed #f3f4f6;text-align:right;font-size:11px;font-weight:600;color:#059669">${formatCurrency(ext.extensionTotal)}</td>
           </tr>
         `).join("");
@@ -229,6 +315,7 @@ export function HistoryTab({
               <thead><tr>
                 <th style="text-align:left;padding:4px 0;font-size:10px;color:#92400e;text-transform:uppercase">Tanggal</th>
                 <th style="text-align:center;padding:4px 8px;font-size:10px;color:#92400e;text-transform:uppercase">Durasi</th>
+                <th style="text-align:right;padding:4px 8px;font-size:10px;color:#92400e;text-transform:uppercase">Jatuh Tempo</th>
                 <th style="text-align:right;padding:4px 8px;font-size:10px;color:#92400e;text-transform:uppercase">Tagihan</th>
               </tr></thead>
               <tbody>${extRows}</tbody>
@@ -325,8 +412,20 @@ export function HistoryTab({
     }
   };
 
-  // Quick-select extension presets
-  const extendPresets = [7, 14, 30, 60, 90];
+  // Quick-select date presets (days from today)
+  const datePresets = [
+    { label: "7 hari", days: 7 },
+    { label: "14 hari", days: 14 },
+    { label: "30 hari", days: 30 },
+    { label: "60 hari", days: 60 },
+    { label: "90 hari", days: 90 },
+  ];
+
+  const getPresetDate = (days: number) => {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    return toDateString(d);
+  };
 
   return (
     <div className="space-y-6">
@@ -547,15 +646,30 @@ export function HistoryTab({
                                 <th className="text-center px-3 py-2 font-medium">Durasi</th>
                                 <th className="text-right px-3 py-2 font-medium">Jatuh Tempo Baru</th>
                                 <th className="text-right px-3 py-2 font-medium">Tagihan</th>
+                                {rental.status === "aktif" && (
+                                  <th className="text-center px-2 py-2 font-medium">Aksi</th>
+                                )}
                               </tr>
                             </thead>
                             <tbody>
                               {rental.extensions.map((ext) => (
-                                <tr key={ext.id} className="border-b border-amber-100 last:border-0">
+                                <tr key={ext.id} className="border-b border-amber-100 last:border-0 group">
                                   <td className="px-3 py-2 text-gray-600">{formatDateShort(ext.createdAt)}</td>
                                   <td className="px-3 py-2 text-center text-gray-600">{ext.extensionDays} hari</td>
                                   <td className="px-3 py-2 text-right text-gray-600">{formatDateShort(ext.newTanggalKembali)}</td>
                                   <td className="px-3 py-2 text-right font-semibold text-amber-700">{formatCurrency(ext.extensionTotal)}</td>
+                                  {rental.status === "aktif" && (
+                                    <td className="px-2 py-2 text-center">
+                                      <button
+                                        onClick={() => openEditExtDialog(rental, ext)}
+                                        className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-amber-700 bg-amber-100 hover:bg-amber-200 rounded-md transition-colors opacity-60 group-hover:opacity-100"
+                                        title="Ubah tanggal"
+                                      >
+                                        <Pencil className="w-3 h-3" />
+                                        <span className="hidden sm:inline">Ubah</span>
+                                      </button>
+                                    </td>
+                                  )}
                                 </tr>
                               ))}
                             </tbody>
@@ -579,7 +693,7 @@ export function HistoryTab({
                       </p>
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      {/* Perpanjang Sewa button — only for active rentals (overdue or not) */}
+                      {/* Perpanjang Sewa button — only for active rentals */}
                       {rental.status === "aktif" && (
                         <Button
                           size="sm"
@@ -794,82 +908,81 @@ export function HistoryTab({
                 )}
               </div>
 
-              {/* Extension days input */}
+              {/* Date picker instead of days input */}
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700">
-                  Perpanjang Berapa Hari?
+                  Tanggal Pengembalian Baru
                 </Label>
                 <Input
-                  type="number"
-                  min={1}
-                  max={365}
-                  value={extendDays}
-                  onChange={(e) => {
-                    const val = Math.min(365, Math.max(1, Number(e.target.value) || 1));
-                    setExtendDays(val);
-                  }}
+                  type="date"
+                  value={extendDate}
+                  onChange={(e) => setExtendDate(e.target.value)}
                   className="h-10"
                 />
                 {/* Quick presets */}
                 <div className="flex gap-1.5 flex-wrap">
-                  {extendPresets.map((days) => (
-                    <button
-                      key={days}
-                      onClick={() => setExtendDays(days)}
-                      className={`px-3 py-1 text-xs rounded-lg border transition-all ${
-                        extendDays === days
-                          ? "bg-emerald-600 text-white border-emerald-600"
-                          : "border-gray-200 text-gray-600 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700"
-                      }`}
-                    >
-                      {days} hari
-                    </button>
-                  ))}
+                  {datePresets.map((preset) => {
+                    const presetDate = getPresetDate(preset.days);
+                    const isActive = extendDate === presetDate;
+                    return (
+                      <button
+                        key={preset.days}
+                        onClick={() => setExtendDate(presetDate)}
+                        className={`px-3 py-1 text-xs rounded-lg border transition-all ${
+                          isActive
+                            ? "bg-emerald-600 text-white border-emerald-600"
+                            : "border-gray-200 text-gray-600 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700"
+                        }`}
+                      >
+                        {preset.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Preview: SEPARATE billing */}
-              {extendDays >= 1 && (
-                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 space-y-2 animate-fade-in-up">
-                  <p className="text-xs text-emerald-700 font-semibold">Preview Perpanjangan</p>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-emerald-600">Tanggal Kembali Baru</span>
-                    <span className="font-medium text-emerald-900">{getNewReturnDate()}</span>
+              {/* Preview */}
+              {extendDate && (() => {
+                const estimate = getEstimatedExtensionTotal();
+                if (!estimate) return null;
+                const { total: extTotal, days: extDays } = estimate;
+                const existingExtTotal = (extendRental.extensions || []).reduce((s, e) => s + e.extensionTotal, 0);
+                const newGrandTotal = extendRental.totalHarga + existingExtTotal + extTotal;
+
+                return (
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 space-y-2 animate-fade-in-up">
+                    <p className="text-xs text-emerald-700 font-semibold">Preview Perpanjangan</p>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-emerald-600">Tanggal Kembali Baru</span>
+                      <span className="font-medium text-emerald-900">{toReadableDate(extendDate)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-emerald-600">Durasi Perpanjangan</span>
+                      <span className="font-medium text-emerald-900">{extDays} hari</span>
+                    </div>
+                    <div className="border-t border-emerald-200 pt-2 mt-1">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500">Tagihan Awal</span>
+                        <span className="font-medium text-gray-700">{formatCurrency(extendRental.totalHarga)}</span>
+                      </div>
+                      {existingExtTotal > 0 && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Perpanjangan Sebelumnya</span>
+                          <span className="font-medium text-amber-600">+{formatCurrency(existingExtTotal)}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between text-sm">
+                        <span className="text-amber-700 font-semibold">Tagihan Perpanjangan Baru</span>
+                        <span className="font-bold text-amber-700">+{formatCurrency(extTotal)}</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between text-sm bg-emerald-100/50 rounded-md px-2 py-1.5">
+                      <span className="text-emerald-800 font-bold">Total Keseluruhan</span>
+                      <span className="font-bold text-emerald-800">{formatCurrency(newGrandTotal)}</span>
+                    </div>
                   </div>
-                  {(() => {
-                    const extTotal = getEstimatedExtensionTotal();
-                    if (extTotal !== null) {
-                      const existingExtTotal = (extendRental.extensions || []).reduce((s, e) => s + e.extensionTotal, 0);
-                      const newGrandTotal = extendRental.totalHarga + existingExtTotal + extTotal;
-                      return (
-                        <>
-                          <div className="border-t border-emerald-200 pt-2 mt-1">
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-500">Tagihan Awal</span>
-                              <span className="font-medium text-gray-700">{formatCurrency(extendRental.totalHarga)}</span>
-                            </div>
-                            {existingExtTotal > 0 && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-gray-500">Perpanjangan Sebelumnya</span>
-                                <span className="font-medium text-amber-600">+{formatCurrency(existingExtTotal)}</span>
-                              </div>
-                            )}
-                            <div className="flex justify-between text-sm">
-                              <span className="text-amber-700 font-semibold">Tagihan Perpanjangan Baru</span>
-                              <span className="font-bold text-amber-700">+{formatCurrency(extTotal)}</span>
-                            </div>
-                          </div>
-                          <div className="flex justify-between text-sm bg-emerald-100/50 rounded-md px-2 py-1.5">
-                            <span className="text-emerald-800 font-bold">Total Keseluruhan</span>
-                            <span className="font-bold text-emerald-800">{formatCurrency(newGrandTotal)}</span>
-                          </div>
-                        </>
-                      );
-                    }
-                    return null;
-                  })()}
-                </div>
-              )}
+                );
+              })()}
             </div>
           )}
 
@@ -884,7 +997,7 @@ export function HistoryTab({
             <Button
               size="sm"
               className="bg-amber-600 hover:bg-amber-700 text-white font-medium"
-              disabled={extendLoading || !extendDays || extendDays < 1}
+              disabled={extendLoading || !extendDate}
               onClick={handleExtend}
             >
               {extendLoading ? (
@@ -895,7 +1008,137 @@ export function HistoryTab({
               ) : (
                 <>
                   <CalendarClock className="w-3.5 h-3.5 mr-1" />
-                  Perpanjang {extendDays} Hari
+                  Perpanjang
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ===== Edit Extension Dialog ===== */}
+      <Dialog open={editExtDialogOpen} onOpenChange={setEditExtDialogOpen}>
+        <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <div className="bg-blue-100 p-2 rounded-lg">
+                <Pencil className="w-5 h-5 text-blue-700" />
+              </div>
+              Ubah Tanggal Perpanjangan
+            </DialogTitle>
+          </DialogHeader>
+
+          {editExtRental && editExtId && (
+            <div className="space-y-4">
+              {/* Current extension info */}
+              <div className="bg-gray-50 rounded-lg p-3 space-y-1.5">
+                <p className="text-xs text-gray-500">Penyewa</p>
+                <p className="text-sm font-medium text-gray-900">{editExtRental.namaPenyewa}</p>
+
+                {(() => {
+                  const ext = editExtRental.extensions.find((e) => e.id === editExtId);
+                  if (!ext) return null;
+                  return (
+                    <>
+                      <div className="flex justify-between text-sm pt-1">
+                        <span className="text-gray-600">Jatuh Tempo Sebelumnya</span>
+                        <span className="font-medium text-gray-900">{formatDateShort(ext.previousTanggalKembali)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">Jatuh Tempo Saat Ini</span>
+                        <span className="font-medium text-amber-700">{formatDateShort(ext.newTanggalKembali)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">Durasi</span>
+                        <span className="font-medium text-gray-900">{ext.extensionDays} hari</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">Tagihan Perpanjangan</span>
+                        <span className="font-bold text-amber-700">{formatCurrency(ext.extensionTotal)}</span>
+                      </div>
+                    </>
+                  );
+                })()}
+              </div>
+
+              {/* New date input */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">
+                  Tanggal Pengembalian Baru
+                </Label>
+                <Input
+                  type="date"
+                  value={editExtDate}
+                  onChange={(e) => setEditExtDate(e.target.value)}
+                  className="h-10"
+                />
+              </div>
+
+              {/* Preview of new values */}
+              {editExtDate && (() => {
+                const selectedDate = new Date(editExtDate);
+                const ext = editExtRental.extensions.find((e) => e.id === editExtId);
+                if (!ext) return null;
+                const prevKembali = new Date(ext.previousTanggalKembali);
+                prevKembali.setHours(0, 0, 0, 0);
+                const startDate = new Date(prevKembali);
+                startDate.setDate(startDate.getDate() + 1);
+                const newDays = daysBetween(startDate, selectedDate);
+
+                let newTotal = 0;
+                for (const item of editExtRental.items) {
+                  let multiplier = newDays;
+                  if (item.billingType === "bulanan") {
+                    multiplier = Math.max(1, Math.ceil(newDays / 30));
+                  }
+                  newTotal += item.jumlah * item.harga * multiplier;
+                }
+
+                return (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 space-y-2 animate-fade-in-up">
+                    <p className="text-xs text-blue-700 font-semibold">Preview Perubahan</p>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-blue-600">Tanggal Baru</span>
+                      <span className="font-medium text-blue-900">{toReadableDate(editExtDate)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-blue-600">Durasi Baru</span>
+                      <span className="font-medium text-blue-900">{newDays} hari</span>
+                    </div>
+                    <div className="flex justify-between text-sm border-t border-blue-200 pt-1 mt-1">
+                      <span className="text-amber-700 font-semibold">Tagihan Baru</span>
+                      <span className="font-bold text-amber-700">{formatCurrency(newTotal)}</span>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setEditExtDialogOpen(false)}
+            >
+              <X className="w-3.5 h-3.5 mr-1" />
+              Batal
+            </Button>
+            <Button
+              size="sm"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
+              disabled={editExtLoading || !editExtDate}
+              onClick={handleEditExtension}
+            >
+              {editExtLoading ? (
+                <>
+                  <RefreshCw className="w-3.5 h-3.5 mr-1 animate-spin" />
+                  Menyimpan...
+                </>
+              ) : (
+                <>
+                  <Save className="w-3.5 h-3.5 mr-1" />
+                  Simpan
                 </>
               )}
             </Button>
@@ -905,5 +1148,3 @@ export function HistoryTab({
     </div>
   );
 }
-
-

@@ -32,10 +32,15 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# database
+/db/*.db
+/db/*.db-journal
+/db/*.db-wal
 
 # vercel
 .vercel
-
 
 # typescript
 *.tsbuildinfo
@@ -48,7 +53,20 @@ dev.log
 dev.out.log
 test
 prompt
-
 server.log
-# Skills directory
+
+# Screenshots & downloads (dev artifacts)
+*.png
+!public/*.png
+/download/
+/.zscripts/
+/Caddyfile
+
+# Z.ai skills (not part of the app)
 /skills/
+/examples/
+/upload/
+/worklog.md
+
+# Editor backup files
+*.tsxE

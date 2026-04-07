@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     const sewaDate = new Date(tanggalSewa);
     const kembaliDate = new Date(tanggalKembali);
     const diffTime = kembaliDate.getTime() - sewaDate.getTime();
-    const lamaSewa = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+    const lamaSewa = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1);
 
     if (kembaliDate < sewaDate) {
       return NextResponse.json(

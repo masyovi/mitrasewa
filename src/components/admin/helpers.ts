@@ -6,7 +6,7 @@ export function useMemoLamaSewa(sewa: string, kembali: string): number {
   const k = new Date(kembali);
   const diff = k.getTime() - s.getTime();
   if (diff < 0) return 0;
-  return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)) + 1);
 }
 
 export function formatCurrency(amount: number): string {
