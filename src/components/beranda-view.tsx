@@ -18,6 +18,8 @@ import {
   Facebook,
   CheckCircle2,
   TrendingUp,
+  Plus,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -103,11 +105,9 @@ export function BerandaView() {
   const animatedTersedia = useAnimatedNumber(stockData.reduce((sum, s) => sum + s.tersedia, 0), animatedStats, 1200);
   const animatedPerbaikan = useAnimatedNumber(stockData.filter((s) => s.perbaikan > 0).length, animatedStats, 800);
 
-  // Calculator state
-  const [selectedEquipment, setSelectedEquipment] = useState<string>("");
-  const [quantity, setQuantity] = useState<number>(1);
+  // Calculator state - multi equipment
+  const [calcItems, setCalcItems] = useState<{ item: string; quantity: number }[]>([]);
   const [duration, setDuration] = useState<number>(1);
-  const [estimatedCost, setEstimatedCost] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
 
 
@@ -197,18 +197,46 @@ export function BerandaView() {
     (s) => s.item === "shock" || s.item === "u_head" || s.item === "catwalk"
   );
 
-  const selectedPriceItem = priceData.find(
-    (p) => p.item === selectedEquipment
-  );
+  // Calculator helpers
+  function addCalcItem() {
+    const usedItems = calcItems.map((ci) => ci.item);
+    const available = priceData.find((p) => !usedItems.includes(p.item));
+    if (available) {
+      setCalcItems([...calcItems, { item: available.item, quantity: 1 }]);
+      setShowResult(false);
+    }
+  }
+
+  function removeCalcItem(index: number) {
+    setCalcItems(calcItems.filter((_, i) => i !== index));
+    setShowResult(false);
+  }
+
+  function updateCalcItem(index: number, field: "item" | "quantity", value: string | number) {
+    const updated = [...calcItems];
+    if (field === "item") {
+      // Make sure the new item is not already selected
+      const otherItems = calcItems.filter((_, i) => i !== index).map((ci) => ci.item);
+      if (otherItems.includes(value as string)) return;
+      updated[index].item = value as string;
+    } else {
+      updated[index].quantity = Math.min(100, Math.max(1, value as number));
+    }
+    setCalcItems(updated);
+    setShowResult(false);
+  }
+
+  // Computed results for each item
+  function getItemResult(ci: { item: string; quantity: number }) {
+    const p = priceData.find((pr) => pr.item === ci.item);
+    if (!p) return null;
+    const multiplier = p.billingType === "bulanan" ? Math.ceil(duration / 30) : duration;
+    const cost = p.price * ci.quantity * multiplier;
+    return { priceItem: p, multiplier, cost };
+  }
 
   function handleCalculate() {
-    if (!selectedPriceItem) return;
-    const multiplier =
-      selectedPriceItem.billingType === "bulanan"
-        ? Math.ceil(duration / 30)
-        : duration;
-    const cost = selectedPriceItem.price * quantity * multiplier;
-    setEstimatedCost(cost);
+    if (calcItems.length === 0) return;
     setShowResult(true);
   }
 
@@ -628,171 +656,181 @@ export function BerandaView() {
                   Hitung Estimasi Biaya Sewa
                 </p>
                 <p className="text-white/70 text-xs">
-                  Pilih alat dan hitung perkiraan biaya penyewaan
+                  Pilih beberapa alat dan hitung perkiraan biaya penyewaan
                 </p>
               </div>
             </div>
             <CardContent className="p-5 sm:p-6 space-y-4">
-              {/* Equipment selector */}
-              <div className="space-y-2">
+              {/* Multi equipment rows */}
+              <div className="space-y-3">
                 <Label className="text-sm font-medium text-gray-700">
-                  Jenis Alat
+                  Daftar Alat yang Disewa
                 </Label>
                 {priceData.length > 0 ? (
-                  <Select
-                    value={selectedEquipment}
-                    onValueChange={(val) => {
-                      setSelectedEquipment(val);
-                      setShowResult(false);
-                    }}
-                  >
-                    <SelectTrigger className="w-full h-10">
-                      <SelectValue placeholder="Pilih jenis alat..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {priceData.map((p) => (
-                        <SelectItem key={p.item} value={p.item}>
-                          {p.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <>
+                    {calcItems.map((ci, idx) => {
+                      const p = priceData.find((pr) => pr.item === ci.item);
+                      return (
+                        <div key={idx} className="flex items-end gap-2">
+                          <div className="flex-1 space-y-1">
+                            {idx === 0 && <span className="text-[10px] text-gray-400">Jenis Alat</span>}
+                            <Select
+                              value={ci.item}
+                              onValueChange={(val) => updateCalcItem(idx, "item", val)}
+                            >
+                              <SelectTrigger className="w-full h-10">
+                                <SelectValue placeholder="Pilih alat..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {priceData.map((pr) => {
+                                  const usedByOther = calcItems.some((c, i) => i !== idx && c.item === pr.item);
+                                  return (
+                                    <SelectItem key={pr.item} value={pr.item} disabled={usedByOther}>
+                                      {pr.label} {usedByOther ? "(dipilih)" : ""}
+                                    </SelectItem>
+                                  );
+                                })}
+                              </SelectContent>
+                            </Select>
+                            {p && (
+                              <p className="text-[10px] text-emerald-600">
+                                {formatCurrency(p.price)} / {p.billingType === "bulanan" ? "bulan" : "hari"} per {p.unit}
+                              </p>
+                            )}
+                          </div>
+                          <div className="w-24 space-y-1">
+                            {idx === 0 && <span className="text-[10px] text-gray-400">Jumlah</span>}
+                            <Input
+                              type="number"
+                              min={1}
+                              max={100}
+                              value={ci.quantity}
+                              onChange={(e) => updateCalcItem(idx, "quantity", Number(e.target.value) || 1)}
+                              className="h-10"
+                            />
+                          </div>
+                          {calcItems.length > 1 && (
+                            <button
+                              onClick={() => removeCalcItem(idx)}
+                              className="mb-0.5 p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Hapus alat"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                    {/* Add item button */}
+                    {calcItems.length < priceData.length && (
+                      <button
+                        onClick={addCalcItem}
+                        className="flex items-center gap-1.5 text-sm text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 px-3 py-2 rounded-lg transition-colors w-full justify-center border border-dashed border-emerald-200"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Tambah Alat Lainnya
+                      </button>
+                    )}
+                  </>
                 ) : (
                   <Skeleton className="h-10 w-full rounded-md" />
                 )}
               </div>
 
-              {/* Price info */}
-              {selectedPriceItem && (
-                <div className="bg-gradient-to-br from-emerald-50 to-white rounded-lg px-4 py-2.5 flex items-center justify-between">
-                  <span className="text-sm text-emerald-700">
-                    Harga per {selectedPriceItem.unit}
-                  </span>
-                  <span className="text-sm font-bold text-emerald-600 stat-number">
-                    {formatCurrency(selectedPriceItem.price)}{" "}
-                    <span className="text-xs font-normal">
-                      / {selectedPriceItem.billingType === "bulanan" ? "bulan" : "hari"}
-                    </span>
-                  </span>
-                </div>
-              )}
-
-              {/* Quantity & Duration inputs */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="calc-qty"
-                    className="text-sm font-medium text-gray-700"
-                  >
-                    Jumlah ({selectedPriceItem?.unit ?? "unit"})
-                  </Label>
-                  <Input
-                    id="calc-qty"
-                    type="number"
-                    min={1}
-                    max={100}
-                    value={quantity}
-                    onChange={(e) => {
-                      const val = Math.min(100, Math.max(1, Number(e.target.value) || 1));
-                      setQuantity(val);
-                      setShowResult(false);
-                    }}
-                    className="h-10"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="calc-days"
-                    className="text-sm font-medium text-gray-700"
-                  >
-                    Durasi Sewa (hari)
-                  </Label>
-                  <Input
-                    id="calc-days"
-                    type="number"
-                    min={1}
-                    max={365}
-                    value={duration}
-                    onChange={(e) => {
-                      const val = Math.min(365, Math.max(1, Number(e.target.value) || 1));
-                      setDuration(val);
-                      setShowResult(false);
-                    }}
-                    className="h-10"
-                  />
-                </div>
+              {/* Duration input */}
+              <div className="space-y-2">
+                <Label
+                  htmlFor="calc-days"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Durasi Sewa (hari)
+                </Label>
+                <Input
+                  id="calc-days"
+                  type="number"
+                  min={1}
+                  max={365}
+                  value={duration}
+                  onChange={(e) => {
+                    const val = Math.min(365, Math.max(1, Number(e.target.value) || 1));
+                    setDuration(val);
+                    setShowResult(false);
+                  }}
+                  className="h-10"
+                />
               </div>
-
-              {/* Billing info */}
-              {selectedPriceItem && (
-                <p className="text-xs text-gray-400">
-                  {selectedPriceItem.billingType === "bulanan"
-                    ? `Tagihan bulanan: ${Math.ceil(duration / 30)} bulan × ${formatCurrency(selectedPriceItem.price)} × ${quantity} ${selectedPriceItem.unit}`
-                    : `Tagihan harian: ${duration} hari × ${formatCurrency(selectedPriceItem.price)} × ${quantity} ${selectedPriceItem.unit}`}
-                </p>
-              )}
 
               {/* Calculate button */}
               <Button
                 onClick={handleCalculate}
                 className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold btn-press transition-all btn-emerald-gradient"
-                disabled={!selectedPriceItem}
+                disabled={calcItems.length === 0}
               >
                 <Calculator className="w-4 h-4 mr-2" />
-                Hitung Estimasi
+                Hitung Estimasi ({calcItems.length} alat)
               </Button>
 
               {/* Result card */}
-              {showResult && estimatedCost !== null && selectedPriceItem && (
-                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-xl overflow-hidden animate-fade-in-up">
-                  {/* Success header */}
-                  <div className="bg-mitra-gradient px-5 py-3 flex items-center gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-white" />
-                    <p className="text-white font-semibold text-sm">Estimasi Biaya Sewa</p>
-                  </div>
-                  <div className="p-5">
-                    {/* Total */}
-                    <div className="text-center mb-4">
-                      <p className="text-2xl sm:text-3xl font-bold text-emerald-700 stat-number">
-                        {formatCurrency(estimatedCost)}
-                      </p>
+              {showResult && (
+                (() => {
+                  const results = calcItems.map((ci) => getItemResult(ci)).filter(Boolean) as { priceItem: typeof priceData[0]; multiplier: number; cost: number }[];
+                  const totalCost = results.reduce((sum, r) => sum + r.cost, 0);
+                  return (
+                    <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-xl overflow-hidden animate-fade-in-up">
+                      {/* Success header */}
+                      <div className="bg-mitra-gradient px-5 py-3 flex items-center gap-2">
+                        <CheckCircle2 className="w-5 h-5 text-white" />
+                        <p className="text-white font-semibold text-sm">Estimasi Biaya Sewa</p>
+                      </div>
+                      <div className="p-5">
+                        {/* Total */}
+                        <div className="text-center mb-4">
+                          <p className="text-xs text-gray-500 mb-1">Total Estimasi</p>
+                          <p className="text-2xl sm:text-3xl font-bold text-emerald-700 stat-number">
+                            {formatCurrency(totalCost)}
+                          </p>
+                        </div>
+                        {/* Per-item breakdown */}
+                        <div className="bg-white/60 rounded-lg p-3 space-y-3 mb-4">
+                          {results.map((r, idx) => (
+                            <div key={idx}>
+                              <div className="flex justify-between text-xs font-medium text-gray-900 mb-1">
+                                <span>{r.priceItem.label}</span>
+                                <span className="text-emerald-700">{formatCurrency(r.cost)}</span>
+                              </div>
+                              <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-gray-400">
+                                <span>{calcItems[idx].quantity} {r.priceItem.unit} × {formatCurrency(r.priceItem.price)} / {r.priceItem.billingType === "bulanan" ? "bulan" : "hari"}</span>
+                                <span>× {r.multiplier} {r.priceItem.billingType === "bulanan" ? "bulan" : "hari"}</span>
+                              </div>
+                              {idx < results.length - 1 && <div className="border-t border-emerald-100 mt-2 pt-2" />}
+                            </div>
+                          ))}
+                          <div className="border-t border-emerald-200 pt-2 flex justify-between text-xs font-semibold">
+                            <span className="text-gray-700">Durasi Total</span>
+                            <span className="text-gray-900">{duration} hari</span>
+                          </div>
+                        </div>
+                        {/* WhatsApp CTA */}
+                        <a
+                          href={`https://wa.me/6285185924243?text=${encodeURIComponent(
+                            `Halo MITRA SEWA, saya ingin menyewa:\n\n${results.map((r, idx) => `${idx + 1}. ${r.priceItem.label} (${calcItems[idx].quantity} ${r.priceItem.unit})`).join("\n")}\n\nDurasi: ${duration} hari\nTotal estimasi: ${formatCurrency(totalCost)}\n\nApakah tersedia?`
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-2 w-full h-11 bg-[#25D366] hover:bg-[#20BD5A] text-white font-semibold rounded-xl transition-all btn-press"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                          </svg>
+                          Pesan via WhatsApp
+                        </a>
+                        <Badge className="mt-3 bg-emerald-200/80 text-emerald-800 border-0 text-[10px] flex justify-center w-fit mx-auto">
+                          *Estimasi, harga dapat berubah sewaktu-waktu
+                        </Badge>
+                      </div>
                     </div>
-                    {/* Breakdown */}
-                    <div className="bg-white/60 rounded-lg p-3 space-y-2 mb-4">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">Nama Alat</span>
-                        <span className="font-medium text-gray-900">{selectedPriceItem.label}</span>
-                      </div>
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">Jumlah</span>
-                        <span className="font-medium text-gray-900">{quantity} {selectedPriceItem.unit}</span>
-                      </div>
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">Durasi</span>
-                        <span className="font-medium text-gray-900">{duration} hari{selectedPriceItem.billingType === "bulanan" ? ` (${Math.ceil(duration / 30)} bulan)` : ""}</span>
-                      </div>
-                      <div className="border-t border-emerald-100 pt-2 flex justify-between text-xs">
-                        <span className="text-gray-500">Harga per {selectedPriceItem.unit}</span>
-                        <span className="font-medium text-gray-900">{formatCurrency(selectedPriceItem.price)}</span>
-                      </div>
-                    </div>
-                    {/* WhatsApp CTA */}
-                    <a
-                      href={`https://wa.me/6285185924243?text=${encodeURIComponent(`Halo MITRA SEWA, saya ingin menyewa:\n\nAlat: ${selectedPriceItem.label}\nJumlah: ${quantity} ${selectedPriceItem.unit}\nDurasi: ${duration} hari\n\nEstimasi biaya: ${formatCurrency(estimatedCost)}\n\nApakah tersedia?`)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 w-full h-11 bg-[#25D366] hover:bg-[#20BD5A] text-white font-semibold rounded-xl transition-all btn-press"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                      </svg>
-                      Pesan via WhatsApp
-                    </a>
-                    <Badge className="mt-3 bg-emerald-200/80 text-emerald-800 border-0 text-[10px] flex justify-center w-fit mx-auto">
-                      *Estimasi, harga dapat berubah sewaktu-waktu
-                    </Badge>
-                  </div>
-                </div>
+                  );
+                })()
               )}
             </CardContent>
           </Card>

@@ -1144,3 +1144,45 @@ Stage Summary:
 - package.json dev script sets DATABASE_URL for Prisma schema compatibility
 - Data seeded: 6 price settings, 6 stock settings
 - All APIs working: GET /api/stock, GET /api/prices, GET /api/rentals
+
+---
+Task ID: 27
+Agent: Main Agent
+Task: Fix catwalk unit (lbr → pcs) + Enhanced multi-equipment Kalkulator Biaya Sewa
+
+Work Log:
+- Fixed catwalk unit from "lbr" to "pcs" by updating ensureDefaults() in both stock and prices API routes
+  - Updated src/app/api/stock/route.ts: ensureDefaults() now syncs both label AND unit from DEFAULT_STOCK
+  - Updated src/app/api/prices/route.ts: ensureDefaults() now syncs both label AND unit from DEFAULT_PRICES
+  - Previously only label was synced, now unit field is also synced automatically
+- Verified catwalk unit is now "pcs" in both /api/stock and /api/prices responses
+
+- Enhanced Kalkulator Biaya Sewa to support multiple equipment calculation:
+  - Replaced single equipment selector with dynamic list (calcItems state)
+  - Added "Tambah Alat Lainnya" button to add more equipment rows (up to all available)
+  - Each row has: equipment dropdown + quantity input + delete button (Trash2 icon)
+  - Equipment dropdown prevents duplicate selection (already-selected items show "(dipilih)" and are disabled)
+  - Each equipment row shows price info below the dropdown
+  - Removed separate quantity field (now per-row), kept shared duration field
+  - Calculate button shows item count: "Hitung Estimasi (X alat)"
+  - Result card now shows:
+    - Total estimasi (sum of all equipment costs)
+    - Per-item breakdown with: equipment name, individual cost, quantity × price × multiplier details
+    - Divider lines between items
+    - Total duration at bottom
+  - WhatsApp message includes full list of all equipment with quantities and total
+
+Files modified:
+- src/app/api/stock/route.ts — ensureDefaults() now syncs unit field
+- src/app/api/prices/route.ts — ensureDefaults() now syncs unit field
+- src/components/beranda-view.tsx — Complete rewrite of calculator section for multi-equipment support
+  - New imports: Plus, Trash2 from lucide-react
+  - New state: calcItems (array of {item, quantity}), removed selectedEquipment, quantity, estimatedCost
+  - New functions: addCalcItem, removeCalcItem, updateCalcItem, getItemResult
+  - Updated handleCalculate for multi-item total
+
+Stage Summary:
+- Catwalk unit fixed: "lbr" → "pcs" (auto-synced via ensureDefaults)
+- Kalkulator Biaya Sewa now supports multiple equipment items
+- ESLint: 0 errors, 0 warnings
+- Dev server: Compiled successfully, all routes HTTP 200

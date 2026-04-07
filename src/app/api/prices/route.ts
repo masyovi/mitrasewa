@@ -15,11 +15,16 @@ async function ensureDefaults() {
     const existing = await db.priceSetting.findUnique({ where: { item: def.item } });
     if (!existing) {
       await db.priceSetting.create({ data: def });
-    } else if (existing.label !== def.label) {
-      await db.priceSetting.update({
-        where: { item: def.item },
-        data: { label: def.label },
-      });
+    } else {
+      const updateData: Record<string, unknown> = {};
+      if (existing.label !== def.label) updateData.label = def.label;
+      if (existing.unit !== def.unit) updateData.unit = def.unit;
+      if (Object.keys(updateData).length > 0) {
+        await db.priceSetting.update({
+          where: { item: def.item },
+          data: updateData,
+        });
+      }
     }
   }
 }
