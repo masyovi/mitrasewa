@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import ZAI from "z-ai-web-dev-sdk";
+
+export const runtime = "nodejs";
+export const maxDuration = 30;
 
 const SYSTEM_PROMPT = `Kamu adalah Zahra, asisten layanan pelanggan AI dari MITRA SEWA - Penyewaan Alat Konstruksi.
 
@@ -46,6 +48,33 @@ ATURAN BICARA:
 - Selalu perkenalkan diri sebagai Zahra dari MITRA SEWA`;
 
 const MAX_MESSAGES = 20;
+const AI_TIMEOUT_MS = 25000;
+
+async function callAI(messages: Array<{ role: string; content: string }>) {
+  // Dynamic import to avoid bundling issues
+  const ZAI = (await import("z-ai-web-dev-sdk")).default;
+  const ai = await ZAI.create();
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+
+  try {
+    const response = await ai.chat.completions.create({
+      model: "glm-3-turbo",
+      messages: messages,
+      signal: controller.signal as any,
+    });
+
+    clearTimeout(timeout);
+    return response.choices?.[0]?.message?.content || "";
+  } catch (err: any) {
+    clearTimeout(timeout);
+    if (err.name === "AbortError") {
+      throw new Error("AI response timeout");
+    }
+    throw err;
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -57,69 +86,46 @@ export async function POST(request: NextRequest) {
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return NextResponse.json(
-        { error: "Messages are required" },
+        { success: false, error: "Messages are required" },
         { status: 400 }
       );
     }
 
-    // Build messages array: system prompt as "assistant" role + recent user/assistant messages
     const recentMessages = messages.slice(-MAX_MESSAGES);
     const chatMessages = [
-      {
-        role: "assistant" as const,
-        content: SYSTEM_PROMPT,
-      },
+      { role: "assistant" as const, content: SYSTEM_PROMPT },
       ...recentMessages.map((m) => ({
         role: m.role as "user" | "assistant",
         content: m.content,
       })),
     ];
 
-    let lastError: Error | null = null;
+    try {
+      const reply = await callAI(chatMessages);
 
-    // Retry logic (up to 2 retries)
-    for (let attempt = 0; attempt < 3; attempt++) {
-      try {
-        const ai = await ZAI.create();
-        const response = await ai.chat.completions.create({
-          messages: chatMessages,
-          stream: false,
-          thinking: { type: "disabled" },
+      if (reply && reply.trim().length > 0) {
+        return NextResponse.json({
+          success: true,
+          message: reply.trim(),
+          sessionId: sessionId || `session_${Date.now()}`,
         });
-
-        const reply = response.choices?.[0]?.message?.content;
-
-        if (reply && reply.trim().length > 0) {
-          return NextResponse.json({
-            success: true,
-            message: reply.trim(),
-            sessionId: sessionId || `session_${Date.now()}`,
-          });
-        }
-
-        // If empty response, try next attempt
-        lastError = new Error("Empty response from AI");
-        console.error(`Chat API attempt ${attempt + 1}: empty response`);
-        if (attempt < 2) {
-          await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
-        }
-      } catch (err) {
-        lastError = err as Error;
-        console.error(`Chat API attempt ${attempt + 1} failed:`, err);
-        if (attempt < 2) {
-          await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
-        }
       }
-    }
 
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Gagal mendapatkan respons. Silakan coba lagi.",
-        details: lastError?.message,
-      },
-      { status: 500 }
-    );
+      return NextResponse.json(
+        { success: false, error: "Empty response from AI" },
+        { status: 500 }
+      );
+    } catch (err: any) {
+      console.error("Chat AI error:", err.message);
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Gagal mendapatkan respons. Silakan coba lagi.",
+          details: err.message,
+        },
+        { status: 500 }
+      );
+    }
   } catch (err) {
     console.error("Chat API error:", err);
     return NextResponse.json(

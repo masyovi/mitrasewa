@@ -107,3 +107,38 @@ Stage Summary:
 - Chat mini-service must be started: `cd mini-services/chat-service && bun index.ts`
 - Frontend fetch URL: `/?XTransformPort=3031` (relative path through gateway)
 - Old Next.js API route at `src/app/api/chat/route.ts` is no longer used (kept for reference)
+
+---
+Task ID: 48
+Agent: Main Agent
+Task: Make Zahra chat Vercel-compatible (no mini-service dependency)
+
+Work Log:
+- Rewrote `src/app/api/chat/route.ts` for Vercel compatibility:
+  - Added `export const runtime = "nodejs"` for Node.js runtime on Vercel
+  - Added `export const maxDuration = 30` for Vercel serverless function timeout
+  - Used dynamic import `await import("z-ai-web-dev-sdk")` to avoid bundling issues
+  - Added AbortController with 25s timeout to prevent hanging
+  - Using model `glm-3-turbo` (faster, cheaper)
+- Updated `next.config.ts`:
+  - Removed `output: "standalone"` (Vercel uses default output)
+  - Added `serverExternalPackages: ["z-ai-web-dev-sdk"]` to prevent bundling the SDK
+- Updated frontend `src/components/layanan-view.tsx`:
+  - Changed fetch URL back to `/api/chat` (standard Next.js API route)
+  - No longer depends on mini-service or XTransformPort gateway
+- Verified API route works locally: POST /api/chat returns 200 with correct Zahra response
+
+Stage Summary:
+- Chat is now fully Vercel-compatible — uses standard Next.js API route
+- No mini-service dependency needed for production deployment
+- API route uses Node.js runtime with 30s maxDuration on Vercel
+- Model: glm-3-turbo (fast, economical, good quality for chatbot use)
+- Mini-service at `mini-services/chat-service/` still available as fallback for local dev
+
+### Vercel Deployment Checklist
+- ✅ No `output: "standalone"` in next.config.ts
+- ✅ `serverExternalPackages: ["z-ai-web-dev-sdk"]` configured
+- ✅ API route uses `runtime = "nodejs"` and `maxDuration = 30`
+- ✅ Dynamic import for SDK to avoid bundling issues
+- ✅ Frontend fetches `/api/chat` (relative path, works on any domain)
+- ⚠️ Ensure `z-ai-web-dev-sdk` environment variables are set on Vercel if needed
