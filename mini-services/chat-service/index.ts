@@ -102,8 +102,8 @@ const server = serve({
 
       const ai = await getAI();
       const response = await ai.chat.completions.create({
+        model: "glm-3-turbo",
         messages: chatMessages,
-        thinking: { type: "disabled" },
       });
 
       const reply = response.choices?.[0]?.message?.content;
