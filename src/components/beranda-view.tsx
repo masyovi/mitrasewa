@@ -22,6 +22,7 @@ import {
   Layers,
   Link,
   Home,
+  MessageCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -38,6 +39,7 @@ import {
 } from "@/components/ui/select";
 import { useEffect, useState, useRef } from "react";
 import { AboutModal } from "@/components/about-modal";
+import { LayananView } from "@/components/layanan-view";
 import { formatCurrency } from "@/components/admin/helpers";
 import {
   Dialog,
@@ -100,7 +102,7 @@ export function BerandaView() {
   const [loading, setLoading] = useState(true);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [animatedStats, setAnimatedStats] = useState(false);
-  const [currentPage, setCurrentPage] = useState<"beranda" | "lokasi" | "alat" | "hitung">("beranda");
+  const [currentPage, setCurrentPage] = useState<"beranda" | "lokasi" | "alat" | "hitung" | "layanan">("beranda");
 
   // Animated counting values
   const animatedJenisAlat = useAnimatedNumber(stockData.length, animatedStats, 1000);
@@ -266,6 +268,7 @@ export function BerandaView() {
             { key: "lokasi", label: "Lokasi", icon: MapPin },
             { key: "alat", label: "Alat", icon: Boxes },
             { key: "hitung", label: "Hitung", icon: Calculator },
+            { key: "layanan", label: "Layanan", icon: MessageCircle },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -1082,6 +1085,12 @@ export function BerandaView() {
           </Card>
         </section>
         )}
+
+        {currentPage === "layanan" && (
+        <section className="animate-fade-in -mx-4 -mb-6 -mt-1 sm:-mx-0 sm:-mb-4 sm:-mt-0">
+          <LayananView />
+        </section>
+        )}
       </main>
 
       {/* Full-Page Floating Bubbles Background */}
@@ -1286,6 +1295,13 @@ export function BerandaView() {
           >
             <Calculator className="w-5 h-5" />
             <span className="text-[10px] font-medium" style={{ minWidth: '64px', textAlign: 'center' }}>Hitung</span>
+          </button>
+          <button
+            onClick={() => setCurrentPage("layanan")}
+            className={`mobile-bottom-nav-item ${currentPage === "layanan" ? 'active' : ''}`}
+          >
+            <MessageCircle className="w-5 h-5" />
+            <span className="text-[10px] font-medium" style={{ minWidth: '64px', textAlign: 'center' }}>Layanan</span>
           </button>
         </div>
       </nav>
