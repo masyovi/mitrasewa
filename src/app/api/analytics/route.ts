@@ -12,15 +12,16 @@ export async function GET(request: NextRequest) {
     const from = fromParam ? new Date(fromParam) : sixMonthsAgo;
     const to = toParam ? new Date(toParam + "T23:59:59.999Z") : new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
 
-    // Fetch rentals in date range with items
+    // Fetch rentals with items and extensions
+    // Filter: rental tanggalSewa OR any extension createdAt falls in range
     const rentals = await db.rental.findMany({
       where: {
-        createdAt: {
-          gte: from,
-          lte: to,
-        },
+        OR: [
+          { tanggalSewa: { gte: from, lte: to } },
+          { extensions: { some: { createdAt: { gte: from, lte: to } } } },
+        ],
       },
-      include: { items: true },
+      include: { items: true, extensions: true },
       orderBy: { createdAt: "desc" },
     });
 
@@ -28,9 +29,6 @@ export async function GET(request: NextRequest) {
 
     // Active rentals (status = aktif)
     const activeRentals = rentals.filter((r) => r.status === "aktif");
-
-    // Total revenue
-    const totalRevenue = rentals.reduce((sum, r) => sum + r.totalHarga, 0);
 
     // Total rentals count
     const totalRentals = rentals.length;
@@ -64,17 +62,28 @@ export async function GET(request: NextRequest) {
 
     // Aggregate revenue by month
     for (const rental of rentals) {
-      const created = rental.createdAt;
-      const key = `${created.getFullYear()}-${String(created.getMonth() + 1).padStart(2, "0")}`;
-      if (monthlyRevenue[key]) {
-        monthlyRevenue[key].revenue += rental.totalHarga;
-        monthlyRevenue[key].count += 1;
+      // Initial rental: revenue assigned to tanggalSewa month
+      const sewaKey = `${rental.tanggalSewa.getFullYear()}-${String(rental.tanggalSewa.getMonth() + 1).padStart(2, "0")}`;
+      if (monthlyRevenue[sewaKey]) {
+        monthlyRevenue[sewaKey].revenue += rental.totalHarga;
+        monthlyRevenue[sewaKey].count += 1;
+      }
+      // Extensions: revenue assigned to extension createdAt month
+      for (const ext of rental.extensions) {
+        const extKey = `${ext.createdAt.getFullYear()}-${String(ext.createdAt.getMonth() + 1).padStart(2, "0")}`;
+        if (monthlyRevenue[extKey]) {
+          monthlyRevenue[extKey].revenue += ext.extensionTotal;
+          monthlyRevenue[extKey].count += 1;
+        }
       }
     }
 
     const monthlyBreakdown = Object.entries(monthlyRevenue)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([key, val]) => ({ monthKey: key, ...val }));
+
+    // Total revenue from all months in range
+    const totalRevenue = monthlyBreakdown.reduce((sum, m) => sum + m.revenue, 0);
 
     // Top rented items
     const itemMap: Record<
