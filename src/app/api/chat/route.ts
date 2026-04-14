@@ -47,10 +47,6 @@ ATURAN BICARA:
 
 const MAX_MESSAGES = 20;
 
-async function getAI(): Promise<ZAI> {
-  return ZAI.create();
-}
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -66,10 +62,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Build messages array with system prompt + last N messages
+    // Build messages array: system prompt as "assistant" role + recent user/assistant messages
     const recentMessages = messages.slice(-MAX_MESSAGES);
-    const chatMessages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
-      { role: "system", content: SYSTEM_PROMPT },
+    const chatMessages = [
+      {
+        role: "assistant" as const,
+        content: SYSTEM_PROMPT,
+      },
       ...recentMessages.map((m) => ({
         role: m.role as "user" | "assistant",
         content: m.content,
@@ -81,21 +80,29 @@ export async function POST(request: NextRequest) {
     // Retry logic (up to 2 retries)
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
-        const ai = await getAI();
+        const ai = await ZAI.create();
         const response = await ai.chat.completions.create({
           messages: chatMessages,
+          stream: false,
+          thinking: { type: "disabled" },
         });
 
-        const assistantMessage =
-          response?.choices?.[0]?.message?.content ||
-          response?.content ||
-          "Maaf, saya sedang mengalami gangguan. Silakan coba lagi atau hubungi kami via WhatsApp di 0851-8592-4243.";
+        const reply = response.choices?.[0]?.message?.content;
 
-        return NextResponse.json({
-          success: true,
-          message: assistantMessage,
-          sessionId: sessionId || `session_${Date.now()}`,
-        });
+        if (reply && reply.trim().length > 0) {
+          return NextResponse.json({
+            success: true,
+            message: reply.trim(),
+            sessionId: sessionId || `session_${Date.now()}`,
+          });
+        }
+
+        // If empty response, try next attempt
+        lastError = new Error("Empty response from AI");
+        console.error(`Chat API attempt ${attempt + 1}: empty response`);
+        if (attempt < 2) {
+          await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
+        }
       } catch (err) {
         lastError = err as Error;
         console.error(`Chat API attempt ${attempt + 1} failed:`, err);

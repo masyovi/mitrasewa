@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, MessageCircle, User } from "lucide-react";
+import { Send, MessageCircle, User, RotateCcw, Sparkles } from "lucide-react";
+import Image from "next/image";
 
 interface ChatMessage {
   id: string;
@@ -26,6 +27,34 @@ const WELCOME_MESSAGE: ChatMessage = {
   timestamp: new Date(),
 };
 
+function ZahraAvatar({ size = "sm" }: { size?: "sm" | "md" | "lg" }) {
+  const sizeClasses = {
+    sm: "w-8 h-8",
+    md: "w-11 h-11",
+    lg: "w-24 h-24",
+  };
+  const ringClasses = {
+    sm: "ring-2 ring-emerald-200",
+    md: "ring-2 ring-emerald-200",
+    lg: "ring-4 ring-emerald-100 shadow-lg shadow-emerald-200/50",
+  };
+
+  return (
+    <div
+      className={`${sizeClasses[size]} rounded-full overflow-hidden flex-shrink-0 ${ringClasses[size]}`}
+    >
+      <Image
+        src="/zahra-avatar.png"
+        alt="Zahra"
+        width={size === "lg" ? 96 : size === "md" ? 44 : 32}
+        height={size === "lg" ? 96 : size === "md" ? 44 : 32}
+        className="w-full h-full object-cover"
+        unoptimized
+      />
+    </div>
+  );
+}
+
 function TypingIndicator() {
   return (
     <motion.div
@@ -34,14 +63,21 @@ function TypingIndicator() {
       exit={{ opacity: 0, y: -10 }}
       className="flex items-end gap-2.5 mb-4"
     >
-      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-white text-xs font-bold bg-gradient-to-br from-emerald-400 to-emerald-600">
-        Z
-      </div>
+      <ZahraAvatar size="sm" />
       <div className="bg-gray-100 rounded-2xl rounded-bl-md px-4 py-3">
         <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-          <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-          <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+          <span
+            className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+            style={{ animationDelay: "0ms" }}
+          />
+          <span
+            className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+            style={{ animationDelay: "150ms" }}
+          />
+          <span
+            className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+            style={{ animationDelay: "300ms" }}
+          />
         </div>
       </div>
     </motion.div>
@@ -76,7 +112,10 @@ export function LayananView() {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
       const maxHeight = 3 * 24; // 3 lines
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, maxHeight)}px`;
+      textareaRef.current.style.height = `${Math.min(
+        textareaRef.current.scrollHeight,
+        maxHeight
+      )}px`;
     }
   }, [input]);
 
@@ -115,13 +154,18 @@ export function LayananView() {
 
         const data = await response.json();
 
+        let replyContent: string;
+        if (data.success && data.message) {
+          replyContent = data.message;
+        } else {
+          replyContent =
+            "Maaf, saya sedang mengalami gangguan teknis. Silakan coba lagi atau hubungi kami langsung via WhatsApp di 0851-8592-4243 ya! 🙏";
+        }
+
         const assistantMessage: ChatMessage = {
           id: `assistant_${Date.now()}`,
           role: "assistant",
-          content:
-            data.success && data.message
-              ? data.message
-              : "Maaf, saya sedang mengalami gangguan. Silakan coba lagi atau hubungi kami via WhatsApp di 0851-8592-4243. 🙏",
+          content: replyContent,
           timestamp: new Date(),
         };
 
@@ -131,7 +175,7 @@ export function LayananView() {
           id: `error_${Date.now()}`,
           role: "assistant",
           content:
-            "Maaf, terjadi kesalahan koneksi. Silakan coba lagi nanti atau hubungi kami via WhatsApp di 0851-8592-4243. 🙏",
+            "Maaf, koneksi bermasalah nih. Coba lagi ya, atau hubungi kami via WhatsApp di 0851-8592-4243! 🙏",
           timestamp: new Date(),
         };
         setMessages((prev) => [...prev, errorMessage]);
@@ -154,6 +198,12 @@ export function LayananView() {
     sendMessage(question);
   };
 
+  const handleClearChat = () => {
+    setMessages([WELCOME_MESSAGE]);
+    setHasStarted(false);
+    setInput("");
+  };
+
   // Welcome state - show when no user messages yet
   if (!hasStarted) {
     return (
@@ -161,13 +211,19 @@ export function LayananView() {
         {/* Header */}
         <div className="flex items-center gap-3 mb-4 px-1">
           <div className="w-1 h-6 bg-emerald-500 rounded-full" />
-          <div>
-            <h3 className="text-lg font-bold text-gray-900">Layanan</h3>
-            <div className="flex items-center gap-1.5">
-              <MessageCircle className="w-3.5 h-3.5 text-emerald-500" />
-              <span className="text-xs text-gray-500">Chat dengan Zahra</span>
-              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="text-[10px] text-emerald-600 font-medium">Online</span>
+          <div className="flex items-center gap-2.5">
+            <ZahraAvatar size="md" />
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-bold text-gray-900">Zahra</h3>
+                <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-medium">
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                  Online
+                </span>
+              </div>
+              <p className="text-xs text-gray-500">
+                Asisten virtual MITRA SEWA
+              </p>
             </div>
           </div>
         </div>
@@ -178,24 +234,27 @@ export function LayananView() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="w-full max-w-md"
+            className="w-full max-w-md px-2"
           >
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 text-center">
-              {/* Zahra Avatar */}
-              <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center mb-4 shadow-lg shadow-emerald-200">
-                <span className="text-3xl font-bold text-white">Z</span>
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sm:p-8 text-center">
+              {/* Zahra Avatar Large */}
+              <div className="mx-auto mb-4 relative">
+                <ZahraAvatar size="lg" />
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center shadow-md">
+                  <Sparkles className="w-3.5 h-3.5 text-white" />
+                </div>
               </div>
               <h4 className="text-lg font-bold text-gray-900 mb-1">
                 Halo, saya Zahra! 👋
               </h4>
-              <p className="text-sm text-gray-500 mb-5 leading-relaxed">
-                Asisten virtual MITRA SEWA. Saya siap membantu Anda dengan
+              <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+                Asisten virtual MITRA SEWA yang siap membantu Anda dengan
                 informasi penyewaan alat konstruksi.
               </p>
 
               {/* Quick Questions */}
-              <div className="space-y-2">
-                <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-2">
+              <div className="space-y-2 text-left">
+                <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-3 text-center">
                   Pertanyaan populer
                 </p>
                 {QUICK_QUESTIONS.map((q, i) => (
@@ -205,8 +264,9 @@ export function LayananView() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 * i + 0.3 }}
                     onClick={() => handleQuickQuestion(q)}
-                    className="w-full text-left px-4 py-2.5 text-sm text-gray-700 bg-gray-50 hover:bg-emerald-50 hover:text-emerald-700 rounded-xl transition-all border border-gray-100 hover:border-emerald-200"
+                    className="w-full text-left px-4 py-3 text-sm text-gray-700 bg-gray-50 hover:bg-emerald-50 hover:text-emerald-700 rounded-xl transition-all border border-gray-100 hover:border-emerald-200 flex items-center gap-3"
                   >
+                    <MessageCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                     {q}
                   </motion.button>
                 ))}
@@ -244,17 +304,33 @@ export function LayananView() {
   return (
     <div className="flex flex-col h-[calc(100vh-200px)] sm:h-[calc(100vh-180px)]">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-3 px-1">
-        <div className="w-1 h-6 bg-emerald-500 rounded-full" />
-        <div>
-          <h3 className="text-lg font-bold text-gray-900">Layanan</h3>
-          <div className="flex items-center gap-1.5">
-            <MessageCircle className="w-3.5 h-3.5 text-emerald-500" />
-            <span className="text-xs text-gray-500">Chat dengan Zahra</span>
-            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-            <span className="text-[10px] text-emerald-600 font-medium">Online</span>
+      <div className="flex items-center justify-between mb-3 px-1">
+        <div className="flex items-center gap-3">
+          <div className="w-1 h-6 bg-emerald-500 rounded-full" />
+          <div className="flex items-center gap-2.5">
+            <ZahraAvatar size="md" />
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-bold text-gray-900">Zahra</h3>
+                <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-medium">
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                  Online
+                </span>
+              </div>
+              <p className="text-xs text-gray-500">
+                Asisten virtual MITRA SEWA
+              </p>
+            </div>
           </div>
         </div>
+        <button
+          onClick={handleClearChat}
+          className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-red-500 px-2.5 py-1.5 rounded-lg hover:bg-red-50 transition-all"
+          title="Mulai chat baru"
+        >
+          <RotateCcw className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Baru</span>
+        </button>
       </div>
 
       {/* Chat Messages Area */}
@@ -271,14 +347,15 @@ export function LayananView() {
               }`}
             >
               {/* Zahra Avatar */}
-              {message.role === "assistant" && (
-                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-white text-xs font-bold bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-sm">
-                  Z
-                </div>
-              )}
+              {message.role === "assistant" && <ZahraAvatar size="sm" />}
 
               {/* Message Bubble */}
               <div className="max-w-[80%] sm:max-w-[70%]">
+                {message.role === "assistant" && (
+                  <p className="text-[10px] text-emerald-600 font-medium mb-0.5 ml-1">
+                    Zahra
+                  </p>
+                )}
                 <div
                   className={`px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap break-words ${
                     message.role === "user"
@@ -290,7 +367,7 @@ export function LayananView() {
                 </div>
                 <p
                   className={`text-[10px] text-gray-400 mt-1 ${
-                    message.role === "user" ? "text-right" : "text-left"
+                    message.role === "user" ? "text-right" : "text-left ml-1"
                   }`}
                 >
                   {formatTime(message.timestamp)}
@@ -338,7 +415,7 @@ export function LayananView() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Tulis pesan..."
+            placeholder="Tulis pesan ke Zahra..."
             rows={1}
             disabled={isTyping}
             className="flex-1 resize-none bg-transparent text-sm text-gray-900 placeholder:text-gray-400 px-2 py-1.5 focus:outline-none max-h-[72px] disabled:opacity-50"
@@ -348,7 +425,16 @@ export function LayananView() {
             disabled={!input.trim() || isTyping}
             className="w-9 h-9 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white flex items-center justify-center hover:from-emerald-600 hover:to-emerald-700 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0 shadow-sm"
           >
-            <Send className="w-4 h-4" />
+            {isTyping ? (
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              >
+                <Send className="w-4 h-4" />
+              </motion.div>
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
           </button>
         </div>
       </div>

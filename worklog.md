@@ -47,8 +47,37 @@ MITRA SEWA is fully operational with all previous features (Tasks 1-44) plus the
 - None identified. All systems operational, ESLint clean.
 
 ### Priority Recommendations for Next Phase
-1. Add chat history persistence (localStorage or DB)
-2. Add "Clear chat" button
-3. Enhance Zahra with real-time stock data integration
-4. Add voice input for chat (ASR skill)
-5. Image upload in chat (VLM skill for equipment photos)
+1. Enhance Zahra with real-time stock data integration
+2. Add voice input for chat (ASR skill)
+3. Image upload in chat (VLM skill for equipment photos)
+4. Add chat history persistence (localStorage or DB)
+
+---
+Task ID: 46
+Agent: Main Agent
+Task: Fix Zahra chat API (always returning error) + add female profile picture
+
+Work Log:
+- Diagnosed API issue: z-ai-web-dev-sdk requires `role: "assistant"` (not `"system"`) for system prompts, plus `stream: false` and `thinking: { type: "disabled" }` params
+- Fixed `src/app/api/chat/route.ts` with correct SDK call format
+- Verified fix by direct SDK test — Zahra now responds correctly in Bahasa Indonesia
+- Generated female profile picture using image-generation skill (Indonesian woman with green hijab, professional portrait)
+- Saved profile picture at `public/zahra-avatar.png` (1024x1024, 74KB)
+- Completely rewrote `src/components/layanan-view.tsx` with improvements:
+  - ZahraAvatar component with profile picture (sm/md/lg sizes using next/image)
+  - Enhanced header with avatar, name badge "Zahra", online indicator, subtitle "Asisten virtual MITRA SEWA"
+  - Welcome card: large avatar with sparkle icon, 4 quick questions with MessageCircle icons
+  - Active chat: "Zahra" name label above each assistant message, profile picture avatar
+  - "Mulai chat baru" (clear chat) button with RotateCcw icon in active chat header
+  - Spinning send button animation while typing
+  - Better placeholder text: "Tulis pesan ke Zahra..."
+- ESLint lint passed with zero errors
+
+Stage Summary:
+- Zahra chat API now works correctly — can answer questions about MITRA SEWA
+- Female profile picture added for Zahra (professional Indonesian woman with green hijab)
+- Chat UI enhanced with avatar, name labels, clear chat button, better animations
+- Direct SDK test confirmed: successful response in Bahasa Indonesia
+
+### Unresolved Issues / Risks
+- None. All systems operational, ESLint clean, SDK API verified working.
