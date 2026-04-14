@@ -81,3 +81,29 @@ Stage Summary:
 
 ### Unresolved Issues / Risks
 - None. All systems operational, ESLint clean, SDK API verified working.
+
+---
+Task ID: 47
+Agent: Main Agent
+Task: Fix Zahra chat - API route hanging (always returning "maaf gangguan")
+
+Work Log:
+- Diagnosed that z-ai-web-dev-sdk works perfectly in standalone context but hangs inside Next.js API route
+- Root cause: Next.js App Router API routes have compatibility issues with z-ai-web-dev-sdk (timeout/hanging)
+- Solution: Created dedicated mini-service for chat at `mini-services/chat-service/` (port 3031)
+- Updated frontend `src/components/layanan-view.tsx` to call mini-service via gateway: `fetch("/?XTransformPort=3031")`
+- Mini-service uses Bun's native HTTP server with z-ai-web-dev-sdk — verified working with all test cases
+- Chat service singleton pattern: ZAI instance created once and reused across requests
+- Verified multi-turn conversation support works correctly through gateway
+
+Stage Summary:
+- Chat mini-service running on port 3031 (standalone Bun server)
+- Frontend routes chat requests through Caddy gateway (XTransformPort=3031)
+- Zahra now responds correctly to all questions about MITRA SEWA
+- Profile picture at `public/zahra-avatar.png` already active in all chat UI locations
+- Test results: Simple greeting ✅, Multi-turn conversation ✅, Equipment questions ✅
+
+### Important Notes
+- Chat mini-service must be started: `cd mini-services/chat-service && bun index.ts`
+- Frontend fetch URL: `/?XTransformPort=3031` (relative path through gateway)
+- Old Next.js API route at `src/app/api/chat/route.ts` is no longer used (kept for reference)
