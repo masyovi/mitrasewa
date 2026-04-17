@@ -224,3 +224,38 @@ Stage Summary:
 - ✅ Response time significantly improved (0.5-1s)
 - ✅ Browser-tested and working perfectly
 - File modified: `mini-services/chat-service/index.ts` (model: "glm-3-turbo" → "deepseek-chat")
+
+---
+Task ID: 50
+Agent: Main Agent
+Task: Fix Zahra not responding + Make chat Vercel-compatible
+
+Work Log:
+- Diagnosed issue: Frontend was calling `/api?XTransformPort=3031` via gateway, which returned 405/empty (gateway routing broken)
+- Mini-service on port 3031 was working fine when called directly
+- Decision: Remove mini-service dependency entirely, move AI logic into Next.js API route
+- Rewrote `src/app/api/chat/route.ts`:
+  - Direct z-ai-web-dev-sdk import (dynamic, with `ZAI.default || ZAI` fallback)
+  - DeepSeek model (`deepseek-chat`) for fast responses
+  - Full SYSTEM_PROMPT inline (no dependency on external service)
+  - `maxDuration = 30` for Vercel serverless
+- Updated `next.config.ts`: Added `serverExternalPackages: ["z-ai-web-dev-sdk"]`
+- Updated `src/components/layanan-view.tsx`: Changed fetch URL from `/api?XTransformPort=3031` to `/api/chat`
+- Tested: POST /api/chat returns 200 with correct Zahra response
+
+Stage Summary:
+- ✅ Zahra now responds correctly via `/api/chat` (standard Next.js API route)
+- ✅ No mini-service dependency needed — fully Vercel-compatible
+- ✅ Uses z-ai-web-dev-sdk with DeepSeek model (free, no external API key)
+- ✅ Architecture simplified: Frontend → Next.js API Route → z-ai-web-dev-sdk → DeepSeek
+- Mini-service at `mini-services/chat-service/` still exists but no longer required
+
+### Vercel Deployment Notes
+- This architecture IS fully Vercel-compatible
+- `serverExternalPackages: ["z-ai-web-dev-sdk"]` ensures SDK is bundled as external
+- API route uses Node.js runtime with 30s maxDuration
+- No mini-service, no gateway, no special port routing needed
+- Environment variables needed on Vercel:
+  - `DATABASE_URL` — SQLite database URL (or use Turso)
+  - `NEXTAUTH_SECRET` — for NextAuth.js
+  - `NEXTAUTH_URL` — your Vercel deployment URL
