@@ -49,6 +49,56 @@ ATURAN BICARA:
 
 const MAX_MESSAGES = 20;
 
+// ====== DeepSeek API (for Vercel / production) ======
+async function chatWithDeepSeekAPI(
+  chatMessages: Array<{ role: string; content: string }>
+): Promise<string> {
+  const apiKey = process.env.DEEPSEEK_API_KEY;
+  if (!apiKey) throw new Error("DEEPSEEK_API_KEY not set");
+
+  const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: "deepseek-chat",
+      messages: chatMessages,
+      max_tokens: 1024,
+      temperature: 0.7,
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`DeepSeek API error: ${res.status} - ${err}`);
+  }
+
+  const data = await res.json();
+  const reply = data.choices?.[0]?.message?.content;
+  if (!reply) throw new Error("Empty response from DeepSeek");
+  return reply.trim();
+}
+
+// ====== z-ai-web-dev-sdk (for local sandbox only) ======
+async function chatWithZAI(
+  chatMessages: Array<{ role: string; content: string }>
+): Promise<string> {
+  const ZAI = await import("z-ai-web-dev-sdk");
+  const aiInstance = ZAI.default || ZAI;
+  const ai = await aiInstance.create();
+
+  const response = await ai.chat.completions.create({
+    model: "deepseek-chat",
+    messages: chatMessages,
+  });
+
+  const reply = response.choices?.[0]?.message?.content;
+  if (!reply) throw new Error("Empty response from z-ai-web-dev-sdk");
+  return reply.trim();
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -63,56 +113,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    try {
-      // Dynamic import z-ai-web-dev-sdk (must be in serverExternalPackages)
-      const ZAI = await import("z-ai-web-dev-sdk");
-      const aiInstance = ZAI.default || ZAI;
-      const ai = await aiInstance.create();
+    const recentMessages = messages.slice(-MAX_MESSAGES);
+    const chatMessages = [
+      { role: "system", content: SYSTEM_PROMPT },
+      ...recentMessages.map((m) => ({
+        role: m.role as "user" | "assistant",
+        content: m.content,
+      })),
+    ];
 
-      const recentMessages = messages.slice(-MAX_MESSAGES);
-      const chatMessages = [
-        { role: "assistant" as const, content: SYSTEM_PROMPT },
-        ...recentMessages.map((m) => ({
-          role: m.role as "user" | "assistant",
-          content: m.content,
-        })),
-      ];
+    let reply: string;
 
-      const response = await ai.chat.completions.create({
-        model: "deepseek-chat",
-        messages: chatMessages,
-      });
-
-      const reply = response.choices?.[0]?.message?.content;
-
-      if (reply && reply.trim().length > 0) {
-        return NextResponse.json({
-          success: true,
-          message: reply.trim(),
-        });
-      }
-
-      return NextResponse.json(
-        { success: false, error: "Empty response from AI" },
-        { status: 500 }
-      );
-    } catch (err: any) {
-      console.error("AI SDK error:", err.message || err);
-      return NextResponse.json(
-        {
-          success: false,
-          error:
-            "Maaf, saya sedang mengalami gangguan teknis. Silakan coba lagi atau hubungi kami via WhatsApp di 0851-8592-4243 ya! 🙏",
-        },
-        { status: 500 }
-      );
+    // Try z-ai-web-dev-sdk first (local dev), fallback to DeepSeek API (Vercel)
+    if (process.env.DEEPSEEK_API_KEY) {
+      // Vercel / production: use DeepSeek API directly
+      reply = await chatWithDeepSeekAPI(chatMessages);
+    } else {
+      // Local dev: use z-ai-web-dev-sdk
+      reply = await chatWithZAI(chatMessages);
     }
-  } catch (err) {
-    console.error("Chat API error:", err);
+
+    return NextResponse.json({ success: true, message: reply });
+  } catch (err: any) {
+    console.error("Chat API error:", err.message || err);
     return NextResponse.json(
       {
         success: false,
-        error: "Terjadi kesalahan internal. Silakan coba lagi.",
+        error:
+          "Maaf, saya sedang mengalami gangguan teknis. Silakan coba lagi atau hubungi kami via WhatsApp di 0851-8592-4243 ya! 🙏",
       },
       { status: 500 }
     );
