@@ -205,3 +205,22 @@ Stage Summary:
 - ✅ All API routes working without errors (stock, prices, chat)
 - ⚠️ Mini-service required for local development; for Vercel deployment, a separate hosting solution needed for the AI service
 - Files modified: `src/lib/db.ts`, `src/app/api/chat/route.ts`, `src/components/layanan-view.tsx`, `next.config.ts`
+
+---
+Task ID: 45-deepseek
+Agent: Main Agent
+Task: Switch chatbot AI model from glm-3-turbo to DeepSeek
+
+Work Log:
+- Tested DeepSeek model via z-ai-web-dev-sdk: `deepseek-chat` model works without any API key
+- Updated mini-service model from `glm-3-turbo` to `deepseek-chat`
+- Response time improved: DeepSeek ~0.75s vs glm-3-turbo ~3s
+- Verified via browser: Zahra responds correctly with DeepSeek model
+- All services running: Next.js (:3000), Chat service (:3031), Caddy gateway (:81)
+
+Stage Summary:
+- ✅ Model switched to DeepSeek (deepseek-chat) via z-ai-web-dev-sdk
+- ✅ No external API key required
+- ✅ Response time significantly improved (0.5-1s)
+- ✅ Browser-tested and working perfectly
+- File modified: `mini-services/chat-service/index.ts` (model: "glm-3-turbo" → "deepseek-chat")

@@ -102,7 +102,7 @@ const server = serve({
 
       const ai = await getAI();
       const response = await ai.chat.completions.create({
-        model: "glm-3-turbo",
+        model: "deepseek-chat",
         messages: chatMessages,
       });
 
