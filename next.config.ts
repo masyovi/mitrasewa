@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
-  serverExternalPackages: ["z-ai-web-dev-sdk"],
+  serverExternalPackages: ["@ai-sdk/google", "ai"],
 };
 
 export default nextConfig;

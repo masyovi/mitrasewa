@@ -10,6 +10,7 @@ interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  isStreaming?: boolean;
 }
 
 const QUICK_QUESTIONS = [
@@ -84,6 +85,16 @@ function TypingIndicator() {
   );
 }
 
+function StreamingDots() {
+  return (
+    <span className="inline-flex items-center gap-0.5 ml-0.5">
+      <span className="w-1 h-1 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+      <span className="w-1 h-1 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "100ms" }} />
+      <span className="w-1 h-1 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "200ms" }} />
+    </span>
+  );
+}
+
 function formatTime(date: Date): string {
   return date.toLocaleTimeString("id-ID", {
     hour: "2-digit",
@@ -99,6 +110,7 @@ export function LayananView() {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isTypingRef = useRef(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -111,7 +123,7 @@ export function LayananView() {
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      const maxHeight = 3 * 24; // 3 lines
+      const maxHeight = 3 * 24;
       textareaRef.current.style.height = `${Math.min(
         textareaRef.current.scrollHeight,
         maxHeight
@@ -130,58 +142,110 @@ export function LayananView() {
         timestamp: new Date(),
       };
 
-      setMessages((prev) => [...prev, userMessage]);
+      const assistantId = `assistant_${Date.now()}`;
+      const assistantMessage: ChatMessage = {
+        id: assistantId,
+        role: "assistant",
+        content: "",
+        timestamp: new Date(),
+        isStreaming: true,
+      };
+
+      setMessages((prev) => [...prev, userMessage, assistantMessage]);
       setHasStarted(true);
       setInput("");
       setIsTyping(true);
       isTypingRef.current = true;
 
-      // Reset textarea height
       if (textareaRef.current) {
         textareaRef.current.style.height = "auto";
       }
 
       try {
-        const chatHistory = [...messages, userMessage]
+        const chatHistory = messages
           .filter((m) => m.id !== "welcome")
           .map((m) => ({ role: m.role, content: m.content }));
+
+        abortControllerRef.current = new AbortController();
 
         const response = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: chatHistory }),
+          body: JSON.stringify({
+            messages: [...chatHistory, { role: "user", content: text.trim() }],
+          }),
+          signal: abortControllerRef.current.signal,
         });
 
-        const data = await response.json();
-
-        let replyContent: string;
-        if (data.success && data.message) {
-          replyContent = data.message;
-        } else {
-          replyContent =
-            "Maaf, saya sedang mengalami gangguan teknis. Silakan coba lagi atau hubungi kami langsung via WhatsApp di 0851-8592-4243 ya! 🙏";
+        if (!response.ok || !response.body) {
+          throw new Error(`HTTP ${response.status}`);
         }
 
-        const assistantMessage: ChatMessage = {
-          id: `assistant_${Date.now()}`,
-          role: "assistant",
-          content: replyContent,
-          timestamp: new Date(),
-        };
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let fullContent = "";
+        let buffer = "";
 
-        setMessages((prev) => [...prev, assistantMessage]);
-      } catch {
-        const errorMessage: ChatMessage = {
-          id: `error_${Date.now()}`,
-          role: "assistant",
-          content:
-            "Maaf, koneksi bermasalah nih. Coba lagi ya, atau hubungi kami via WhatsApp di 0851-8592-4243! 🙏",
-          timestamp: new Date(),
-        };
-        setMessages((prev) => [...prev, errorMessage]);
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || "";
+
+          for (const line of lines) {
+            if (line.startsWith("0:")) {
+              try {
+                const textValue = JSON.parse(line.slice(2));
+                if (typeof textValue === "string") {
+                  fullContent += textValue;
+                  setMessages((prev) =>
+                    prev.map((m) =>
+                      m.id === assistantId
+                        ? { ...m, content: fullContent, isStreaming: true }
+                        : m
+                    )
+                  );
+                }
+              } catch {
+                // skip malformed chunks
+              }
+            }
+          }
+        }
+
+        // Finalize message
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId
+              ? {
+                  ...m,
+                  content: fullContent || "Maaf, saya tidak bisa menjawab saat ini. Silakan coba lagi. 🙏",
+                  isStreaming: false,
+                }
+              : m
+          )
+        );
+      } catch (err: any) {
+        if (err.name === "AbortError") return;
+
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId
+              ? {
+                  ...m,
+                  content:
+                    "Maaf, koneksi bermasalah nih. Coba lagi ya, atau hubungi kami via WhatsApp di 0851-8592-4243! 🙏",
+                  isStreaming: false,
+                }
+              : m
+          )
+        );
       } finally {
         setIsTyping(false);
         isTypingRef.current = false;
+        abortControllerRef.current = null;
       }
     },
     [messages]
@@ -199,12 +263,15 @@ export function LayananView() {
   };
 
   const handleClearChat = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
     setMessages([WELCOME_MESSAGE]);
     setHasStarted(false);
     setInput("");
   };
 
-  // Welcome state - show when no user messages yet
+  // Welcome state
   if (!hasStarted) {
     return (
       <div className="flex flex-col h-[calc(100vh-200px)] sm:h-[calc(100vh-180px)]">
@@ -237,7 +304,6 @@ export function LayananView() {
             className="w-full max-w-md px-2"
           >
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sm:p-8 text-center">
-              {/* Zahra Avatar Large */}
               <div className="mx-auto mb-4 relative">
                 <ZahraAvatar size="lg" />
                 <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center shadow-md">
@@ -252,7 +318,6 @@ export function LayananView() {
                 informasi penyewaan alat konstruksi.
               </p>
 
-              {/* Quick Questions */}
               <div className="space-y-2 text-left">
                 <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-3 text-center">
                   Pertanyaan populer
@@ -346,10 +411,8 @@ export function LayananView() {
                 message.role === "user" ? "justify-end" : "justify-start"
               }`}
             >
-              {/* Zahra Avatar */}
               {message.role === "assistant" && <ZahraAvatar size="sm" />}
 
-              {/* Message Bubble */}
               <div className="max-w-[80%] sm:max-w-[70%]">
                 {message.role === "assistant" && (
                   <p className="text-[10px] text-emerald-600 font-medium mb-0.5 ml-1">
@@ -364,17 +427,19 @@ export function LayananView() {
                   }`}
                 >
                   {message.content}
+                  {message.isStreaming && <StreamingDots />}
                 </div>
-                <p
-                  className={`text-[10px] text-gray-400 mt-1 ${
-                    message.role === "user" ? "text-right" : "text-left ml-1"
-                  }`}
-                >
-                  {formatTime(message.timestamp)}
-                </p>
+                {!message.isStreaming && (
+                  <p
+                    className={`text-[10px] text-gray-400 mt-1 ${
+                      message.role === "user" ? "text-right" : "text-left ml-1"
+                    }`}
+                  >
+                    {formatTime(message.timestamp)}
+                  </p>
+                )}
               </div>
 
-              {/* User Avatar */}
               {message.role === "user" && (
                 <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-gray-200 text-gray-500 shadow-sm">
                   <User className="w-4 h-4" />
@@ -384,15 +449,16 @@ export function LayananView() {
           ))}
         </AnimatePresence>
 
-        {/* Typing Indicator */}
         <AnimatePresence>
-          {isTyping && <TypingIndicator />}
+          {isTyping && !messages.some((m) => m.isStreaming) && (
+            <TypingIndicator />
+          )}
         </AnimatePresence>
 
         <div ref={chatEndRef} />
       </div>
 
-      {/* Quick Questions (show only after welcome, if few messages) */}
+      {/* Quick Questions */}
       {messages.length <= 3 && (
         <div className="flex gap-2 overflow-x-auto pb-2 px-1 scrollbar-hide">
           {QUICK_QUESTIONS.map((q) => (

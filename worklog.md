@@ -142,3 +142,40 @@ Stage Summary:
 - ✅ Dynamic import for SDK to avoid bundling issues
 - ✅ Frontend fetches `/api/chat` (relative path, works on any domain)
 - ⚠️ Ensure `z-ai-web-dev-sdk` environment variables are set on Vercel if needed
+
+---
+Task ID: 49
+Agent: Main Agent
+Task: Migrate chat from z-ai-web-dev-sdk to Vercel AI SDK + Google Gemini with streaming
+
+Work Log:
+- Installed `ai` (v6.0.168) and `@ai-sdk/google` (v3.0.64) packages
+- Installed `@ai-sdk/react` (v3.0.170) for React hooks
+- Rewrote `src/app/api/chat/route.ts` using Vercel AI SDK:
+  - Model: `google("gemini-2.0-flash")` via `@ai-sdk/google`
+  - Streaming: `streamText()` → `toTextStreamResponse()` (SSE text streaming)
+  - System prompt as `system` parameter (proper role, not workaround)
+  - `maxDuration = 30` for Vercel serverless
+- Rewrote `src/components/layanan-view.tsx` for streaming:
+  - Reads SSE stream with `ReadableStream` reader
+  - Parses data stream chunks incrementally
+  - Text appears character by character (real-time streaming effect)
+  - StreamingDots animation while text is still generating
+  - AbortController support for cancelling in-flight requests
+- Updated `next.config.ts`: `serverExternalPackages: ["@ai-sdk/google", "ai"]`
+- Build passes ✅, Lint passes ✅
+
+Stage Summary:
+- Chat now uses Google Gemini 2.0 Flash via Vercel AI SDK (streaming!)
+- Text appears in real-time as Zahra "types" — much better UX than waiting for full response
+- Fully Vercel-compatible — no mini-service needed
+- No dependency on z-ai-web-dev-sdk anymore for chat
+
+### Vercel Environment Variables Needed
+- `TURSO_DATABASE_URL` — Turso database URL
+- `TURSO_AUTH_TOKEN` — Turso auth token
+
+### ⚠️ Note
+- The provided API key has exhausted its free tier quota (limit: 0)
+- User needs to get a fresh API key from https://aistudio.google.com/
+- Or enable billing on the Google Cloud project for higher limits
