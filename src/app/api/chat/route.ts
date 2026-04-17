@@ -49,21 +49,21 @@ ATURAN BICARA:
 
 const MAX_MESSAGES = 20;
 
-// ====== DeepSeek API (for Vercel / production) ======
-async function chatWithDeepSeekAPI(
+// ====== Groq API (for Vercel / production) — fast & free ======
+async function chatWithGroq(
   chatMessages: Array<{ role: string; content: string }>
 ): Promise<string> {
-  const apiKey = process.env.DEEPSEEK_API_KEY;
-  if (!apiKey) throw new Error("DEEPSEEK_API_KEY not set");
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) throw new Error("GROQ_API_KEY not set");
 
-  const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: "deepseek-chat",
+      model: "llama-3.3-70b-versatile",
       messages: chatMessages,
       max_tokens: 1024,
       temperature: 0.7,
@@ -72,12 +72,12 @@ async function chatWithDeepSeekAPI(
 
   if (!res.ok) {
     const err = await res.text();
-    throw new Error(`DeepSeek API error: ${res.status} - ${err}`);
+    throw new Error(`Groq API error: ${res.status} - ${err}`);
   }
 
   const data = await res.json();
   const reply = data.choices?.[0]?.message?.content;
-  if (!reply) throw new Error("Empty response from DeepSeek");
+  if (!reply) throw new Error("Empty response from Groq");
   return reply.trim();
 }
 
@@ -123,25 +123,22 @@ export async function POST(request: NextRequest) {
     ];
 
     let reply: string;
-    let lastError: Error | null = null;
 
-    // Strategy: try z-ai-web-dev-sdk first (free, local), then fallback to DeepSeek API
+    // Strategy: try z-ai-web-dev-sdk first (free, local), then fallback to Groq (Vercel)
     // 1. Try z-ai-web-dev-sdk (local sandbox)
     try {
       reply = await chatWithZAI(chatMessages);
       return NextResponse.json({ success: true, message: reply });
     } catch (e: any) {
-      lastError = e;
-      console.warn("z-ai-web-dev-sdk failed:", e.message);
+      console.warn("z-ai-web-dev-sdk failed, trying Groq:", e.message);
     }
 
-    // 2. Fallback to DeepSeek API (Vercel / production)
+    // 2. Fallback to Groq API (Vercel / production)
     try {
-      reply = await chatWithDeepSeekAPI(chatMessages);
+      reply = await chatWithGroq(chatMessages);
       return NextResponse.json({ success: true, message: reply });
     } catch (e: any) {
-      lastError = e;
-      console.error("DeepSeek API failed:", e.message);
+      console.error("Groq API failed:", e.message);
     }
 
     // Both failed
@@ -158,8 +155,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error:
-          "Terjadi kesalahan internal. Silakan coba lagi.",
+        error: "Terjadi kesalahan internal. Silakan coba lagi.",
       },
       { status: 500 }
     );
