@@ -16,22 +16,31 @@ function getDb(): PrismaClient {
     return _db;
   }
 
-  // Use Turso (libsql) if TURSO_DATABASE_URL is set
   const tursoUrl = process.env.TURSO_DATABASE_URL;
   const tursoToken = process.env.TURSO_AUTH_TOKEN;
 
   if (tursoUrl) {
+    // Turso: use libsql adapter
     const libsql = createClient({
       url: tursoUrl,
       authToken: tursoToken,
     });
     const adapter = new PrismaLibSQL(libsql);
+
+    // Temporarily override DATABASE_URL so Prisma accepts the libsql scheme
+    const originalUrl = process.env.DATABASE_URL;
+    process.env.DATABASE_URL = tursoUrl;
+
     _db = new PrismaClient({
       adapter,
       log: process.env.NODE_ENV === "development" ? ["error"] : [],
     });
+
+    // Restore original DATABASE_URL
+    if (originalUrl) process.env.DATABASE_URL = originalUrl;
+    else delete process.env.DATABASE_URL;
   } else {
-    // Fallback to local SQLite
+    // Local SQLite fallback
     _db = new PrismaClient({
       log: process.env.NODE_ENV === "development" ? ["error"] : [],
     });
