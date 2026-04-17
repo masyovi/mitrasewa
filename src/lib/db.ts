@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaLibSQL } from "@prisma/adapter-libsql";
+import { createClient } from "@libsql/client";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -14,14 +16,29 @@ function getDb(): PrismaClient {
     return _db;
   }
 
-  const client = new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["error"] : [],
-  });
+  // Use Turso (libsql) if TURSO_DATABASE_URL is set
+  const tursoUrl = process.env.TURSO_DATABASE_URL;
+  const tursoToken = process.env.TURSO_AUTH_TOKEN;
 
-  _db = client;
+  if (tursoUrl) {
+    const libsql = createClient({
+      url: tursoUrl,
+      authToken: tursoToken,
+    });
+    const adapter = new PrismaLibSQL(libsql);
+    _db = new PrismaClient({
+      adapter,
+      log: process.env.NODE_ENV === "development" ? ["error"] : [],
+    });
+  } else {
+    // Fallback to local SQLite
+    _db = new PrismaClient({
+      log: process.env.NODE_ENV === "development" ? ["error"] : [],
+    });
+  }
 
   if (process.env.NODE_ENV !== "production") {
-    globalForPrisma.prisma = client;
+    globalForPrisma.prisma = _db;
   }
 
   return _db;
