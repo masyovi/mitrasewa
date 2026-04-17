@@ -43,7 +43,8 @@ ATURAN BICARA:
 - Untuk harga spesifik, arahkan user menghubungi WhatsApp karena harga bisa berubah
 - Jawab singkat tapi lengkap, tidak perlu terlalu panjang
 - Gunakan emoji secukupnya agar terasa friendly
-- Selalu perkenalkan diri sebagai Zahra dari MITRA SEWA`;
+- Selalu perkenalkan diri sebagai Zahra dari MITRA SEWA
+- Gunakan salam "Assalamualaikum" sebagai sapaan, bukan "Halo"`;
 
 const MAX_MESSAGES = 20;
 

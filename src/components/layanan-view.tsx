@@ -23,7 +23,7 @@ const WELCOME_MESSAGE: ChatMessage = {
   id: "welcome",
   role: "assistant",
   content:
-    "Halo! 👋 Saya Zahra, asisten virtual MITRA SEWA. Saya siap membantu Anda dengan informasi penyewaan alat konstruksi. Silakan tanyakan apa saja!",
+    "Assalamualaikum! 👋 Saya Zahra, asisten virtual MITRA SEWA. Saya siap membantu Anda dengan informasi penyewaan alat konstruksi. Silakan tanyakan apa saja!",
   timestamp: new Date(),
 };
 
@@ -245,7 +245,7 @@ export function LayananView() {
                 </div>
               </div>
               <h4 className="text-lg font-bold text-gray-900 mb-1">
-                Halo, saya Zahra! 👋
+                Assalamualaikum, saya Zahra! 👋
               </h4>
               <p className="text-sm text-gray-500 mb-6 leading-relaxed">
                 Asisten virtual MITRA SEWA yang siap membantu Anda dengan
