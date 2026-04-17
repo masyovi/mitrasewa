@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaLibSQL } from "@prisma/adapter-libsql";
-import { createClient } from "@libsql/client";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -20,25 +19,18 @@ function getDb(): PrismaClient {
   const tursoToken = process.env.TURSO_AUTH_TOKEN;
 
   if (tursoUrl) {
-    // Turso: use libsql adapter
-    const libsql = createClient({
-      url: tursoUrl,
-      authToken: tursoToken,
-    });
-    const adapter = new PrismaLibSQL(libsql);
-
-    // Temporarily override DATABASE_URL so Prisma accepts the libsql scheme
-    const originalUrl = process.env.DATABASE_URL;
+    // Turso: use libsql adapter (pass config, not client)
     process.env.DATABASE_URL = tursoUrl;
+
+    const adapter = new PrismaLibSQL({
+      url: tursoUrl,
+      authToken: tursoToken || undefined,
+    });
 
     _db = new PrismaClient({
       adapter,
       log: process.env.NODE_ENV === "development" ? ["error"] : [],
     });
-
-    // Restore original DATABASE_URL
-    if (originalUrl) process.env.DATABASE_URL = originalUrl;
-    else delete process.env.DATABASE_URL;
   } else {
     // Local SQLite fallback
     _db = new PrismaClient({

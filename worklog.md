@@ -259,3 +259,27 @@ Stage Summary:
   - `DATABASE_URL` — SQLite database URL (or use Turso)
   - `NEXTAUTH_SECRET` — for NextAuth.js
   - `NEXTAUTH_URL` — your Vercel deployment URL
+
+---
+Task ID: 51
+Agent: Main Agent
+Task: Setup Turso database integration + Fix Vercel-compatible chatbot
+
+Work Log:
+- Identified root cause: `PrismaLibSQL` in v6.19.2 is a factory class that takes config `{url, authToken}`, NOT a pre-created libsql client
+- Fixed `src/lib/db.ts`: Use `new PrismaLibSQL({ url, authToken })` instead of `new PrismaLibSQL(createClient(...))`
+- Removed dependency on `createClient` from `@libsql/client` in db.ts (adapter handles it internally)
+- Migrated all data (6 PriceSetting + 6 StockSetting rows) from local SQLite to Turso
+- Set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in .env
+- Updated chat API (`src/app/api/chat/route.ts`) for dual-mode:
+  - Local dev: uses z-ai-web-dev-sdk (free, no API key)
+  - Vercel/production: uses DeepSeek API directly (requires DEEPSEEK_API_KEY env var)
+- Updated `next.config.ts`: added `allowedDevOrigins` for preview, kept `serverExternalPackages: ["z-ai-web-dev-sdk"]`
+- All APIs tested and working: prices (6), stock (6), chat (success)
+
+Stage Summary:
+- ✅ Database connected to Turso (libsql cloud) — works locally and ready for Vercel
+- ✅ Prisma adapter working correctly with config-based factory
+- ✅ Chat dual-mode: z-ai-web-dev-sdk (local) / DeepSeek API (Vercel)
+- ⚠️ For Vercel deployment, user needs to set DEEPSEEK_API_KEY env variable (free at platform.deepseek.com)
+- ⚠️ Vercel env vars needed: TURSO_DATABASE_URL, TURSO_AUTH_TOKEN, DEEPSEEK_API_KEY
