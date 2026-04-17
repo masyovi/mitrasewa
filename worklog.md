@@ -179,3 +179,29 @@ Stage Summary:
 - The provided API key has exhausted its free tier quota (limit: 0)
 - User needs to get a fresh API key from https://aistudio.google.com/
 - Or enable billing on the Google Cloud project for higher limits
+
+---
+Task ID: 45-fix
+Agent: Main Agent
+Task: Fix Zahra AI chatbot - make it work without external API keys
+
+Work Log:
+- Identified that Gemini API keys provided by user (`AQ.Ab8...` format) are NOT valid Google Gemini API keys (should be `AIzaSy...` format)
+- Decided to switch back to z-ai-web-dev-sdk (glm-3-turbo) which is free and doesn't require external API keys
+- Found root cause of Next.js server instability: `db.ts` was using `TURSO_DATABASE_URL` (not set in .env), causing all DB queries to fail with PrismaClientKnownRequestError
+- Fixed `db.ts` to use standard PrismaClient with `DATABASE_URL` from .env
+- Mini-service (port 3031) already had working z-ai-web-dev-sdk implementation
+- Updated `layanan-view.tsx` to call mini-service via gateway: `/api?XTransformPort=3031`
+- Updated `src/app/api/chat/route.ts` to proxy requests to mini-service
+- Added 30s timeout to frontend fetch call
+- Removed unused `serverExternalPackages` from `next.config.ts`
+- Created `start-services.sh` script for easy service management
+- Tested end-to-end: Zahra successfully responds to chat messages via browser
+
+Stage Summary:
+- ✅ Zahra AI chatbot works without any external API key (uses z-ai-web-dev-sdk glm-3-turbo)
+- ✅ Architecture: Frontend → Gateway (Caddy :81) → Mini-service (:3031) → z-ai-web-dev-sdk
+- ✅ Database fix: `db.ts` now uses standard PrismaClient instead of Turso adapter
+- ✅ All API routes working without errors (stock, prices, chat)
+- ⚠️ Mini-service required for local development; for Vercel deployment, a separate hosting solution needed for the AI service
+- Files modified: `src/lib/db.ts`, `src/app/api/chat/route.ts`, `src/components/layanan-view.tsx`, `next.config.ts`

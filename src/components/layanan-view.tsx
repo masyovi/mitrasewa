@@ -143,11 +143,17 @@ export function LayananView() {
           .filter((m) => m.id !== "welcome")
           .map((m) => ({ role: m.role, content: m.content }));
 
-        const response = await fetch("/api/chat", {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+        const response = await fetch("/api?XTransformPort=3031", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ messages: chatHistory }),
+          signal: controller.signal,
         });
+
+        clearTimeout(timeoutId);
 
         const data = await response.json();
 

@@ -1,9 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaLibSQL } from "@prisma/adapter-libsql";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
-  _prismaInit: boolean;
 };
 
 let _db: PrismaClient | null = null;
@@ -16,30 +14,7 @@ function getDb(): PrismaClient {
     return _db;
   }
 
-  const databaseUrl = process.env.TURSO_DATABASE_URL;
-  const authToken = process.env.TURSO_AUTH_TOKEN;
-
-  if (!databaseUrl) {
-    // Return a dummy disconnected client for build time
-    // This prevents build failures when env vars are not available
-    const fallbackClient = new PrismaClient({
-      datasources: {
-        db: {
-          url: "file:./dummy.db",
-        },
-      },
-    } as any);
-    _db = fallbackClient;
-    return _db;
-  }
-
-  const adapter = new PrismaLibSQL({
-    url: databaseUrl,
-    authToken: authToken,
-  });
-
   const client = new PrismaClient({
-    adapter,
     log: process.env.NODE_ENV === "development" ? ["error"] : [],
   });
 
