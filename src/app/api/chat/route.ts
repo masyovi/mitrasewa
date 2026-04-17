@@ -123,24 +123,43 @@ export async function POST(request: NextRequest) {
     ];
 
     let reply: string;
+    let lastError: Error | null = null;
 
-    // Try z-ai-web-dev-sdk first (local dev), fallback to DeepSeek API (Vercel)
-    if (process.env.DEEPSEEK_API_KEY) {
-      // Vercel / production: use DeepSeek API directly
-      reply = await chatWithDeepSeekAPI(chatMessages);
-    } else {
-      // Local dev: use z-ai-web-dev-sdk
+    // Strategy: try z-ai-web-dev-sdk first (free, local), then fallback to DeepSeek API
+    // 1. Try z-ai-web-dev-sdk (local sandbox)
+    try {
       reply = await chatWithZAI(chatMessages);
+      return NextResponse.json({ success: true, message: reply });
+    } catch (e: any) {
+      lastError = e;
+      console.warn("z-ai-web-dev-sdk failed:", e.message);
     }
 
-    return NextResponse.json({ success: true, message: reply });
-  } catch (err: any) {
-    console.error("Chat API error:", err.message || err);
+    // 2. Fallback to DeepSeek API (Vercel / production)
+    try {
+      reply = await chatWithDeepSeekAPI(chatMessages);
+      return NextResponse.json({ success: true, message: reply });
+    } catch (e: any) {
+      lastError = e;
+      console.error("DeepSeek API failed:", e.message);
+    }
+
+    // Both failed
     return NextResponse.json(
       {
         success: false,
         error:
           "Maaf, saya sedang mengalami gangguan teknis. Silakan coba lagi atau hubungi kami via WhatsApp di 0851-8592-4243 ya! 🙏",
+      },
+      { status: 500 }
+    );
+  } catch (err) {
+    console.error("Chat API error:", err);
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          "Terjadi kesalahan internal. Silakan coba lagi.",
       },
       { status: 500 }
     );
