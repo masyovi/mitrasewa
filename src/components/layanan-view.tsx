@@ -2,30 +2,50 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, MessageCircle, User, RotateCcw, Sparkles } from "lucide-react";
+import { Send, User, RotateCcw, Sparkles, Trash2 } from "lucide-react";
 import Image from "next/image";
+
+const STORAGE_KEY = "mitrasewa-chat-history";
 
 interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
-  timestamp: Date;
+  timestamp: string;
 }
-
-const QUICK_QUESTIONS = [
-  "Alat apa saja yang tersedia?",
-  "Berapa harga sewa scaffolding?",
-  "Bagaimana cara menyewa?",
-  "Area layanan di mana saja?",
-];
 
 const WELCOME_MESSAGE: ChatMessage = {
   id: "welcome",
   role: "assistant",
   content:
     "Assalamualaikum! 👋 Saya Zahra, asisten virtual MITRA SEWA. Saya siap membantu Anda dengan informasi penyewaan alat konstruksi. Silakan tanyakan apa saja!",
-  timestamp: new Date(),
+  timestamp: new Date().toISOString(),
 };
+
+function loadChatHistory(): ChatMessage[] {
+  if (typeof window === "undefined") return [WELCOME_MESSAGE];
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return [WELCOME_MESSAGE];
+}
+
+function saveChatHistory(messages: ChatMessage[]) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+  } catch {
+    // ignore
+  }
+}
 
 function ZahraAvatar({ size = "sm" }: { size?: "sm" | "md" | "lg" }) {
   const sizeClasses = {
@@ -84,8 +104,8 @@ function TypingIndicator() {
   );
 }
 
-function formatTime(date: Date): string {
-  return date.toLocaleTimeString("id-ID", {
+function formatTime(dateStr: string): string {
+  return new Date(dateStr).toLocaleTimeString("id-ID", {
     hour: "2-digit",
     minute: "2-digit",
   });
@@ -96,9 +116,27 @@ export function LayananView() {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isTypingRef = useRef(false);
+
+  // Load chat history from localStorage on mount
+  useEffect(() => {
+    const history = loadChatHistory();
+    setMessages(history);
+    if (history.length > 1) {
+      setHasStarted(true);
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // Save to localStorage whenever messages change (after initial load)
+  useEffect(() => {
+    if (isLoaded) {
+      saveChatHistory(messages);
+    }
+  }, [messages, isLoaded]);
 
   useEffect(() => {
     if (chatEndRef.current) {
@@ -125,7 +163,7 @@ export function LayananView() {
         id: `user_${Date.now()}`,
         role: "user",
         content: text.trim(),
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       };
 
       setMessages((prev) => [...prev, userMessage]);
@@ -169,7 +207,7 @@ export function LayananView() {
           id: `assistant_${Date.now()}`,
           role: "assistant",
           content: replyContent,
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
         };
 
         setMessages((prev) => [...prev, assistantMessage]);
@@ -179,7 +217,7 @@ export function LayananView() {
           role: "assistant",
           content:
             "Maaf, koneksi bermasalah nih. Coba lagi ya, atau hubungi kami via WhatsApp di 0851-8592-4243! 🙏",
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
         };
         setMessages((prev) => [...prev, errorMessage]);
       } finally {
@@ -197,17 +235,15 @@ export function LayananView() {
     }
   };
 
-  const handleQuickQuestion = (question: string) => {
-    sendMessage(question);
-  };
-
   const handleClearChat = () => {
-    setMessages([WELCOME_MESSAGE]);
+    const newMessages = [WELCOME_MESSAGE];
+    setMessages(newMessages);
     setHasStarted(false);
     setInput("");
+    saveChatHistory(newMessages);
   };
 
-  // Welcome state
+  // Welcome state — only show on first visit (no history)
   if (!hasStarted) {
     return (
       <div className="flex flex-col h-[calc(100vh-200px)] sm:h-[calc(100vh-180px)]">
@@ -247,29 +283,10 @@ export function LayananView() {
               <h4 className="text-lg font-bold text-gray-900 mb-1">
                 Assalamualaikum, saya Zahra! 👋
               </h4>
-              <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+              <p className="text-sm text-gray-500 leading-relaxed">
                 Asisten virtual MITRA SEWA yang siap membantu Anda dengan
                 informasi penyewaan alat konstruksi.
               </p>
-
-              <div className="space-y-2 text-left">
-                <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-3 text-center">
-                  Pertanyaan populer
-                </p>
-                {QUICK_QUESTIONS.map((q, i) => (
-                  <motion.button
-                    key={q}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 * i + 0.3 }}
-                    onClick={() => handleQuickQuestion(q)}
-                    className="w-full text-left px-4 py-3 text-sm text-gray-700 bg-gray-50 hover:bg-emerald-50 hover:text-emerald-700 rounded-xl transition-all border border-gray-100 hover:border-emerald-200 flex items-center gap-3"
-                  >
-                    <MessageCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                    {q}
-                  </motion.button>
-                ))}
-              </div>
             </div>
           </motion.div>
         </div>
@@ -323,10 +340,10 @@ export function LayananView() {
         <button
           onClick={handleClearChat}
           className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-red-500 px-2.5 py-1.5 rounded-lg hover:bg-red-50 transition-all"
-          title="Mulai chat baru"
+          title="Hapus semua chat"
         >
-          <RotateCcw className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">Baru</span>
+          <Trash2 className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Hapus</span>
         </button>
       </div>
 
@@ -383,20 +400,6 @@ export function LayananView() {
 
         <div ref={chatEndRef} />
       </div>
-
-      {messages.length <= 3 && (
-        <div className="flex gap-2 overflow-x-auto pb-2 px-1 scrollbar-hide">
-          {QUICK_QUESTIONS.map((q) => (
-            <button
-              key={q}
-              onClick={() => handleQuickQuestion(q)}
-              className="flex-shrink-0 px-3 py-1.5 text-xs text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-full transition-all border border-emerald-200 hover:border-emerald-300 whitespace-nowrap"
-            >
-              {q}
-            </button>
-          ))}
-        </div>
-      )}
 
       <div className="pt-2">
         <div className="flex items-end gap-2 bg-white rounded-2xl border border-gray-200 p-2 shadow-sm">
